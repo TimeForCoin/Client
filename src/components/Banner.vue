@@ -1,12 +1,18 @@
 <template>
   <div id="banner">
-    <div id="left">
-      <h1>Time For Coin</h1>
-      <p>{{description}}</p>
-    </div>
-    <div id="right">
-
-    </div>
+    <a-row>
+      <a-col id="left" :span="7">
+        <div>
+          <h1>Time For Coin</h1>
+          <p>{{description}}</p>
+        </div>
+      </a-col>
+      <a-col id="right" :span="6" push="4">
+        <div>
+          <img src="../assets/logo.png" />
+        </div>
+      </a-col>
+    </a-row>
   </div>
 </template>
 
@@ -29,23 +35,32 @@ export default {
 // 样式
 #banner {
   height: @content-height;
-  margin: 0 auto;
+  position: relative;
+  max-width: 1200px;
+  min-width: 580px;
+  margin: 0px auto;
   padding: 0 24px;
-  width: 100%;
   display: flex;
   align-items: center;
 
   #left {
     width: 54%;
-    min-width: 420px;
+    min-width: 500px;
     max-width: 560px;
-    min-height: 336px;
+    min-height: 250px;
     text-align: left;
+    animation: titleAntimation 2s;
 
     h1 {
       font-weight: 900px;
       font-size: 68px;
     }
+
+    p {
+      font-size: 20px;
+      color: #314659;
+    }
+
   }
 
   #right {
@@ -53,8 +68,42 @@ export default {
     min-width: 420px;
     max-width: 560px;
     min-height: 336px;
-
+    animation: upDown 3s infinite;
   }
 }
 
+// 动画
+@keyframes titleAntimation
+{
+  from {
+    transform: translateY(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes upDown
+{
+  0% {
+    transform: translateY(0px);
+  }
+  10% {
+    transform: translateY(40px);
+  }
+  20% {
+    transform: translateY(10px);
+  }
+  30% {
+    transform: translateY(40px);
+  }
+  40% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
 </style>

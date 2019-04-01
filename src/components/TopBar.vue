@@ -30,7 +30,7 @@ export default {
       console.log('注册')
     },
     login: function (event) {
-      console.log('登录')
+      this.$router.push('/user')
     }
   }
 }
