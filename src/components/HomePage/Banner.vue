@@ -1,18 +1,12 @@
 <template>
-  <div id="banner">
-    <a-row>
-      <a-col id="left" :span="7">
-        <div>
-          <h1>Time For Coin</h1>
-          <p>{{description}}</p>
-        </div>
-      </a-col>
-      <a-col id="right" :span="6" push="4">
-        <div>
-          <img src="../assets/logo.png" />
-        </div>
-      </a-col>
-    </a-row>
+  <div class="banner">
+    <div id="left">
+      <h1>Time For Coin</h1>
+      <p>{{description}}</p>
+    </div>
+    <div id="right">
+      <img src="../../assets/logo.png" />
+    </div>
   </div>
 </template>
 
@@ -29,31 +23,28 @@ export default {
 </script>
 
 <style lang="less" scoped>
-// 变量
-@content-height: 576px;
 
 // 样式
-#banner {
-  height: @content-height;
+.banner {
   position: relative;
   max-width: 1200px;
   min-width: 580px;
-  margin: 0px auto;
+  min-height: 500px;
+  margin: 150px auto 0px;
   padding: 0 24px;
   display: flex;
   align-items: center;
 
   #left {
     width: 54%;
-    min-width: 500px;
+    min-width: 420px;
     max-width: 560px;
     min-height: 250px;
     text-align: left;
     animation: titleAntimation 2s;
 
     h1 {
-      font-weight: 900px;
-      font-size: 68px;
+      font-size: 65px;
     }
 
     p {
@@ -65,10 +56,32 @@ export default {
 
   #right {
     width: 46%;
-    min-width: 420px;
-    max-width: 560px;
-    min-height: 336px;
+    max-width: 482px;
+    min-height: 250px;
+    margin-top: 50px;
     animation: upDown 3s infinite;
+  }
+}
+
+// 屏幕宽度小于760时调整布局
+@media screen and (max-width: 760px) {
+  .banner {
+    margin: 50px auto 0;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    min-height: 700px;
+
+    #left {
+      width: 100%;
+      text-align: center;
+      margin-top: 100px;
+    }
+
+    #right {
+      margin-top: 0px;
+      width: 100%;
+    }
   }
 }
 
