@@ -3,8 +3,8 @@
     <a-row>
       <a-col :span="12">
         <a id="logo">
-          <img src="../assets/logo.png">
-          <img class="logo-font" src="../assets/logo-font.png">
+          <img src="../../assets/logo.png">
+          <img class="logo-font" src="../../assets/logo-font.png">
         </a>
       </a-col>
       <a-col :span="6" push="6">
@@ -30,7 +30,7 @@ export default {
       console.log('注册')
     },
     login: function (event) {
-      console.log('登录')
+      this.$router.push('/user')
     }
   }
 }
