@@ -1,6 +1,8 @@
 <template>
   <div class="page1">
-    <div id="empty">{{ title }}</div>
+    <div id="title" class="empty">{{ title }}</div>
+    <div id="image-area"></div>
+    <div class="empty">{{ ability }}</div>
     <div id="content">
       <div v-for="item in logoPath" class="ability" :key="item.text">
         <div class="image">
@@ -16,7 +18,8 @@
 export default {
   data: function () {
     return {
-      title: '功能',
+      title: '闲得一币',
+      ability: '功能',
       logoPath: [
         { path: require('../../assets/HomePage/questionnaire.png'), text: '问卷调查' },
         { path: require('../../assets/HomePage/errand.png'), text: '跑腿代取' },
@@ -29,14 +32,23 @@ export default {
 <style lang="less" scoped>
 
 .page1 {
+  background: url("../../assets/HomePage/page1-background.jpg");
+  background-attachment: fixed;
+  background-size: cover;
 
-  #empty {
+  .empty {
     height: 150px;
     line-height: 150px;
     width: 100%;
     font-size: 40px;
     color: white;
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.4);
     background-color: rgb(50, 79, 229);
+  }
+
+  #image-area {
+    height: 800px;
+    width: 100%;
   }
 
   #content {
