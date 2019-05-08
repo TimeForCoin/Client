@@ -1,13 +1,13 @@
 <template>
   <div class="topbar" :class="{hide: !isShow}">
     <a-row>
-      <a-col :span="6">
+      <a-col :span="6" :push="2">
         <a id="logo">
           <img src="../../assets/logo.png">
           <img class="logo-font" src="../../assets/logo-font.png">
         </a>
       </a-col>
-      <a-col :span="5" :push="12">
+      <a-col :span="5" :push="10">
         <div id="navigate">
           <a-button class="nav-button" type="default" @click="signup">注册</a-button>
           <a-button class="nav-button" type="primary" @click="login">登录</a-button>
@@ -29,19 +29,17 @@ export default {
   },
   methods: {
     signup: function (event) {
-      console.log('注册')
+
     },
     login: function (event) {
       this.$router.push('/user')
     },
     onScroll: function () {
       let top = document.scrollingElement.scrollTop
-      if (this.oldTop > top) {
+      if (this.oldTop >= top) {
         this.isShow = true
-        console.log(1)
       } else {
         this.isShow = false
-        console.log(2)
       }
       this.oldTop = top
     }
@@ -63,11 +61,12 @@ export default {
   opacity: 1;
   position: fixed;
   width: 100%;
+  min-width: 655px;
   padding: 0 24px;
   margin: 0 auto;
   transition: 0.5s;
   background-color: white;
-  box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
   z-index: 10;
 
   #logo {
@@ -94,6 +93,7 @@ export default {
 
   #navigate {
     white-space: nowrap;
+    text-align: right;
 
     .nav-button {
       margin: 20px 0px 0px 15px;

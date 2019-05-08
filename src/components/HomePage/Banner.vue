@@ -29,7 +29,7 @@ export default {
   position: relative;
   max-width: 1200px;
   min-width: 580px;
-  min-height: 500px;
+  min-height: 600px;
   margin: 150px auto 0px;
   padding: 0 24px;
   display: flex;
