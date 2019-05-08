@@ -1,10 +1,15 @@
 <template>
   <div id="app">
-    <router-view />
+    <a-layout>
+      <nav-bar/>
+      <router-view/>
+    </a-layout>
+    <a-back-top></a-back-top>
   </div>
 </template>
 
 <script>
+import NavBar from './components/NavBar'
 
 export default {
   name: 'app',
@@ -14,7 +19,7 @@ export default {
     }
   },
   components: {
-
+    NavBar
   }
 }
 </script>

@@ -1,10 +1,14 @@
 import Vue from 'vue'
-import App from './App.vue'
+import App from './App'
 import router from './router'
-import store from './store'
-import './plugins/ant-design-vue.js'
+import service from './services/service'
+import store from './store/store'
+import './plugins/ant-design-vue'
+import './plugins/axios'
 
 Vue.config.productionTip = false
+
+Vue.use(service)
 
 new Vue({
   router,
