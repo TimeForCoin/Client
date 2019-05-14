@@ -1,21 +1,17 @@
 <template>
-  <div class="topbar" :class="{hide: !isShow}">
-    <a-row>
-      <a-col :span="6" :push="2">
-        <a id="logo">
-          <img src="@/assets/logo.png">
-          <img class="logo-font" src="@/assets/logo-font.png">
-        </a>
-      </a-col>
-      <a-col :span="5" :push="10">
-        <div id="navigate">
-          <a-button class="nav-button" type="default" @click="signup">注册</a-button>
-          <a-button class="nav-button" type="primary" @click="login">登录</a-button>
-        </div>
-      </a-col>
-    </a-row>
+  <div class="navbar" :class="{hide: !isShow}">
+    <div class="left-menu" @click="logoClick">
+      <img src="@/assets/logo.png">Time For Coin
+    </div>
+    <div class="right-menu">
+      <a-button class="menu-button" type="default" @click="signup">注册</a-button>
+      <a-button class="menu-button" type="primary" @click="login">登录</a-button>
+    </div>
+    <a-menu class="mid-menu" mode="horizontal" @click="menuClick" :style="{ lineHeight: '64px' }">
+      <a-menu-item class="menu-item" key="discover">发现</a-menu-item>
+      <a-menu-item class="menu-item" key="mission">任务中心</a-menu-item>
+    </a-menu>
   </div>
-
 </template>
 
 <script>
@@ -23,17 +19,29 @@ export default {
   data() {
     return {
       oldTop: 0,
-      isShow: true
+      isShow: true,
+      current: ['mail']
     }
   },
   methods: {
-    signup: function (event) {
-
+    logoClick(event) {
+      this.$router.push('/')
     },
-    login: function (event) {
+    menuClick(event) {
+      switch (event.key) {
+        case 'discover':
+          this.$router.push('/discover')
+          break
+        case 'mission':
+          this.$router.push('/mission')
+          break
+      }
+    },
+    signup(event) {},
+    login(event) {
       this.$router.push('/user')
     },
-    onScroll: function () {
+    onScroll() {
       let top = document.scrollingElement.scrollTop
       if (this.oldTop >= top) {
         this.isShow = true
@@ -43,20 +51,19 @@ export default {
       this.oldTop = top
     }
   },
-  mounted: function () {
+  mounted() {
     // 屏幕滚动事件监听
     window.addEventListener('scroll', this.onScroll)
     this.oldTop = document.scrollingElement.scrollTop
   },
-  destroyed () {
+  destroyed() {
     window.removeEventListener('scroll', this.onScroll)
   }
 }
 </script>
 
 <style lang="less" scoped>
-
-.topbar {
+.navbar {
   opacity: 1;
   position: fixed;
   width: 100%;
@@ -68,13 +75,13 @@ export default {
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
   z-index: 10;
 
-  #logo {
-    display: block;
+  .left-menu {
     cursor: pointer;
     white-space: nowrap;
     height: 64px;
     width: 270px;
-    text-align: left;
+    float: left;
+    font-size: 24px;
     line-height: 64px;
 
     overflow: hidden;
@@ -83,21 +90,25 @@ export default {
       height: 40px;
       margin-right: 20px;
     }
-
-    .logo-font {
-      height: 16px;
-    }
-
   }
 
-  #navigate {
-    white-space: nowrap;
-    text-align: right;
+  .mid-menu {
+    font-size: 16px;
 
-    .nav-button {
-      margin: 20px 0px 0px 15px;
-      height: 25px;
-      font-size: 13px;
+    .menu-item {
+      margin: 0 30px;
+    }
+  }
+
+  .right-menu {
+    white-space: nowrap;
+    float: right;
+    overflow: hidden;
+
+    .menu-button {
+      margin: 16px 7px;
+      font-size: 16px;
+      height: 32px;
     }
   }
 }
