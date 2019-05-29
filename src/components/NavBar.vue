@@ -27,7 +27,7 @@
     </div>
     <div v-if="user !== null" class="right-menu">
       <a-avatar class="user-avatar" :src="user.info.avatar"/>
-      <span class="user-name" @click="logout">{{user.info.nickname}}</span>
+      <span class="user-name" @click="userClick">{{user.info.nickname}}</span>
     </div>
     <a-menu class="mid-menu" mode="horizontal" @click="menuClick" :style="{ lineHeight: '64px' }">
       <a-menu-item class="menu-item" key="discover">发现</a-menu-item>
@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { setInterval, clearInterval, setTimeout } from 'timers';
+import { setInterval, clearInterval, setTimeout } from 'timers'
 export default {
   data () {
     return {
@@ -68,14 +68,13 @@ export default {
       try {
         const res = await this.$service.user.GetInfo.call(this)
         this.user = res
+        console.log(res)
       } catch (error) {
 
       }
     },
-    logout () {
-      this.user = null
-      this.$service.user.Logout.call(this)
-      this.$message.info('退出登陆')
+    userClick () {
+      this.$router.push('/user')
     },
     async login (event) {
       // this.$router.push('/user')
@@ -111,7 +110,7 @@ export default {
         }
         timer()
       } catch (error) {
-        this.$message.error('请求失败:' + error);
+        this.$message.error('请求失败:' + error)
         this.loginModalVisible = false
       }
     },
