@@ -9,11 +9,16 @@ export async function GetLoginStatus() {
 }
 
 export async function GetInfo() {
-  const res = await this.$axios.get('/user/info/me')
+  const res = await this.$axios.get('/users/info/me')
   return res.data
 }
 
 export async function Logout() {
   const res = await this.$axios.delete('/session')
+  return res.data
+}
+
+export async function ChangeInfo(params) {
+  const res = await this.$axios.put('/users/info', params)
   return res.data
 }
