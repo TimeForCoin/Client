@@ -16,48 +16,40 @@
           </div>
         </li>
         <li class="user-info-item">
-          <span class="title">用户名</span>
+          <span class="title">昵称</span>
           <div class="user-info-item-input">
-              <a-input class="info-input" :disabled="!isUsernameChange" placeholder="CookiesChen"/>
+              <a-input class="info-input" :disabled="!isNicknameChange" v-model="user.info.nickname" />
           </div>
-          <div v-if="!isUsernameChange" @click="changeByIndex(0)" class="change-button">
+          <div v-if="!isNicknameChange" @click="changeByIndex(0)" class="change-button">
             <img src="https://b-gold-cdn.xitu.io/v3/static/img/edit-icon.6d6382b.svg"/>
             <span class="change-hint">修改</span>
           </div>
-          <div v-if="isUsernameChange" class="save-cancel">
-            <a-button type="primary" size="small" class="save-button">保存</a-button>
-            <a-button size="small" @click="changeByIndex(0)" class="cancel-button">取消</a-button>
-          </div>
+          <a-button v-if="isNicknameChange" size="small" @click="changeByIndex(0)">取消</a-button>
         </li>
         <li class="user-info-item">
           <span class="title">邮箱</span>
           <div class="user-info-item-input">
-              <a-input class="info-input" :disabled="!isEmailChange" placeholder="CookiesChen"/>
+              <a-input class="info-input" :disabled="!isEmailChange" v-model="user.info.email" />
           </div>
           <div v-if="!isEmailChange" @click="changeByIndex(1)" class="change-button">
             <img src="https://b-gold-cdn.xitu.io/v3/static/img/edit-icon.6d6382b.svg"/>
             <span class="change-hint">修改</span>
           </div>
-          <div v-if="isEmailChange" class="save-cancel">
-            <a-button type="primary" size="small" class="save-button">保存</a-button>
-            <a-button size="small" @click="changeByIndex(1)" class="cancel-button">取消</a-button>
-          </div>
+          <a-button v-if="isEmailChange" size="small" @click="changeByIndex(1)">取消</a-button>
         </li>
         <li class="user-info-item">
           <span class="title">电话</span>
           <div class="user-info-item-input">
-              <a-input class="info-input" :disabled="!isPhoneChange" placeholder="CookiesChen"/>
+              <a-input class="info-input" :disabled="!isPhoneChange" v-model="user.info.phone" />
           </div>
           <div v-if="!isPhoneChange" @click="changeByIndex(2)" class="change-button">
             <img src="https://b-gold-cdn.xitu.io/v3/static/img/edit-icon.6d6382b.svg"/>
             <span class="change-hint">修改</span>
           </div>
-          <div v-if="isPhoneChange" class="save-cancel">
-            <a-button type="primary" size="small" class="save-button">保存</a-button>
-            <a-button size="small" @click="changeByIndex(2)" class="cancel-button">取消</a-button>
-          </div>
+            <a-button v-if="isPhoneChange" size="small" @click="changeByIndex(2)">取消</a-button>
         </li>
       </ul>
+      <a-button :disabled="!(isEmailChange||isNicknameChange||isNicknameChange)" class="save-button" type="primary" @click="save">保存</a-button>
     </a-card>
   </div>
 </template>
@@ -67,16 +59,17 @@
 export default {
   data: function () {
     return {
-      isUsernameChange: false,
+      isNicknameChange: false,
       isEmailChange: false,
-      isPhoneChange: false
+      isPhoneChange: false,
+      user: {}
     }
   },
   methods: {
-    changeByIndex(index, val) {
+    changeByIndex: function(index) {
       switch (index) {
         case 0:
-          this.isUsernameChange = !this.isUsernameChange
+          this.isNicknameChange = !this.isNicknameChange
           break
         case 1:
           this.isEmailChange = !this.isEmailChange
@@ -85,13 +78,26 @@ export default {
           this.isPhoneChange = !this.isPhoneChange
           break
       }
+    },
+    save: async function() {
+      if (!this.$utils.verify.isValidEmail(this.user.info.email)) {
+        this.$message.error('邮箱格式有误')
+        return
+      }
+      const res = await this.$service.user.ChangeInfo.call(this, this.user.info)
+      this.isNicknameChange = this.isEmailChange = this.isPhoneChange = false
+      this.$message.success('保存成功')
     }
+  },
+  created: function() {
+    this.user = this.$store.state.user
   }
 }
 
 </script>
 
 <style lang="less" scoped>
+@items-num: 4;
 
 .user {
   background-color: white;
@@ -100,21 +106,19 @@ export default {
     margin-top: 80px;
     padding: 20px;
     width: 30vw;
-    height: 70vh;
     min-width: 500px;
-    min-height: 500px;
+    min-height: (@items-num+1)*100px;
 
     .user-info {
       list-style: none;
-      height: 100%;
       width: 100%;
       margin: 0px;
       padding: 0px;
 
       .user-info-item {
         width: 100%;
-        height: 10vh;
-        min-height: 125px;
+        height: 5vh;
+        min-height: 100px;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -157,6 +161,7 @@ export default {
 
         .change-button {
           display: flex;
+          justify-content: flex-end;
 
           .change-hint {
             color: #007fff;
@@ -164,19 +169,14 @@ export default {
 
         }
 
-        .change-button:hover{
+        .change-button:hover {
           cursor: pointer;
         }
-
-        .save-cancel{
-          display: flex;
-          justify-content: space-around;
-
-          .cancel-button {
-            margin-left: 5px;
-          }
-        }
       }
+    }
+
+    .save-button {
+      margin: 20px;
     }
   }
 }

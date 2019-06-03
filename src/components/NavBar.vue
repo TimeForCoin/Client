@@ -68,12 +68,12 @@ export default {
       try {
         const res = await this.$service.user.GetInfo.call(this)
         this.user = res
-        console.log(res)
+        this.$store.commit('set', res)
       } catch (error) {
 
       }
     },
-    userClick () {
+    async userClick () {
       this.$router.push('/user')
     },
     async login (event) {
