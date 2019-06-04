@@ -40,7 +40,7 @@
         </div>
         <div class="mission-cards">
           <div v-for="(item, index) in missions" class="cards" :key="index" >
-            <MissionCard />
+            <MissionCard :MissionModel=missions[index]></MissionCard>
           </div>
         </div>
         <a-pagination simple :defaultCurrent="1" :total=totalPage class="pagination"/>
@@ -75,7 +75,7 @@ export default {
         {
           "title": "天王盖地虎",
           "content": "小鸡炖蘑菇",
-          "type": "run",
+          "type": "questionnaire",
           "reward": "rmb",
           "reward_value": 0,
           "reward_object": "蘑菇",
@@ -83,7 +83,7 @@ export default {
         {
           "title": "暗示荣真",
           "content": "疯狂暗示荣真",
-          "type": "run",
+          "type": "info",
           "reward": "rmb",
           "reward_value": 500,
           "reward_object": "Zhenly",
@@ -98,16 +98,16 @@ export default {
         },
         {
           "title": "暗示荣真",
-          "content": "疯狂暗示荣真",
-          "type": "run",
+          "content": "疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真",
+          "type": "questionnaire",
           "reward": "rmb",
           "reward_value": 500,
           "reward_object": "Zhenly",
         },
         {
-          "title": "暗示荣真",
-          "content": "疯狂暗示荣真",
-          "type": "run",
+          "title": "秀秀好强啊",
+          "content": "疯狂暗示秀秀",
+          "type": "info",
           "reward": "rmb",
           "reward_value": 500,
           "reward_object": "Zhenly",

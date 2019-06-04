@@ -3,21 +3,42 @@
     <div class="image"></div>  
     <div class="head-img"></div>
     <div class="text1">
-      <p class="title">Title</p>
+      <p class="title">{{MissionModel.title}}</p>
       <span class="user">Username</span>
       <span class="time">2019-6-6</span>
     </div>
     <div class="text2">
-      <p class="long-text">任务类型：跑腿</p>
-      <p class="long-text">任务内容：你妈的为什么你妈的为什么你妈的为什么你妈的为什么你妈的为什么你妈的为什么你妈的为什么</p>
-      <p class="long-text" id="reward">酬劳：100RMB</p>
+      <p class="long-text">任务类型：{{missionType}}</p>
+      <p class="long-text">任务内容：{{MissionModel.content}}</p>
+      <p class="long-text" id="reward">酬劳：{{MissionModel.reward_object}}</p>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-
+  props: ["MissionModel"],
+  data() {
+    return {
+      
+    }
+  },
+  computed:{
+    missionType: function(){
+      switch(this.MissionModel.type) {
+        case "run":
+          return "跑腿";
+          break;
+        case "questionnaire":
+          return "问卷";
+          break;
+        case "info":
+          return "信息";
+          break;
+      }
+      return "跑腿";
+    }
+  }
 }
 </script>
 
