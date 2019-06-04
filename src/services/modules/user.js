@@ -9,7 +9,7 @@ export async function GetLoginStatus() {
 }
 
 export async function GetInfo() {
-  const res = await this.$axios.get('/user/info/me')
+  const res = await this.$axios.get('/users/info/me')
   return res.data
 }
 
