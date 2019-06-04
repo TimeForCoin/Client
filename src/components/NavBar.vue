@@ -28,8 +28,8 @@
     <div v-if="user !== null" class="right-menu">
       <a-dropdown>
         <div>
-          <a-avatar class="user-avatar" :src="user.info.avatar"/>
-          <span class="user-name" @click="userClick">{{user.info.nickname}}</span>
+          <img class="user-avatar" :src="avatar"/>
+          <span class="user-name" @click="userClick">{{nickname}}</span>
         </div>
         <a-menu slot="overlay" class="login-dropdown">
           <a-menu-item class="dropdown-menu-item" @click="logout">退出登陆</a-menu-item>
@@ -61,6 +61,14 @@ export default {
       oldTop: 0,
       isShow: true,
       menuSelected: []
+    }
+  },
+  computed: {
+    nickname: function() {
+      return this.$store.getters.getNickname
+    },
+    avatar: function() {
+      return this.$store.getters.getAvatar
     }
   },
   methods: {
@@ -211,6 +219,8 @@ export default {
 
     .user-avatar {
       margin-top: 20px;
+      height: 30px;
+      width: 30px;
       vertical-align: bottom;
     }
 
