@@ -2,6 +2,7 @@
   <div class="banner">
     <div id="left">
       <h1>Time For Coin</h1>
+      <p>{{summary}}</p>
       <p>{{description}}</p>
     </div>
     <div id="right">
@@ -15,7 +16,8 @@
 export default {
   data: function () {
     return {
-      description: '闲得一币是大学生通过做任务挣钱的云平台，定位上是重点在于运营的众包系统。在本平台中，每个人可以是挣闲钱的受益者，也可以是所谓的“奶牛”。'
+      summary: '闲得一币是大学生通过做任务挣钱的云平台。',
+      description: '每个人可以是挣闲钱的受益者，也可以是所谓的“奶牛”。'
     }
   }
 }

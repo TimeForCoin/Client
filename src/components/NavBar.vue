@@ -26,10 +26,23 @@
       </a-modal>
     </div>
     <div v-if="user !== null" class="right-menu">
-      <img class="user-avatar" :src="avatar"/>
-      <span class="user-name" @click="userClick">{{nickname}}</span>
+      <a-dropdown>
+        <div>
+          <img class="user-avatar" :src="avatar"/>
+          <span class="user-name" @click="userClick">{{nickname}}</span>
+        </div>
+        <a-menu slot="overlay" class="login-dropdown">
+          <a-menu-item class="dropdown-menu-item" @click="logout">退出登陆</a-menu-item>
+        </a-menu>
+      </a-dropdown>
     </div>
-    <a-menu class="mid-menu" mode="horizontal" @click="menuClick" :style="{ lineHeight: '64px' }">
+    <a-menu
+      class="mid-menu"
+      v-model="menuSelected"
+      mode="horizontal"
+      @click="menuClick"
+      :style="{ lineHeight: '64px' }"
+    >
       <a-menu-item class="menu-item" key="discover">发现</a-menu-item>
       <a-menu-item class="menu-item" key="mission">任务中心</a-menu-item>
     </a-menu>
@@ -39,7 +52,7 @@
 <script>
 import { setInterval, clearInterval, setTimeout } from 'timers'
 export default {
-  data () {
+  data() {
     return {
       user: null,
       failedLogin: false,
@@ -47,7 +60,7 @@ export default {
       loginModalVisible: false,
       oldTop: 0,
       isShow: true,
-      current: ['mail']
+      menuSelected: []
     }
   },
   computed: {
@@ -59,10 +72,11 @@ export default {
     }
   },
   methods: {
-    logoClick (event) {
+    logoClick(event) {
+      this.menuSelected = []
       this.$router.push('/')
     },
-    menuClick (event) {
+    menuClick(event) {
       switch (event.key) {
         case 'discover':
           this.$router.push('/discover')
@@ -72,19 +86,17 @@ export default {
           break
       }
     },
-    async getUserInfo () {
+    async getUserInfo() {
       try {
         const res = await this.$service.user.GetInfo.call(this)
         this.user = res
-        this.$store.commit('set', res)
-      } catch (error) {
-
-      }
+        this.$store.commit('setUser', res)
+      } catch (error) {}
     },
-    async userClick () {
+    async userClick() {
       this.$router.push('/user')
     },
-    async login (event) {
+    async login(event) {
       // this.$router.push('/user')
       this.loginModalVisible = true
       this.failedLogin = false
@@ -94,7 +106,8 @@ export default {
         const oauthWindow = window.open(
           res.url,
           'newWindow',
-          'menubar=0,scrollbars=1, resizable=1,status=1,titlebar=0,toolbar=0,location=1,width=600,height=600,top=50,left=100')
+          'menubar=0,scrollbars=1, resizable=1,status=1,titlebar=0,toolbar=0,location=1,width=600,height=600,top=50,left=100'
+        )
         const timer = () => {
           setTimeout(async () => {
             const res = await this.$service.user.GetLoginStatus.call(this)
@@ -122,7 +135,17 @@ export default {
         this.loginModalVisible = false
       }
     },
-    onScroll () {
+    async logout() {
+      try {
+        await this.$service.user.Logout.call(this)
+        this.$store.commit('removeUser')
+        this.user = null
+        this.$message.info('退出登陆成功')
+      } catch (error) {
+        this.$message.error('请求失败:' + error)
+      }
+    },
+    onScroll() {
       let top = document.scrollingElement.scrollTop
       if (this.oldTop >= top) {
         this.isShow = true
@@ -132,14 +155,14 @@ export default {
       this.oldTop = top
     }
   },
-  mounted () {
+  mounted() {
     // 屏幕滚动事件监听
     window.addEventListener('scroll', this.onScroll)
     this.oldTop = document.scrollingElement.scrollTop
 
     this.getUserInfo()
   },
-  destroyed () {
+  destroyed() {
     window.removeEventListener('scroll', this.onScroll)
   }
 }
@@ -212,10 +235,17 @@ export default {
 .hide {
   opacity: 0;
 }
+
 .login-modal {
   text-align: center;
   .modal-button {
     margin-left: 20px;
+  }
+}
+
+.login-dropdown {
+  .dropdown-menu-item {
+    text-align: center;
   }
 }
 </style>
