@@ -42,6 +42,9 @@ export default {
   getters: {
     getNickname: function(state) {
       return state.info.nickname
+    },
+    getAvatar: function(state) {
+      return state.info.avatar
     }
   }
 }

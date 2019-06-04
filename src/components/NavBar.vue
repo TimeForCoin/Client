@@ -26,7 +26,7 @@
       </a-modal>
     </div>
     <div v-if="user !== null" class="right-menu">
-      <a-avatar class="user-avatar" :src="user.info.avatar"/>
+      <img class="user-avatar" :src="avatar"/>
       <span class="user-name" @click="userClick">{{nickname}}</span>
     </div>
     <a-menu class="mid-menu" mode="horizontal" @click="menuClick" :style="{ lineHeight: '64px' }">
@@ -48,6 +48,14 @@ export default {
       oldTop: 0,
       isShow: true,
       current: ['mail']
+    }
+  },
+  computed: {
+    nickname: function() {
+      return this.$store.getters.getNickname
+    },
+    avatar: function() {
+      return this.$store.getters.getAvatar
     }
   },
   methods: {
@@ -124,11 +132,6 @@ export default {
       this.oldTop = top
     }
   },
-  computed: {
-    nickname: function() {
-      return this.$store.getters.getNickname
-    }
-  },
   mounted () {
     // 屏幕滚动事件监听
     window.addEventListener('scroll', this.onScroll)
@@ -193,6 +196,8 @@ export default {
 
     .user-avatar {
       margin-top: 20px;
+      height: 30px;
+      width: 30px;
       vertical-align: bottom;
     }
 
