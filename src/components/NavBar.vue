@@ -29,7 +29,7 @@
       <a-avatar class="user-avatar" :src="user.info.avatar"/>
       <span class="user-name" @click="userClick">{{user.info.nickname}}</span>
     </div>
-    <a-menu class="mid-menu" mode="horizontal" @click="menuClick" :style="{ lineHeight: '64px' }">
+    <a-menu class="mid-menu" v-model="menuSelected" mode="horizontal" @click="menuClick" :style="{ lineHeight: '64px' }">
       <a-menu-item class="menu-item" key="discover">发现</a-menu-item>
       <a-menu-item class="menu-item" key="mission">任务中心</a-menu-item>
     </a-menu>
@@ -47,11 +47,12 @@ export default {
       loginModalVisible: false,
       oldTop: 0,
       isShow: true,
-      current: ['mail']
+      menuSelected: []
     }
   },
   methods: {
     logoClick (event) {
+      this.menuSelected = []
       this.$router.push('/')
     },
     menuClick (event) {
