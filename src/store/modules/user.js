@@ -29,7 +29,7 @@ export default {
     }
   },
   mutations: {
-    set: function (state, data) {
+    setUser: function (state, data) {
       state.id = data.id
       for (let key in state.info) {
         state.info[key] = data.info[key]
@@ -37,6 +37,9 @@ export default {
       for (let key in state.data) {
         state.data[key] = data.data[key]
       }
+    },
+    removeUser: function (state) {
+      window.localStorage.clear()
     }
   }
 }

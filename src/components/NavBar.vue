@@ -31,16 +31,8 @@
           <a-avatar class="user-avatar" :src="user.info.avatar"/>
           <span class="user-name" @click="userClick">{{user.info.nickname}}</span>
         </div>
-        <a-menu slot="overlay">
-          <a-menu-item>
-            <a href="javascript:;">1st menu item</a>
-          </a-menu-item>
-          <a-menu-item>
-            <a href="javascript:;">2nd menu item</a>
-          </a-menu-item>
-          <a-menu-item>
-            <a href="javascript:;">3rd menu item</a>
-          </a-menu-item>
+        <a-menu slot="overlay" class="login-dropdown">
+          <a-menu-item class="dropdown-menu-item" @click="logout">退出登陆</a-menu-item>
         </a-menu>
       </a-dropdown>
     </div>
@@ -90,7 +82,7 @@ export default {
       try {
         const res = await this.$service.user.GetInfo.call(this)
         this.user = res
-        this.$store.commit('set', res)
+        this.$store.commit('setUser', res)
       } catch (error) {}
     },
     async userClick() {
@@ -133,6 +125,16 @@ export default {
       } catch (error) {
         this.$message.error('请求失败:' + error)
         this.loginModalVisible = false
+      }
+    },
+    async logout() {
+      try {
+        await this.$service.user.Logout.call(this)
+        this.$store.commit('removeUser')
+        this.user = null
+        this.$message.info('退出登陆成功')
+      } catch (error) {
+        this.$message.error('请求失败:' + error)
       }
     },
     onScroll() {
@@ -223,10 +225,17 @@ export default {
 .hide {
   opacity: 0;
 }
+
 .login-modal {
   text-align: center;
   .modal-button {
     margin-left: 20px;
+  }
+}
+
+.login-dropdown {
+  .dropdown-menu-item {
+    text-align: center;
   }
 }
 </style>
