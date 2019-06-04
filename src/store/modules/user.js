@@ -38,5 +38,10 @@ export default {
         state.data[key] = data.data[key]
       }
     }
+  },
+  getters: {
+    getNickname: function(state) {
+      return state.info.nickname
+    }
   }
 }

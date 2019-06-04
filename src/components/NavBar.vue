@@ -27,7 +27,7 @@
     </div>
     <div v-if="user !== null" class="right-menu">
       <a-avatar class="user-avatar" :src="user.info.avatar"/>
-      <span class="user-name" @click="userClick">{{user.info.nickname}}</span>
+      <span class="user-name" @click="userClick">{{nickname}}</span>
     </div>
     <a-menu class="mid-menu" mode="horizontal" @click="menuClick" :style="{ lineHeight: '64px' }">
       <a-menu-item class="menu-item" key="discover">发现</a-menu-item>
@@ -122,6 +122,11 @@ export default {
         this.isShow = false
       }
       this.oldTop = top
+    }
+  },
+  computed: {
+    nickname: function() {
+      return this.$store.getters.getNickname
     }
   },
   mounted () {
