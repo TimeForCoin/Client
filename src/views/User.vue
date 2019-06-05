@@ -5,20 +5,20 @@
         <li class="user-info-item">
           <span class="title">头像</span>
           <div class="user-info-item-input">
-            <input id="avatar-upload"/>
-            <img class="avatar" src="../assets/logo.png"/>
+            <input type="file" id="avatar-upload" accept=".jpg,.png" @change="uploadCallback"/>
+            <img class="avatar" :src="info.avatar"/>
             <div class="action-box">
               <div class="hint">
                 支持 jpg、png 格式大小 5M 以内的图片
               </div>
-              <a-button type="primary" class="upload-button">上传头像</a-button>
+              <a-button type="primary" class="upload-button" @click="upload">上传头像</a-button>
             </div>
           </div>
         </li>
         <li class="user-info-item">
           <span class="title">昵称</span>
           <div class="user-info-item-input">
-              <a-input class="info-input" :disabled="!isNicknameChange" v-model="user.info.nickname" />
+              <a-input class="info-input" :disabled="!isNicknameChange" v-model="info.nickname" />
           </div>
           <div v-if="!isNicknameChange" @click="changeByIndex(0)" class="change-button">
             <img src="https://b-gold-cdn.xitu.io/v3/static/img/edit-icon.6d6382b.svg"/>
@@ -29,7 +29,7 @@
         <li class="user-info-item">
           <span class="title">邮箱</span>
           <div class="user-info-item-input">
-              <a-input class="info-input" :disabled="!isEmailChange" v-model="user.info.email" />
+              <a-input class="info-input" :disabled="!isEmailChange" v-model="info.email" />
           </div>
           <div v-if="!isEmailChange" @click="changeByIndex(1)" class="change-button">
             <img src="https://b-gold-cdn.xitu.io/v3/static/img/edit-icon.6d6382b.svg"/>
@@ -40,7 +40,7 @@
         <li class="user-info-item">
           <span class="title">电话</span>
           <div class="user-info-item-input">
-              <a-input class="info-input" :disabled="!isPhoneChange" v-model="user.info.phone" />
+              <a-input class="info-input" :disabled="!isPhoneChange" v-model="info.phone" />
           </div>
           <div v-if="!isPhoneChange" @click="changeByIndex(2)" class="change-button">
             <img src="https://b-gold-cdn.xitu.io/v3/static/img/edit-icon.6d6382b.svg"/>
@@ -49,7 +49,7 @@
             <a-button v-if="isPhoneChange" size="small" @click="changeByIndex(2)">取消</a-button>
         </li>
       </ul>
-      <a-button :disabled="!(isEmailChange||isNicknameChange||isNicknameChange)" class="save-button" type="primary" @click="save">保存</a-button>
+      <a-button :disabled="!(isEmailChange||isNicknameChange||isPhoneChange||isAvatarChange)" class="save-button" type="primary" @click="save">保存</a-button>
     </a-card>
   </div>
 </template>
@@ -62,35 +62,69 @@ export default {
       isNicknameChange: false,
       isEmailChange: false,
       isPhoneChange: false,
+      isAvatarChange: false,
+      info: {
+        avatar: '',
+        nickname: '',
+        email: '',
+        phone: ''
+      },
       user: {}
     }
   },
   methods: {
+    uploadCallback: function(e) {
+      let reader = new FileReader()
+      let that = this
+      this.isAvatarChange = true
+      reader.onload = function() {
+        // 返回base64编码
+        that.info.avatar = this.result
+      }
+      reader.readAsDataURL(e.target.files[0])
+    },
+    upload: function() {
+      this.$el.querySelector('#avatar-upload').click()
+    },
     changeByIndex: function(index) {
       switch (index) {
         case 0:
           this.isNicknameChange = !this.isNicknameChange
+          if (!this.isNicknameChange) this.info.nickname = this.$store.state.user.info.nickname
           break
         case 1:
           this.isEmailChange = !this.isEmailChange
+          if (!this.isEmailChange) this.email = this.$store.state.user.info.email
           break
         case 2:
           this.isPhoneChange = !this.isPhoneChange
+          if (!this.isPhoneChange) this.phone = this.$store.state.user.info.phone
           break
       }
     },
     save: async function() {
-      if (!this.$utils.verify.isValidEmail(this.user.info.email)) {
+      if (!this.$utils.verify.isValidNickname(this.info.nickname)) {
+        this.$message.error('请输入用户名')
+        return
+      }
+      if (!this.$utils.verify.isValidEmail(this.info.email)) {
         this.$message.error('邮箱格式有误')
         return
       }
-      const res = await this.$service.user.ChangeInfo.call(this, this.user.info)
+      await this.$service.user.ChangeInfo.call(this, this.info)
       this.isNicknameChange = this.isEmailChange = this.isPhoneChange = false
+      let user = this.$store.state.user
+      user.info = this.info
+      this.$store.commit('set', user)
       this.$message.success('保存成功')
     }
   },
+  computed: {
+  },
   created: function() {
-    this.user = this.$store.state.user
+    for (let key in this.$store.state.user.info) {
+      this.info[key] = this.$store.state.user.info[key]
+    }
   }
 }
 
@@ -105,6 +139,7 @@ export default {
     margin: auto;
     margin-top: 80px;
     padding: 20px;
+    padding-bottom: 0px;
     width: 30vw;
     min-width: 500px;
     min-height: (@items-num+1)*100px;
