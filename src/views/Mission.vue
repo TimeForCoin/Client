@@ -36,11 +36,14 @@
               <a-menu-item key="hot">{{subSortTitle[1]}}</a-menu-item>
             </a-sub-menu>
           </a-menu>
-          <a-input-search placeholder="搜索" @search="onSearch" class="input-text"/>
+          <a-input placeholder="搜索" v-model="searchText" class="input-text">
+            <a-icon slot="prefix" type="search" />
+            <a-icon v-if="searchText" slot="suffix" type="close-circle" @click="emitEmpty" class="close-btn" />
+          </a-input>
         </div>
         <div class="mission-cards">
-          <div v-for="(item, index) in missions" class="cards" :key="index" >
-            <MissionCard :MissionModel=missions[index]></MissionCard>
+          <div v-for="(item, index) in missionShow" class="cards" :key="index" >
+            <MissionCard :MissionModel=missionShow[index]></MissionCard>
           </div>
         </div>
         <a-pagination simple :defaultCurrent="1" :total=totalPage class="pagination"/>
@@ -63,6 +66,7 @@ export default {
       subTypeTitle: ['全部', '跑腿任务', '问卷任务', '信息任务'],
       subSortTitle: ['最新', '最热'],
       totalPage: 10,
+      searchText: '',
       missions: [
         {
           "title": "帮我洗澡",
@@ -71,6 +75,13 @@ export default {
           "reward": "rmb",
           "reward_value": 100,
           "reward_object": "一个吻",
+          "view_count": 30,
+          "like_count": 30,
+          "collect_count": 30,
+          "publish_date": 1559732518,
+          "publisher": {
+            "nickname": "CTP",
+          },
         },
         {
           "title": "天王盖地虎",
@@ -79,6 +90,13 @@ export default {
           "reward": "rmb",
           "reward_value": 0,
           "reward_object": "蘑菇",
+          "view_count": 50,
+          "like_count": 30,
+          "collect_count": 30,
+          "publish_date": 1559732557,
+          "publisher": {
+            "nickname": "Eason",
+          },
         },
         {
           "title": "暗示荣真",
@@ -87,6 +105,13 @@ export default {
           "reward": "rmb",
           "reward_value": 500,
           "reward_object": "Zhenly",
+          "view_count": 60,
+          "like_count": 30,
+          "collect_count": 30,
+          "publish_date": 1559732561,
+          "publisher": {
+            "nickname": "DarkVan",
+          },
         },
         {
           "title": "暗示荣真",
@@ -95,6 +120,13 @@ export default {
           "reward": "rmb",
           "reward_value": 500,
           "reward_object": "Zhenly",
+          "view_count": 10,
+          "like_count": 30,
+          "collect_count": 30,
+          "publish_date": 1559732563,
+          "publisher": {
+            "nickname": "User1",
+          },
         },
         {
           "title": "暗示荣真",
@@ -103,6 +135,13 @@ export default {
           "reward": "rmb",
           "reward_value": 500,
           "reward_object": "Zhenly",
+          "view_count": 80,
+          "like_count": 30,
+          "collect_count": 30,
+          "publish_date": 1559732518,
+          "publisher": {
+            "nickname": "CSQ",
+          },
         },
         {
           "title": "秀秀好强啊",
@@ -111,8 +150,46 @@ export default {
           "reward": "rmb",
           "reward_value": 500,
           "reward_object": "Zhenly",
+          "view_count": 40,
+          "like_count": 30,
+          "collect_count": 30,
+          "publish_date": 1559732518,
+          "publisher": {
+            "nickname": "Zhenly",
+          },
         },
       ],
+    }
+  },
+  computed: {
+    missionShow: function() {
+      return this.missions.filter((item) => {
+        if(this.searchText != null) {
+          return (item.title.indexOf(this.searchText) !== -1
+                  || item.content.indexOf(this.searchText) !== -1);
+        }
+        return true;
+      }).filter((item) => {
+        if (this.missionType == 0
+            ||this.missionType == 1 && item.type == "run"             //跑腿
+            || this.missionType == 2 && item.type == "questionnaire"  //问卷
+            || this.missionType == 3 && item.type == "info") {        //信息
+          return true;
+        }
+        return false;
+      }).sort((a, b) => {
+        if (this.sortType == 0) {       //按时间排序
+          var x = a.publish_date;
+          var y = b.publish_date;
+          return ((x<y)?-1:(x>y)?1:0);
+        }
+        if (this.sortType == 1) {      //按热度排序
+          var x = a.view_count + a.like_count + a.collect_count;
+          var y = b.view_count + b.like_count + b.collect_count;
+          return ((x<y)?1:(x>y)?-1:0);
+        }
+        return 0;
+      })
     }
   },
   methods: {
@@ -120,8 +197,7 @@ export default {
       switch(event.key) {
         case '1':
           break;
-        case '2':
-          break;
+        case '2': 
         case '3':
           break;
       }
@@ -151,7 +227,10 @@ export default {
       console.log(event.key);
     },
     onSearch(value) {
-      
+      console.log(this.searchText);
+    },
+    emitEmpty () {
+      this.searchText = '';
     },
     createMission() {
       this.$router.push('/create_mission');
@@ -210,6 +289,19 @@ export default {
         right: 50px;
         top: -50px;
         width: 200px;
+
+        .close-btn {
+          cursor: pointer;
+          color: #ccc;
+          transition: color 0.3s;
+          font-size: 12px;
+        }
+        .close-btn:hover {
+          color: #999;
+        }
+        .close-btn:active {
+          color: #666;
+        }
       }
     }
     .mission-cards {
@@ -219,11 +311,11 @@ export default {
       flex-direction: row;
       justify-content: flex-start ;
       left: 50px;
-      top: 50px;
+      top: 30px;
       margin-right: 100px;
       width: calc(100vw - 340px);
       min-width: 1000px;
-      height: 650px;
+      height: 670px;
 
       .cards {
         height: auto;
@@ -232,7 +324,7 @@ export default {
     }
     .pagination {
       position: relative;
-      top: 50px;
+      top: 30px;
       margin-top: 30px;
     }
   }

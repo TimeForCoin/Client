@@ -4,18 +4,24 @@
     <div class="head-img"></div>
     <div class="text1">
       <p class="title">{{MissionModel.title}}</p>
-      <span class="user">Username</span>
-      <span class="time">2019-6-6</span>
+      <span class="user">{{MissionModel.publisher.nickname}}</span>
+      <span class="time">{{time}}</span>
     </div>
     <div class="text2">
       <p class="long-text">任务类型：{{missionType}}</p>
       <p class="long-text">任务内容：{{MissionModel.content}}</p>
       <p class="long-text" id="reward">酬劳：{{MissionModel.reward_object}}</p>
     </div>
+    <div class="text3">
+      <p class="icon-number"><a-icon type="eye"/>{{MissionModel.view_count}}</p>
+      <p class="icon-number"><a-icon type="like"/>{{MissionModel.like_count}}</p>
+      <p class="icon-number"><a-icon type="star"/>{{MissionModel.collect_count}}</p>
+    </div>
   </div>
 </template>
 
 <script>
+const moment = require('moment')
 export default {
   props: ["MissionModel"],
   data() {
@@ -37,6 +43,11 @@ export default {
           break;
       }
       return "跑腿";
+    },
+    time: function() {
+      var newTime = new Date(this.MissionModel.publish_date * 1000);
+      //return moment(newTime).format("YYYY-MM-DD")
+      return moment(newTime).startOf('hour').fromNow();
     }
   }
 }
@@ -46,7 +57,7 @@ export default {
 .mission-card {
   background-color: white;
   width: 250px;
-  height: 300px;
+  height: 320px;
   margin-right: 50px;
   transition: 0.5s;
   position: relative;
@@ -122,6 +133,26 @@ export default {
       -webkit-box-orient: vertical;
       -webkit-line-clamp: 1;
       overflow: hidden;
+    }
+  }
+
+  .text3 {
+    width: 150px;
+    height: 25px;
+    display: flex;
+    flex-direction: row;
+    color: gray;
+    font-size: 13px;
+    position: relative;
+    top: -5px;
+    left: 25px;
+
+    .icon-number {
+      margin-right: 12px;
+
+      .anticon {
+        margin-right: 5px;
+      }
     }
   }
 }
