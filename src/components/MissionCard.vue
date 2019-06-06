@@ -3,7 +3,7 @@
     <div class="image">
       <div class="back-image"></div>
       <div class="triangle"></div>
-    </div>  
+    </div>
     <div class="content">
       <div class="head-img"></div>
         <div class="text1">
@@ -22,37 +22,37 @@
           <p class="icon-number"><a-icon type="star"/>{{MissionModel.collect_count}}</p>
         </div>
       </div>
-    </div> 
+    </div>
 </template>
 
 <script>
 const moment = require('moment')
 export default {
-  props: ["MissionModel"],
+  props: ['MissionModel'],
   data() {
     return {
-      
+
     }
   },
-  computed:{
-    missionType: function(){
-      switch(this.MissionModel.type) {
-        case "run":
-          return "跑腿";
-          break;
-        case "questionnaire":
-          return "问卷";
-          break;
-        case "info":
-          return "信息";
-          break;
+  computed: {
+    missionType: function() {
+      switch (this.MissionModel.type) {
+        case 'run':
+          return '跑腿'
+          break
+        case 'questionnaire':
+          return '问卷'
+          break
+        case 'info':
+          return '信息'
+          break
       }
-      return "跑腿";
+      return '跑腿'
     },
     time: function() {
-      var newTime = new Date(this.MissionModel.publish_date * 1000);
-      //return moment(newTime).format("YYYY-MM-DD")
-      return moment(newTime ).startOf('hour').fromNow();
+      var newTime = new Date(this.MissionModel.publish_date * 1000)
+      // return moment(newTime).format("YYYY-MM-DD")
+      return moment(newTime).startOf('hour').fromNow()
     }
   }
 }
@@ -114,7 +114,7 @@ export default {
 
       .title {
         margin: 0px;
-        font-weight: bold; 
+        font-weight: bold;
         font-size: 15px;
       }
       .user {
@@ -180,7 +180,7 @@ export default {
     }
   }
 }
-  
+
 .mission-card:hover {
   box-shadow: 0 0px 10px 0 rgba(0, 0, 0, 0.2);
   transition: 0.5s;

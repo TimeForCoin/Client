@@ -2,70 +2,53 @@
     <div class="missionblock">
         <a-divider class="divider">闲得一币</a-divider>
         <div class="function-bar">
-            <a-select class="mission-select" defaultValue="time" @change="handleChange">
+            <a-select class="mission-select" defaultValue="time" >
                 <a-select-option value="time">时间</a-select-option>
                 <a-select-option value="hit">热度</a-select-option>
             </a-select>
-            <a-select class="mission-select" defaultValue="questionnaire" @change="handleChange">
+            <a-select class="mission-select" defaultValue="questionnaire" >
                 <a-select-option value="questionnaire">问卷</a-select-option>
                 <a-select-option value="errand">跑腿</a-select-option>
                 <a-select-option value="information">信息</a-select-option>
             </a-select>
-            <a-select class="mission-select" defaultValue="icon" @change="handleChange">
+            <a-select class="mission-select" defaultValue="icon" >
                 <a-select-option value="icon">闲币报酬</a-select-option>
                 <a-select-option value="money">现金报酬</a-select-option>
                 <a-select-option value="physical">实物报酬</a-select-option>
             </a-select>
             <a-button class="mission-sort" type="primary" ghost>开始排序</a-button>
         </div>
-        <a-list
-            class="mission-list"
-            :grid="{ column:3, gutter:16 }"
-            :dataSource="test"
-        >
-            <a-list-item slot="renderItem" slot-scope="item, index">
-                <a-card class="mission-list-item">
-                    <img src="@/assets/logo.png">
-                </a-card>
-            </a-list-item>
-        </a-list>
+        <div class="mission-list">
+          <MissionCardLong />
+        </div>
         <a-pagination :total="50" showQuickJumper />
     </div>
 </template>
 
 <script>
+import MissionCardLong from './MissionCardLong.vue'
+
 export default {
+  components: {
+    MissionCardLong
+  },
   data: function() {
     return {
-      test: [
-        {
-          title: 'Title 1'
-        },
-        {
-          title: 'Title 2'
-        },
-        {
-          title: 'Title 3'
-        },
-        {
-          title: 'Title 4'
-        },
-        {
-          title: 'Title 5'
-        },
-        {
-          title: 'Title 6'
-        },
-        {
-          title: 'Title 4'
-        },
-        {
-          title: 'Title 5'
-        },
-        {
-          title: 'Title 6'
+      test: {
+        'title': '吃饭睡觉打游戏',
+        'content': '疯狂暗示荣真',
+        'type': 'info',
+        'reward': 'rmb',
+        'reward_value': 500,
+        'reward_object': 'Zhenly',
+        'view_count': 60,
+        'like_count': 30,
+        'collect_count': 30,
+        'publish_date': 1559732561,
+        'publisher': {
+          'nickname': 'DarkVan'
         }
-      ]
+      }
     }
   },
   methods: {
@@ -78,11 +61,11 @@ export default {
 
 <style lang="less" scoped>
 .missionblock {
-    width: 70vw;
+    width: 90vw;
     margin: auto;
     margin-bottom: 100px;
     display: flex;
-    min-width: 750px;
+    min-width: 570px;
     flex-direction: column;
 
     .divider {
@@ -105,7 +88,13 @@ export default {
 
     .mission-list {
         margin-top: 20px;
+        padding:0px 20px 20px 20px;
         margin-bottom: 20px;
+        background-color: rgb(244, 244, 244);
+        display: flex;
+        justify-content: space-around;
+        align-content: space-around;
+        flex-wrap: wrap;
     }
 }
 </style>
