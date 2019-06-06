@@ -99,7 +99,7 @@ export default {
           },
         },
         {
-          "title": "暗示荣真",
+          "title": "吃饭睡觉打游戏",
           "content": "疯狂暗示荣真",
           "type": "info",
           "reward": "rmb",
@@ -315,7 +315,7 @@ export default {
       margin-right: 100px;
       width: calc(100vw - 340px);
       min-width: 1000px;
-      height: 670px;
+      height: 700px;
 
       .cards {
         height: auto;
@@ -324,7 +324,7 @@ export default {
     }
     .pagination {
       position: relative;
-      top: 30px;
+      top: 0px;
       margin-top: 30px;
     }
   }
