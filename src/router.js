@@ -33,6 +33,11 @@ export default new Router({
       path: '/discover',
       name: 'discover',
       component: () => import(/* webpackChunkName: "discover" */ './views/Discover.vue')
+    },
+    {
+      path: '/create_mission',
+      name: 'create_mission',
+      component: () => import(/* webpackChunkName: "create_mission" */ './views/CreateMission.vue')
     }
   ]
 })
