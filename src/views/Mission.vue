@@ -18,6 +18,7 @@
             </a-menu-item>
           </a-menu>
           <a-button type="primary" class="mission-btn" @click="createMission">发布任务</a-button>
+          <a-button type="primary" class="questionnaire-btn" @click="createQuestionnaire">创建问卷</a-button>
         </div>
       </a-layout-sider>
       <a-layout-content>
@@ -234,6 +235,9 @@ export default {
     },
     createMission() {
       this.$router.push('/create_mission');
+    },
+    createQuestionnaire() {
+      this.$router.push('/create_questionnaire');
     }
   }
 }
@@ -262,8 +266,15 @@ export default {
         }
       }
       .mission-btn {
-        position: relative;
+        position: absolute;
+        
         top: 250px;
+        left: 70px;
+      }
+      .questionnaire-btn {
+        position: absolute;
+        top: 300px;
+        left: 70px;
       }
     }
     .ant-layout-content {
