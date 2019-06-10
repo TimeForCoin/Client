@@ -42,7 +42,7 @@ export default new Router({
     {
       path: '/create_questionnaire',
       name: 'create_questionnaire',
-      component: () => import(/* webpackChunkName: "create_mission" */ './views/Create/CreateQuestionnaire.vue')
+      component: () => import(/* webpackChunkName: "create_mission" */ './views/Questionnaire.vue')
     }
   ]
 })

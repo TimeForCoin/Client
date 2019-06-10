@@ -118,6 +118,7 @@ export default {
     display: flex;
     flex-direction: column;
     margin-top: 20px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
 
     .card-top {
         display: flex;
