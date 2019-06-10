@@ -136,7 +136,7 @@ export default {
       padding-left: 10px;
       border-left-style:solid;
       border-width:3px;
-      border-color:#ffd19a;
+      border-color:#F0B11B;
 
       .long-text {
         font-size: 13px;
