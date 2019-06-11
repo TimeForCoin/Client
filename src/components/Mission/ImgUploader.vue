@@ -2,11 +2,11 @@
 	<div class="img-uploader">
 		<p>最多上传9张图片</p>
 		<a-upload
-      action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
       listType="picture-card"
       :fileList="fileList"
+			:remove="handleRemove"
+			:beforeUpload="beforeUpload"
       @preview="handlePreview"
-      @change="handleChange"
     >
       <div v-if="fileList.length < 9">
         <a-icon type="plus" />
@@ -26,6 +26,7 @@ export default {
 			previewVisible: false,
 			previewImage: '',
 			fileList: [],
+			fileIDList: [],
     }
 	},
 	methods: {
@@ -33,12 +34,42 @@ export default {
       this.previewVisible = false
     },
     handlePreview (file) {
+			console.log(file)
       this.previewImage = file.url || file.thumbUrl
       this.previewVisible = true
+		},
+		handleRemove(file) {
+      const index = this.fileList.indexOf(file);
+      const newFileList = this.fileList.slice();
+      newFileList.splice(index, 1);
+			this.fileList = newFileList
+
+			const newFileIDList = this.fileIDList.slice();
+      newFileIDList.splice(index, 1);
+			this.fileIDList = newFileIDList
+			this.$emit("fileChange", this.fileIDList)
     },
-    handleChange ({ fileList }) {
-      this.fileList = fileList
-    },
+		async beforeUpload(file) {
+			// get img url
+			let reader = new FileReader();
+			reader.onload = (evt)=> {
+				file.url = evt.target.result;
+				this.fileList = [...this.fileList, file]
+			}
+			reader.readAsDataURL(file);
+				
+			const formData = new FormData();
+			formData.append("data", file);
+			formData.append("owner", "user");
+			formData.append("type", "image");
+			console.log(formData);
+			const res = await this.$service.file.UploadFile.call(this, formData);
+			console.log(res);
+			this.fileIDList.push(res.id)
+			this.$emit("fileChange", this.fileIDList)
+			throw "Finsih"
+      return false;
+		}
 	}
 }
 </script>

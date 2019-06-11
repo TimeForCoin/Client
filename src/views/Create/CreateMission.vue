@@ -8,7 +8,7 @@
     <a-divider />
     <div class="left-div">
       <p class="title"><span>任务内容描述:</span></p>
-      <a-textarea class="mission-content-input" :rows="4" v-model="mission.content"/>
+      <a-textarea class="mission-content-input" :autosize="{minRows: 4}" v-model="mission.content"/>
     </div>
     <a-divider />
     <div class="flex-div">
@@ -71,7 +71,7 @@
         </div>
         <div v-else>
           <span class="reward-object-span">报酬详情:</span>
-          <a-textarea class="reward-object" :rows="3" v-model="mission.reward_object"/>
+          <a-textarea class="reward-object" :autosize="{minRows: 3}" v-model="mission.reward_object"/>
         </div>
       </div>
       <div class="player-div">
@@ -88,12 +88,12 @@
     <a-divider />
     <div class="left-div">
       <p class="title">上传图片：</p>
-      <ImgUploader/>
+      <ImgUploader @fileChange="addImages"/>
     </div>
     <a-divider />
     <div class="left-div">
       <p class="title">上传附件：</p>
-      <FileUploader />
+      <FileUploader @fileChange="addAttachment"/>
     </div>
     <a-divider />
     <a-button class="publish-btn" type="primary" @click="createMission">发布</a-button>
@@ -159,8 +159,11 @@ export default {
     onCheckedChange(e) {
       this.mission.auto_accept = e.target.checked
     },
-    handleCancel () {
-      this.previewVisible = false
+    addAttachment(ids) {
+      this.mission.attachment = ids
+    },
+    addImages(ids) {
+      this.mission.images = ids
     },
     createMission() {
       console.log(this.mission)
