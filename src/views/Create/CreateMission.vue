@@ -1,94 +1,111 @@
 <template>
   <div class="create-mission">
     <a-divider class="top-title"><img class="top-logo" src="@/assets/logo.png">发布任务</a-divider>
+    <div class="left-div">
+      <p class="title"><span>任务名称：</span></p>
+      <a-input class="mission-title-input" v-model="mission.title"/>
+    </div>
+    <a-divider />
+    <div class="left-div">
+      <p class="title"><span>任务内容描述:</span></p>
+      <a-textarea class="mission-content-input" :rows="4" v-model="mission.content"/>
+    </div>
+    <a-divider />
     <div class="flex-div">
-      <div class="left-div">
-        <p class="title-left">任务名称：</p>
-        <a-input class="mission-title-input"/>
+      <div class="left-div" id="time-div">
+        <p class="title">
+          <span>任务时间:</span>
+          <a-icon class="left-icon" type="clock-circle" theme="twoTone" twoToneColor="#F0B11B"/>
+        </p>
+        <a-range-picker class="date-picker"
+          :ranges="{ Today: [moment(), moment()], 'This Month': [moment(), moment().endOf('month')] }"
+          @change="onTimeChange"
+        />
       </div>
       <div class="right-div">
-        <p class="title-left">任务类型：</p>
-        <a-select class="mission-type" defaultValue="errand" >
+        <p class="title">
+          <span>任务类型:</span>
+          <a-icon class="left-icon" type="tag" theme="twoTone" twoToneColor="#F0B11B"/>
+        </p>
+        <a-select class="mission-type" defaultValue="errand" v-model="mission.type">
           <a-select-option value="errand">跑腿</a-select-option>
           <a-select-option value="information">信息</a-select-option>
         </a-select>
       </div>
     </div>
-    <div class="left-div">
-      <p class="title-left">任务时间：</p>
-      <a-icon class="left-icon" type="clock-circle" theme="twoTone" twoToneColor="#F0B11B"/>
-      <a-range-picker class="date-picker"
-        :ranges="{ Today: [moment(), moment()], 'This Month': [moment(), moment().endOf('month')] }"
-        @change="onChange"
-      />
-    </div>
-    <div class="left-div">
-      <p class="title-left">任务地点：</p>
-      <a-icon class="left-icon" type="environment" theme="twoTone" twoToneColor="#F0B11B"/>
-      <a-input class="mission-location"/>
-    </div>
-    <div class="left-div">
-      <p class="title-left">任务标签：</p>
-      <a-icon class="left-icon" type="tags" theme="twoTone" twoToneColor="#F0B11B"/>
-      <a-input-search class="tag-input" placeholder="添加标签" @search="addTag" enterButton=" ╋ "/>
-      <div class="mission-tags">
-        <div class="tag" v-for="(tag, index) in mission.tags" :key="index" >
-          {{tag}}
-          <a-icon class="tag-btn" type="close-circle" />
-        </div>
-      </div>
-    </div>
-    <div class="left-div">
-      <p class="title-left">任务内容描述：</p>
-      <a-textarea class="mission-content-input" :rows="4"/>
-    </div>
+    <a-divider />
     <div class="flex-div">
-      <div class="reward-div">
-        <p class="title-left">任务报酬：</p>
-        <a-icon class="left-icon" type="money-collect" theme="twoTone" twoToneColor="#F0B11B"/>
-        <span>类型:</span>
-        <a-select class="reward-type" defaultValue="coin" >
-          <a-select-option value="money">闲币</a-select-option>
-          <a-select-option value="rmb">RMB</a-select-option>
-          <a-select-option value="object">其他</a-select-option>
-        </a-select>
-        <span>数量:</span>
-        <a-input class="reward-account"/>
+      <div class="left-div">
+        <p class="title">
+          <span>任务地点:</span>
+          <a-icon class="left-icon" type="environment" theme="twoTone" twoToneColor="#F0B11B"/>
+        </p>
+        <TagBlock @addTag="addMissionLocation" :text="'添加地点'"/>
       </div>
       <div class="right-div">
-        <p class="title-left">参与者设置：</p>
+        <p class="title">
+          <span>任务标签:</span>
+          <a-icon class="left-icon" type="tags" theme="twoTone" twoToneColor="#F0B11B"/>
+        </p>
+        <TagBlock @addTag="addMissionTag" :text="'添加标签'"/>
       </div>
     </div>
+    <a-divider />
+    <div class="flex-div">
+      <div class="reward-div">
+        <p class="title">
+          <span>任务报酬:</span>
+          <a-icon class="left-icon" type="money-collect" theme="twoTone" twoToneColor="#F0B11B"/>
+        </p>
+        <div class="reward-type">
+          <span>类型:</span>
+          <a-select defaultValue="money" v-model="mission.reward" style="width: 75px">
+            <a-select-option value="money">闲币</a-select-option>
+            <a-select-option value="rmb">RMB</a-select-option>
+            <a-select-option value="object">其他</a-select-option>
+          </a-select>
+        </div>
+        <div v-if="mission.reward != 'object'" class="reward-account">
+          <span>数量:</span>
+          <a-input style="width: 75px" v-model="mission.reward_value"/>
+        </div>
+        <div v-else>
+          <span class="reward-object-span">报酬详情:</span>
+          <a-textarea class="reward-object" :rows="3" v-model="mission.reward_object"/>
+        </div>
+      </div>
+      <div class="player-div">
+        <p class="title">
+          <span>参与者设置：</span>
+          <a-icon class="left-icon" type="idcard" theme="twoTone" twoToneColor="#F0B11B"/>
+        </p>
+        <a-checkbox @change="onCheckedChange">自动同意领取任务</a-checkbox>
+        <br />
+        <span>人数上限:</span>
+        <a-input class="player-account" v-model="mission.max_player"/>
+      </div>
+    </div>
+    <a-divider />
     <div class="left-div">
-      <p class="title-left">上传图片：</p>
-      <div class="upload-images">
-        <a-upload
-          name="avatar"
-          listType="picture-card"
-          class="avatar-uploader"
-          :showUploadList="false"
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
-          :beforeUpload="beforeUpload"
-          @change="handleChange"
-        >
-          <img v-if="imageUrl" :src="imageUrl" alt="avatar" />
-          <div v-else>
-            <a-icon :type="loading ? 'loading' : 'plus'" />
-            <div class="ant-upload-text">Upload</div>
-          </div>
-        </a-upload>
-      </div>
+      <p class="title">上传图片：</p>
+      <ImgUploader/>
     </div>
-    <p class="title-left">上传附件：</p>
-    <div class="upload-attachment">
-
+    <a-divider />
+    <div class="left-div">
+      <p class="title">上传附件：</p>
+      <FileUploader />
     </div>
-    <a-button class="publish-btn" type="primary">发布</a-button>
+    <a-divider />
+    <a-button class="publish-btn" type="primary" @click="createMission">发布</a-button>
+    <a-button class="save-btn" type="primary">保存草稿</a-button>
   </div>
 </template>
 
 <script>
 import moment from 'moment';
+import TagBlock from '@/components/Mission/TagBlock.vue'
+import ImgUploader from '@/components/Mission/ImgUploader.vue'
+import FileUploader from '@/components/Mission/FileUploader.vue'
 
 function getBase64 (img, callback) {
   const reader = new FileReader()
@@ -97,6 +114,11 @@ function getBase64 (img, callback) {
 }
 
 export default {
+  components: {
+    TagBlock,
+    ImgUploader,
+    FileUploader
+  },
   data() {
     return {
       previewVisible: false,
@@ -108,8 +130,8 @@ export default {
         content: '',
         images: [],
         attachment: [],
-        type: '',
-        reward: '',
+        type: 'errand',
+        reward: 'money',
         reward_value: 0,
         reward_object: '',
         location: [],
@@ -124,47 +146,24 @@ export default {
   },
   methods: {
     moment,
-    onChange(dates, dateStrings) {
+    onTimeChange(dates, dateStrings) {
       console.log('From: ', dates[0], ', to: ', dates[1]);
       console.log('From: ', dateStrings[0], ', to: ', dateStrings[1]);
     },
-    addTag(value) {
-      if(value != '') {
-        this.mission.tags.push(value)
-      }
+    addMissionTag(tags) {
+      this.mission.tags = tags;
+    },
+    addMissionLocation(tags) {
+      this.mission.location = tags;
+    },
+    onCheckedChange(e) {
+      this.mission.auto_accept = e.target.checked
     },
     handleCancel () {
       this.previewVisible = false
     },
-    handlePreview (file) {
-      this.previewImage = file.url || file.thumbUrl
-      this.previewVisible = true
-    },
-    handleChange (info) {
-      if (info.file.status === 'uploading') {
-        this.loading = true
-        return
-      }
-      if (info.file.status === 'done') {
-        // Get this url from response in real world.
-        getBase64(info.file.originFileObj, (imageUrl) => {
-          this.imageUrl = imageUrl
-          this.loading = false
-        })
-      }
-    },
-    beforeUpload (file) {
-      const isJPG = file.type === 'image/jpeg'
-      const isPNG = file.type === 'image/png'
-      console.log(isPNG);
-      if (!isJPG && !isPNG) {
-        this.$message.error('Invalid file type!')
-      }
-      const isLt2M = file.size / 1024 / 1024 < 2
-      if (!isLt2M) {
-        this.$message.error('Image must smaller than 2MB!')
-      }
-      return (isJPG || isPNG) && isLt2M
+    createMission() {
+      console.log(this.mission)
     }
   }
 
@@ -173,6 +172,7 @@ export default {
 
 <style lang="less" scoped>
 @width: 60vw;
+@div-width: 280px;
 
 .create-mission {
   margin-top: 54px;
@@ -185,7 +185,6 @@ export default {
   padding-left: 30px;
   padding-right: 30px;
   position: relative;
-  
 
   .top-title {
     font-size: 25px;
@@ -203,21 +202,25 @@ export default {
 
   .left-div {
     height: auto;
+    margin-bottom: 5px;
   }
 
   .right-div {
     height: auto;
+    position: absolute;
+    left: 55%;
   }
 
   .flex-div {
+    width: 100%;
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
+    position: relative;
   }
 
   .title {
     text-align: left;
-    vertical-align: middle;
     padding-left: 10px;
     border-left-style:solid;
     border-width:5px;
@@ -225,18 +228,9 @@ export default {
     color: #7c7c7c;
     font-size: 18px;
     font-weight: bold;
-  }
-
-  .title-left {
-    .title();
-    margin-top: 15px;
-    clear: both;
-  }
-
-  .title-right {
-    .title();
-    position: absolute;
-    left: 50%;
+    span {
+      vertical-align: middle;
+    }
   }
 
   .left-icon {
@@ -246,104 +240,64 @@ export default {
     transform: translateY(3px);
   }
 
-  .mission-title-input {
-    width: 250px;
-    //transform: translateX(calc(125px - @width/2));
-    float: left;
-    margin-bottom: 15px;
-  }
-
   .mission-type {
     width: 80px;
     float: left;
-    margin-bottom: 15px;
   }
 
   .date-picker {
-    width: 250px;
+    width: @div-width;
     float: left;
-    margin-bottom: 15px;
-  }
-
-  .tag-input {
-    width: 200px;
-    float: left;
-    margin-bottom: 15px;
-  }
-
-  .mission-location {
-    width: 250px;
-    float: left;
-    margin-bottom: 15px;
-  }
-
-  .mission-tags {
-    height: 45px;
-    width: 100%;
-    background-color: white;
-    margin-top: 20px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px lightgray solid;
-    clear: both;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-
-    .tag {
-      padding: 2px 10px;
-      font-size: 13px;
-      font-weight: bold;
-      border-radius: 5px;
-      margin-right: 15px;
-      background-color: darkcyan;
-      color: white;
-
-      .tag-btn {
-        margin-left: 5px;
-      }
-    }
   }
 
   .reward-div {
-    width: 300px;
-    height: auto;
-
+    .left-div();
     span {
       margin-right: 10px;
     }
-
     .reward-type {
-      width: 80px;
-      margin-right: 20px;
+      text-align: left;
     }
-
     .reward-account {
-      width: 80px;
-      display: inline;
+      text-align: left;
+      margin-top: 10px;
+    }
+    .reward-object-span {
+      display: block;
+      text-align: left;
+      margin-top: 10px;
+    }
+    .reward-object {
+      width: @div-width;
+      display: block;
+      margin-top: 10px;
     }
   }
 
-  .upload-images {
-
-    .avatar-uploader  > .ant-upload {
-      width: 200px;
-      height: 150px;
+  .player-div {
+    .right-div();
+    span {
+      margin-right: 8px;
     }
-
-    .ant-upload-text {
-      margin-top: 8px;
-      color: #666;
+    .player-account {
+      width: 75px;
+      margin-top: 10px;
     }
   }
 
-  .publish-btn {
+  .btn {
     width: 100px;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     margin-top: 10px;
     margin-bottom: 50px;
   }
+  .publish-btn {
+    .btn();
+    margin-right: 100px;
+  }
+  .save-btn {
+    .btn();
+  }
 }
-
 </style>

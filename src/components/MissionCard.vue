@@ -85,8 +85,8 @@ export default {
       width: 0px;
       height: 0px;
       border-bottom: 40px solid white;
-      border-right: 250px solid transparent;
-      transform: translate(0, -40px;)
+      border-right: 253px solid transparent;
+      transform: translate(0, -39px;)
     }
   }
 
@@ -184,5 +184,6 @@ export default {
 .mission-card:hover {
   box-shadow: 0 0px 10px 0 rgba(0, 0, 0, 0.2);
   transition: 0.5s;
+  transform: scale(1.03);
 }
 </style>
