@@ -20,6 +20,7 @@
         </div>
         <div class="mission-list">
           <MissionCardLong />
+          <MissionCardLong />
         </div>
         <a-pagination :total="50" showQuickJumper />
     </div>
@@ -90,7 +91,6 @@ export default {
         margin-top: 20px;
         padding:0px 20px 20px 20px;
         margin-bottom: 20px;
-        background-color: rgb(244, 244, 244);
         display: flex;
         justify-content: space-around;
         align-content: space-around;
