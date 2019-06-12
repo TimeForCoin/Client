@@ -1,5 +1,5 @@
 <template>
-    <div class="fill" @mouseenter="isEnter = true" @mouseleave="isEnter = false">
+    <div class="score" @mouseenter="isEnter = true" @mouseleave="isEnter = false">
         <div class="top">
             <div class="question-info">
                 <div class="index">{{question.index}}</div>
@@ -75,39 +75,50 @@
             >完成编辑</a-button>
         </div>
         <div class="content">
-            <a-input v-show="!isModify && !question.fill_problem.multi_line"></a-input>
-            <a-textarea v-show="!isModify && question.fill_problem.multi_line"></a-textarea>
-            <span class="tips" v-show="isModify">是否多行输入</span>
-            <a-select v-show="isModify" defaultValue="false" @change="onChange">
-                <a-select-option value="true">是</a-select-option>
-                <a-select-option value="false">否</a-select-option>
+            <div class="rate-area" v-show="!isModify">
+                <div class="text">{{question.score_problem.min_text}}</div>
+                <a-rate class="rate" :count="question.score_problem.score"/>
+                <div class="text">{{question.score_problem.max_text}}</div>
+            </div>
+            <div class="modify-input" v-show="isModify">
+                <a-input class="input" v-model="question.score_problem.min_text"/>
+                <a-input class="input" v-model="question.score_problem.max_text"/>
+            </div>
+            <a-select
+                v-show="isModify"
+                class="select"
+                :value="question.score_problem.score"
+                @change="(v)=>{question.score_problem.score = v}"
+            >
+                <a-select-option v-for="i in score_array" :key="i" :value="i">{{i}}</a-select-option>
             </a-select>
-            <span class="tips" v-show="isModify">最多可输入字数(最大为2048)</span>
-            <a-input v-show="isModify" v-model="question.fill_problem.max_word"></a-input>
         </div>
     </div>
 </template>
 
 <script>
 export default {
-    props: ['question'],
-    data() {
-        return {
-            isModify: false,
-            isEnter: false
-        }
-    },
-    computed: {},
-    methods: {
-        onChange: function(value) {
-            this.question.fill_problem.multi_line = value
-        }
+  props: ['question'],
+  data() {
+    return {
+      isModify: false,
+      isEnter: false
     }
+  },
+  computed: {
+    score_array: function() {
+      let rateRange = 6
+      return [...new Array(rateRange).keys()].map(i => {
+        return i + 5
+      })
+    }
+  },
+  methods: {}
 }
 </script>
 
 <style lang="less" scoped>
-.fill {
+.score {
     padding: 20px 20px 20px 50px;
     background-color: white;
     box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
@@ -146,15 +157,35 @@ export default {
         width: 60%;
         display: flex;
         flex-direction: column;
-        margin-top: 20px;
         position: relative;
         font-size: 16px;
         text-align: left;
 
-        .tips {
-            margin-top: 20px;
-            margin-bottom: 10px;
-            font-size: 13px;
+        .rate-area {
+            display: flex;
+            align-items: flex-end;
+            margin-top: 30px;
+
+            .rate {
+                margin: 0px 15px;
+            }
+
+            .text {
+                font-size: 13px;
+            }
+        }
+
+        .modify-input {
+            margin-top: 10px;
+
+            .input {
+                margin-bottom: 5px;
+            }
+        }
+
+        .select {
+            margin-top: 10px;
+            width: 50px;
         }
     }
 }
