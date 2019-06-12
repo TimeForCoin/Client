@@ -6,3 +6,8 @@ export async function UploadFile(formData) {
 	})
 	return res.data
 }
+
+export async function DeleteFile(id) {
+	const res = await this.$axios.delete('/file/' + id)
+	return res.data
+}

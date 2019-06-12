@@ -54,7 +54,8 @@
 </template>
 
 <script>
-import MissionCard from '@/components/MissionCard.vue'
+import MissionCard from '@/components/Mission/MissionCard.vue'
+import { async } from 'q';
 
 export default {
   components: {
@@ -68,98 +69,9 @@ export default {
       subSortTitle: ['最新', '最热'],
       totalPage: 10,
       searchText: '',
-      missions: [
-        {
-          "title": "帮我洗澡",
-          "content": "过来至二634洗澡澡",
-          "type": "run",
-          "reward": "rmb",
-          "reward_value": 100,
-          "reward_object": "一个吻",
-          "view_count": 30,
-          "like_count": 30,
-          "collect_count": 30,
-          "publish_date": 1559732518,
-          "publisher": {
-            "nickname": "CTP",
-          },
-        },
-        {
-          "title": "天王盖地虎",
-          "content": "小鸡炖蘑菇",
-          "type": "questionnaire",
-          "reward": "rmb",
-          "reward_value": 0,
-          "reward_object": "蘑菇",
-          "view_count": 50,
-          "like_count": 30,
-          "collect_count": 30,
-          "publish_date": 1559732557,
-          "publisher": {
-            "nickname": "Eason",
-          },
-        },
-        {
-          "title": "吃饭睡觉打游戏",
-          "content": "疯狂暗示荣真",
-          "type": "info",
-          "reward": "rmb",
-          "reward_value": 500,
-          "reward_object": "Zhenly",
-          "view_count": 60,
-          "like_count": 30,
-          "collect_count": 30,
-          "publish_date": 1559732561,
-          "publisher": {
-            "nickname": "DarkVan",
-          },
-        },
-        {
-          "title": "暗示荣真",
-          "content": "疯狂暗示荣真",
-          "type": "run",
-          "reward": "rmb",
-          "reward_value": 500,
-          "reward_object": "Zhenly",
-          "view_count": 10,
-          "like_count": 30,
-          "collect_count": 30,
-          "publish_date": 1559732563,
-          "publisher": {
-            "nickname": "User1",
-          },
-        },
-        {
-          "title": "暗示荣真",
-          "content": "疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真",
-          "type": "questionnaire",
-          "reward": "rmb",
-          "reward_value": 500,
-          "reward_object": "Zhenly",
-          "view_count": 80,
-          "like_count": 30,
-          "collect_count": 30,
-          "publish_date": 1559732518,
-          "publisher": {
-            "nickname": "CSQ",
-          },
-        },
-        {
-          "title": "秀秀好强啊",
-          "content": "疯狂暗示秀秀",
-          "type": "info",
-          "reward": "rmb",
-          "reward_value": 500,
-          "reward_object": "Zhenly",
-          "view_count": 40,
-          "like_count": 30,
-          "collect_count": 30,
-          "publish_date": 1559732518,
-          "publisher": {
-            "nickname": "Zhenly",
-          },
-        },
-      ],
+      missions: [],
+      total: 0,
+      page: 1,
     }
   },
   computed: {
@@ -191,7 +103,7 @@ export default {
         }
         return 0;
       })
-    }
+    },
   },
   methods: {
     leftMenuClick(event) {
@@ -199,6 +111,7 @@ export default {
         case '1':
           break;
         case '2': 
+          break;
         case '3':
           break;
       }
@@ -239,6 +152,17 @@ export default {
     createQuestionnaire() {
       this.$router.push('/create_questionnaire');
     }
+  },
+  created: async function() {
+    var parmas = {
+      page: 1,
+      size: 6
+    }
+    var res = await this.$service.task.GetTasksList.call(this, parmas)
+    console.log(res)
+    this.missions = res.tasks
+    this.page = res.pagination.page + 1
+    this.total = res.pagination.total
   }
 }
 </script>

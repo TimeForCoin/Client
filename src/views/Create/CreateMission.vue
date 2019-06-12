@@ -2,20 +2,27 @@
   <div class="create-mission">
     <a-divider class="top-title"><img class="top-logo" src="@/assets/logo.png">发布任务</a-divider>
     <div class="left-div">
-      <p class="title"><span>任务名称：</span></p>
+      <p class="title">
+        <span>任务名称:</span>
+        <a-icon class="exclamation-icon" type="exclamation-circle" v-show="showError && mission.title == ''" theme="twoTone" twoToneColor="red"/>
+      </p>
       <a-input class="mission-title-input" v-model="mission.title"/>
     </div>
     <a-divider />
     <div class="left-div">
-      <p class="title"><span>任务内容描述:</span></p>
+      <p class="title">
+        <span>任务内容描述:</span>
+        <a-icon class="exclamation-icon" type="exclamation-circle" v-show="showError && mission.content == ''" theme="twoTone" twoToneColor="red"/>
+      </p>
       <a-textarea class="mission-content-input" :autosize="{minRows: 4}" v-model="mission.content"/>
     </div>
     <a-divider />
     <div class="flex-div">
       <div class="left-div" id="time-div">
         <p class="title">
-          <span>任务时间:</span>
           <a-icon class="left-icon" type="clock-circle" theme="twoTone" twoToneColor="#F0B11B"/>
+          <span>任务时间:</span>
+          <a-icon class="exclamation-icon" type="exclamation-circle" v-show="showError && (mission.start_date == 0 || mission.end_date == 0)" theme="twoTone" twoToneColor="red"/>
         </p>
         <a-range-picker class="date-picker"
           :ranges="{ Today: [moment(), moment()], 'This Month': [moment(), moment().endOf('month')] }"
@@ -23,29 +30,29 @@
         />
       </div>
       <div class="right-div">
-        <p class="title">
-          <span>任务类型:</span>
+        <p class="title">          
           <a-icon class="left-icon" type="tag" theme="twoTone" twoToneColor="#F0B11B"/>
+          <span>任务类型:</span>
         </p>
         <a-select class="mission-type" defaultValue="errand" v-model="mission.type">
-          <a-select-option value="errand">跑腿</a-select-option>
-          <a-select-option value="information">信息</a-select-option>
+          <a-select-option value="run">跑腿</a-select-option>
+          <a-select-option value="info">信息</a-select-option>
         </a-select>
       </div>
     </div>
     <a-divider />
     <div class="flex-div">
       <div class="left-div">
-        <p class="title">
-          <span>任务地点:</span>
+        <p class="title">          
           <a-icon class="left-icon" type="environment" theme="twoTone" twoToneColor="#F0B11B"/>
+          <span>任务地点:</span>
         </p>
         <TagBlock @addTag="addMissionLocation" :text="'添加地点'"/>
       </div>
       <div class="right-div">
         <p class="title">
-          <span>任务标签:</span>
           <a-icon class="left-icon" type="tags" theme="twoTone" twoToneColor="#F0B11B"/>
+          <span>任务标签:</span>
         </p>
         <TagBlock @addTag="addMissionTag" :text="'添加标签'"/>
       </div>
@@ -53,9 +60,10 @@
     <a-divider />
     <div class="flex-div">
       <div class="reward-div">
-        <p class="title">
-          <span>任务报酬:</span>
+        <p class="title">         
           <a-icon class="left-icon" type="money-collect" theme="twoTone" twoToneColor="#F0B11B"/>
+          <span>任务报酬:</span>
+          <a-icon class="exclamation-icon" type="exclamation-circle" v-show="showError && mission.reward_value == 0 && mission.reward_object == ''" theme="twoTone" twoToneColor="red"/>
         </p>
         <div class="reward-type">
           <span>类型:</span>
@@ -75,9 +83,10 @@
         </div>
       </div>
       <div class="player-div">
-        <p class="title">
-          <span>参与者设置：</span>
+        <p class="title">          
           <a-icon class="left-icon" type="idcard" theme="twoTone" twoToneColor="#F0B11B"/>
+          <span>参与者设置:</span>
+          <a-icon class="exclamation-icon" type="exclamation-circle" v-show="showError && mission.max_player <= 0" theme="twoTone" twoToneColor="red"/>
         </p>
         <a-checkbox @change="onCheckedChange">自动同意领取任务</a-checkbox>
         <br />
@@ -87,25 +96,25 @@
     </div>
     <a-divider />
     <div class="left-div">
-      <p class="title">上传图片：</p>
+      <p class="title">上传图片:</p>
       <ImgUploader @fileChange="addImages"/>
     </div>
     <a-divider />
     <div class="left-div">
-      <p class="title">上传附件：</p>
+      <p class="title">上传附件:</p>
       <FileUploader @fileChange="addAttachment"/>
     </div>
     <a-divider />
     <a-button class="publish-btn" type="primary" @click="createMission">发布</a-button>
-    <a-button class="save-btn" type="primary">保存草稿</a-button>
+    <a-button class="save-btn" type="primary" @click="saveMission">保存草稿</a-button>
   </div>
 </template>
 
 <script>
 import moment from 'moment';
-import TagBlock from '@/components/Mission/TagBlock.vue'
-import ImgUploader from '@/components/Mission/ImgUploader.vue'
-import FileUploader from '@/components/Mission/FileUploader.vue'
+import TagBlock from '@/components/Mission/CreateMission/TagBlock.vue'
+import ImgUploader from '@/components/Mission/CreateMission/ImgUploader.vue'
+import FileUploader from '@/components/Mission/CreateMission/FileUploader.vue'
 
 function getBase64 (img, callback) {
   const reader = new FileReader()
@@ -121,16 +130,14 @@ export default {
   },
   data() {
     return {
-      previewVisible: false,
-      previewImage: '',
-      loading: false,
-      imageUrl: '',
+      completeInfo: false,
+      showError: false,
       mission: {
         title: '',
         content: '',
         images: [],
         attachment: [],
-        type: 'errand',
+        type: 'run',
         reward: 'money',
         reward_value: 0,
         reward_object: '',
@@ -147,8 +154,14 @@ export default {
   methods: {
     moment,
     onTimeChange(dates, dateStrings) {
-      console.log('From: ', dates[0], ', to: ', dates[1]);
-      console.log('From: ', dateStrings[0], ', to: ', dateStrings[1]);
+      if(dates[0] && dates[1]) {
+        this.mission.start_date = dates[0].unix()
+        this.mission.end_date = dates[1].unix()
+      }
+      else {
+        this.mission.start_date = 0
+        this.mission.end_date = 0
+      }
     },
     addMissionTag(tags) {
       this.mission.tags = tags;
@@ -165,8 +178,29 @@ export default {
     addImages(ids) {
       this.mission.images = ids
     },
-    createMission() {
+    async createMission() {
       console.log(this.mission)
+      if(this.mission.title == '' || this.mission.content == '' || this.mission.start_date == 0 || 
+         this.mission.end_date == 0 || this.mission.max_player <= 0 || 
+         (this.mission.reward_value == 0 && this.mission.reward_object == '')) {
+        this.showError = true
+        this.$message.error('请填写必要信息')
+        return   
+      }
+      if(this.mission.start_date < moment().startOf('day').unix()) {
+        this.$message.error('请选择正确的时间')
+        return
+      }
+      this.mission.max_player = parseInt(this.mission.max_player)
+      this.mission.reward_value = parseInt(this.mission.reward_value)
+      this.mission.publish = true
+      var res = await this.$service.task.CreateTask.call(this, this.mission)
+    },
+    async saveMission() {
+      this.mission.max_player = parseInt(this.mission.max_player)
+      this.mission.reward_value = parseInt(this.mission.reward_value)
+      this.mission.publish = false
+      var res = await this.$service.task.CreateTask.call(this, this.mission)
     }
   }
 
@@ -233,14 +267,19 @@ export default {
     font-weight: bold;
     span {
       vertical-align: middle;
+      margin-right: 10px;
     }
   }
 
   .left-icon {
     font-size: 24px;
-    float: left;
     margin-right: 10px;
     transform: translateY(3px);
+  }
+
+  .exclamation-icon {
+    font-size: 18px;
+    vertical-align: middle;
   }
 
   .mission-type {

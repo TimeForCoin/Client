@@ -22,11 +22,13 @@ export default {
     }
 	},
 	methods: {
-		handleRemove(file) {
+		async handleRemove(file) {
       const index = this.fileList.indexOf(file);
       const newFileList = this.fileList.slice();
       newFileList.splice(index, 1);
 			this.fileList = newFileList
+
+			await this.$service.file.DeleteFile.call(this, this.fileIDList[index]);
 
 			const newFileIDList = this.fileIDList.slice();
       newFileIDList.splice(index, 1);
