@@ -43,11 +43,11 @@
           </a-input>
         </div>
         <div class="mission-cards">
-          <div v-for="(item, index) in missionShow" class="cards" :key="index" >
-            <MissionCard :MissionModel=missionShow[index]></MissionCard>
+          <div v-for="(item) in missionShow" class="cards" :key="item.id" >
+            <MissionCard :MissionModel="item"></MissionCard>
           </div>
         </div>
-        <a-pagination simple :defaultCurrent="1" :total=totalPage class="pagination"/>
+        <a-button type="primary" class="add-more" icon="plus" @click="addMore">加载更多</a-button>
       </a-layout-content>
     </a-layout>
   </div>
@@ -143,6 +143,18 @@ export default {
     onSearch(value) {
       console.log(this.searchText);
     },
+    async addMore() {
+      var parmas = {
+        page: this.page,
+        size: 4
+      }
+      var res = await this.$service.task.GetTasksList.call(this, parmas)
+      console.log(res)
+      this.missions = this.missions.concat(res.tasks)
+      //this.missions = this.missions.concat(res.tasks)
+      console.log(this.missions)
+      this.page = res.pagination.page + 1
+    },
     emitEmpty () {
       this.searchText = '';
     },
@@ -156,7 +168,7 @@ export default {
   created: async function() {
     var parmas = {
       page: 1,
-      size: 6
+      size: 4
     }
     var res = await this.$service.task.GetTasksList.call(this, parmas)
     console.log(res)
@@ -245,22 +257,29 @@ export default {
       flex-wrap: wrap;
       flex-direction: row;
       justify-content: flex-start ;
-      left: 50px;
+      left: 30px;
       top: 30px;
-      margin-right: 100px;
-      width: calc(100vw - 340px);
-      min-width: 1000px;
-      height: 700px;
+      
+      width: auto;
+      min-width: 800px;
+      height: auto;
 
       .cards {
         height: auto;
         width: auto;
+        margin-bottom: 30px;
+        margin-right: 30px;
       }
     }
     .pagination {
       position: relative;
       top: 0px;
       margin-top: 30px;
+      margin-bottom: 50px;
+    }
+    .add-more {
+      margin-top: 30px;
+      margin-bottom: 50px;
     }
   }
   

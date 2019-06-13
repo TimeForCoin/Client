@@ -81,7 +81,6 @@ export default {
   background-color: white;
   width: 250px;
   height: 320px;
-  margin-right: 50px;
   transition: 0.5s;
   position: relative;
 
@@ -104,7 +103,7 @@ export default {
       height: 0px;
       border-bottom: 40px solid white;
       border-right: 253px solid transparent;
-      transform: translate(0, -39px;)
+      transform: translate(0px, -39px;)
     }
   }
 
