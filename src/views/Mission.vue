@@ -55,7 +55,7 @@
 
 <script>
 import MissionCard from '@/components/Mission/MissionCard.vue'
-import { async } from 'q';
+import { async } from 'q'
 
 export default {
   components: {
@@ -71,77 +71,77 @@ export default {
       searchText: '',
       missions: [],
       total: 0,
-      page: 1,
+      page: 1
     }
   },
   computed: {
     missionShow: function() {
       return this.missions.filter((item) => {
-        if(this.searchText != null) {
-          return (item.title.indexOf(this.searchText) !== -1
-                  || item.content.indexOf(this.searchText) !== -1);
+        if (this.searchText != null) {
+          return (item.title.indexOf(this.searchText) !== -1 ||
+                  item.content.indexOf(this.searchText) !== -1)
         }
-        return true;
+        return true
       }).filter((item) => {
-        if (this.missionType == 0
-            ||this.missionType == 1 && item.type == "run"             //跑腿
-            || this.missionType == 2 && item.type == "questionnaire"  //问卷
-            || this.missionType == 3 && item.type == "info") {        //信息
-          return true;
+        if (this.missionType == 0 ||
+            this.missionType == 1 && item.type == 'run' || // 跑腿
+            this.missionType == 2 && item.type == 'questionnaire' || // 问卷
+            this.missionType == 3 && item.type == 'info') { // 信息
+          return true
         }
-        return false;
+        return false
       }).sort((a, b) => {
-        if (this.sortType == 0) {       //按时间排序
-          var x = a.publish_date;
-          var y = b.publish_date;
-          return ((x<y)?-1:(x>y)?1:0);
+        if (this.sortType == 0) { // 按时间排序
+          var x = a.publish_date
+          var y = b.publish_date
+          return ((x < y) ? -1 : (x > y) ? 1 : 0)
         }
-        if (this.sortType == 1) {      //按热度排序
-          var x = a.view_count + a.like_count + a.collect_count;
-          var y = b.view_count + b.like_count + b.collect_count;
-          return ((x<y)?1:(x>y)?-1:0);
+        if (this.sortType == 1) { // 按热度排序
+          var x = a.view_count + a.like_count + a.collect_count
+          var y = b.view_count + b.like_count + b.collect_count
+          return ((x < y) ? 1 : (x > y) ? -1 : 0)
         }
-        return 0;
+        return 0
       })
-    },
+    }
   },
   methods: {
     leftMenuClick(event) {
-      switch(event.key) {
+      switch (event.key) {
         case '1':
-          break;
-        case '2': 
-          break;
+          break
+        case '2':
+          break
         case '3':
-          break;
+          break
       }
-      console.log(event.key);
+      console.log(event.key)
     },
     topMenuClick(event) {
-      switch(event.key) {
+      switch (event.key) {
         case 'type0':
-          this.missionType = 0;
-          break;
+          this.missionType = 0
+          break
         case 'type1':
-          this.missionType = 1;
-          break;
+          this.missionType = 1
+          break
         case 'type2':
-          this.missionType = 2;
-          break;
+          this.missionType = 2
+          break
         case 'type3':
-          this.missionType = 3;
-          break;
+          this.missionType = 3
+          break
         case 'new':
-          this.sortType = 0;
-          break;
+          this.sortType = 0
+          break
         case 'hot':
-          this.sortType = 1;
-          break;
+          this.sortType = 1
+          break
       }
-      console.log(event.key);
+      console.log(event.key)
     },
     onSearch(value) {
-      console.log(this.searchText);
+      console.log(this.searchText)
     },
     async addMore() {
       var parmas = {
@@ -151,18 +151,20 @@ export default {
       var res = await this.$service.task.GetTasksList.call(this, parmas)
       console.log(res)
       this.missions = this.missions.concat(res.tasks)
-      //this.missions = this.missions.concat(res.tasks)
+      // this.missions = this.missions.concat(res.tasks)
       console.log(this.missions)
       this.page = res.pagination.page + 1
     },
     emitEmpty () {
-      this.searchText = '';
+      this.searchText = ''
     },
     createMission() {
-      this.$router.push('/create_mission');
+      this.$router.push('/create_mission')
     },
-    createQuestionnaire() {
-      this.$router.push('/create_questionnaire');
+    async createQuestionnaire() {
+      let taskID = 123
+      // let res = await this.$.service.questionaire.createQuestionnaire(taskID)
+      this.$router.push({ path: '/create_questionnaire', query: { task_id: taskID } })
     }
   },
   created: async function() {
@@ -203,7 +205,7 @@ export default {
       }
       .mission-btn {
         position: absolute;
-        
+
         top: 250px;
         left: 70px;
       }
@@ -259,7 +261,7 @@ export default {
       justify-content: flex-start ;
       left: 30px;
       top: 30px;
-      
+
       width: auto;
       min-width: 800px;
       height: auto;
@@ -282,6 +284,6 @@ export default {
       margin-bottom: 50px;
     }
   }
-  
+
 }
 </style>

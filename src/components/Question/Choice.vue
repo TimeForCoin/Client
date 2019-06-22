@@ -2,11 +2,11 @@
     <div class="choice" @mouseenter="isEnter = true" @mouseleave="isEnter = false">
         <div class="top">
             <div class="question-info">
-                <div class="index">{{question.index}}</div>
+                <div class="index">{{index}}</div>
                 <div class="title" v-show="!isModify">{{question.content}}</div>
-                <a-input class="title" v-show="isModify" :value="question.content"/>
+                <a-input class="title" v-show="isModify" v-model="question.content"/>
                 <div class="note" v-show="!isModify">{{question.note}}</div>
-                <a-input class="note" v-show="isModify" :value="question.note"/>
+                <a-input class="note" v-show="isModify" v-model="question.note"/>
             </div>
             <div class="button-area" v-show="!isModify && isEnter">
             <a-popover>
@@ -21,7 +21,7 @@
                 <template slot="content">
                     <h4>复制</h4>
                 </template>
-                <a-button class="button" size="small">
+                <a-button class="button" size="small" @click="sendMsgToParent('copy')">
                     <a-icon type="copy"/>
                 </a-button>
             </a-popover>
@@ -29,7 +29,7 @@
                 <template slot="content">
                     <h4>删除</h4>
                 </template>
-                <a-button class="button" size="small">
+                <a-button class="button" size="small" @click="sendMsgToParent('delete')">
                     <a-icon type="minus"/>
                 </a-button>
             </a-popover>
@@ -37,7 +37,7 @@
                 <template slot="content">
                     <h4>上移</h4>
                 </template>
-                <a-button class="button" size="small">
+                <a-button class="button" size="small" @click="sendMsgToParent('up')">
                     <a-icon type="arrow-up"/>
                 </a-button>
             </a-popover>
@@ -45,7 +45,7 @@
                 <template slot="content">
                     <h4>下移</h4>
                 </template>
-                <a-button class="button" size="small">
+                <a-button class="button" size="small" @click="sendMsgToParent('down')">
                     <a-icon type="arrow-down"/>
                 </a-button>
             </a-popover>
@@ -53,7 +53,7 @@
                 <template slot="content">
                     <h4>最前</h4>
                 </template>
-                <a-button class="button" size="small">
+                <a-button class="button" size="small" @click="sendMsgToParent('first')">
                     <a-icon type="caret-up"/>
                 </a-button>
             </a-popover>
@@ -61,7 +61,7 @@
                 <template slot="content">
                     <h4>最后</h4>
                 </template>
-                <a-button class="button" size="small">
+                <a-button class="button" size="small" @click="sendMsgToParent('last')">
                     <a-icon type="caret-down"/>
                 </a-button>
             </a-popover>
@@ -153,7 +153,7 @@
 
 <script>
 export default {
-  props: ['question'],
+  props: ['question', 'index'],
   data() {
     return {
       isModify: false,
@@ -207,6 +207,9 @@ export default {
         return
       }
       this.question.choose_problem.options.splice(index, 1)
+    },
+    sendMsgToParent: function(msg) {
+      this.$emit('handleMsgFromChild', { msg: msg, index: this.index })
     }
   }
 }
