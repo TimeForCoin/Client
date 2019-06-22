@@ -55,7 +55,7 @@
 
 <script>
 import MissionCard from '@/components/Mission/MissionCard.vue'
-import { async } from 'q';
+import { async } from 'q'
 
 export default {
   components: {
@@ -71,7 +71,7 @@ export default {
       searchText: '',
       missions: [],
       total: 0,
-      page: 1,
+      page: 1
     }
   },
   computed: {
@@ -103,20 +103,15 @@ export default {
         }
         return 0
       })
-    },
+    }
   },
   methods: {
     leftMenuClick(event) {
       switch (event.key) {
         case '1':
-<<<<<<< HEAD
           break
         case '2':
-=======
-          break;
-        case '2': 
-          break;
->>>>>>> upstream/master
+          break
         case '3':
           break
       }
@@ -156,7 +151,7 @@ export default {
       var res = await this.$service.task.GetTasksList.call(this, parmas)
       console.log(res)
       this.missions = this.missions.concat(res.tasks)
-      //this.missions = this.missions.concat(res.tasks)
+      // this.missions = this.missions.concat(res.tasks)
       console.log(this.missions)
       this.page = res.pagination.page + 1
     },
@@ -266,7 +261,7 @@ export default {
       justify-content: flex-start ;
       left: 30px;
       top: 30px;
-      
+
       width: auto;
       min-width: 800px;
       height: auto;
