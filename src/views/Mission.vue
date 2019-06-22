@@ -43,18 +43,19 @@
           </a-input>
         </div>
         <div class="mission-cards">
-          <div v-for="(item, index) in missionShow" class="cards" :key="index" >
-            <MissionCard :MissionModel=missionShow[index]></MissionCard>
+          <div v-for="(item) in missionShow" class="cards" :key="item.id" >
+            <MissionCard :MissionModel="item"></MissionCard>
           </div>
         </div>
-        <a-pagination simple :defaultCurrent="1" :total=totalPage class="pagination"/>
+        <a-button type="primary" class="add-more" icon="plus" @click="addMore">加载更多</a-button>
       </a-layout-content>
     </a-layout>
   </div>
 </template>
 
 <script>
-import MissionCard from '@/components/MissionCard.vue'
+import MissionCard from '@/components/Mission/MissionCard.vue'
+import { async } from 'q';
 
 export default {
   components: {
@@ -68,98 +69,9 @@ export default {
       subSortTitle: ['最新', '最热'],
       totalPage: 10,
       searchText: '',
-      missions: [
-        {
-          "title": "帮我洗澡",
-          "content": "过来至二634洗澡澡",
-          "type": "run",
-          "reward": "rmb",
-          "reward_value": 100,
-          "reward_object": "一个吻",
-          "view_count": 30,
-          "like_count": 30,
-          "collect_count": 30,
-          "publish_date": 1559732518,
-          "publisher": {
-            "nickname": "CTP",
-          },
-        },
-        {
-          "title": "天王盖地虎",
-          "content": "小鸡炖蘑菇",
-          "type": "questionnaire",
-          "reward": "rmb",
-          "reward_value": 0,
-          "reward_object": "蘑菇",
-          "view_count": 50,
-          "like_count": 30,
-          "collect_count": 30,
-          "publish_date": 1559732557,
-          "publisher": {
-            "nickname": "Eason",
-          },
-        },
-        {
-          "title": "吃饭睡觉打游戏",
-          "content": "疯狂暗示荣真",
-          "type": "info",
-          "reward": "rmb",
-          "reward_value": 500,
-          "reward_object": "Zhenly",
-          "view_count": 60,
-          "like_count": 30,
-          "collect_count": 30,
-          "publish_date": 1559732561,
-          "publisher": {
-            "nickname": "DarkVan",
-          },
-        },
-        {
-          "title": "暗示荣真",
-          "content": "疯狂暗示荣真",
-          "type": "run",
-          "reward": "rmb",
-          "reward_value": 500,
-          "reward_object": "Zhenly",
-          "view_count": 10,
-          "like_count": 30,
-          "collect_count": 30,
-          "publish_date": 1559732563,
-          "publisher": {
-            "nickname": "User1",
-          },
-        },
-        {
-          "title": "暗示荣真",
-          "content": "疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真",
-          "type": "questionnaire",
-          "reward": "rmb",
-          "reward_value": 500,
-          "reward_object": "Zhenly",
-          "view_count": 80,
-          "like_count": 30,
-          "collect_count": 30,
-          "publish_date": 1559732518,
-          "publisher": {
-            "nickname": "CSQ",
-          },
-        },
-        {
-          "title": "秀秀好强啊",
-          "content": "疯狂暗示秀秀",
-          "type": "info",
-          "reward": "rmb",
-          "reward_value": 500,
-          "reward_object": "Zhenly",
-          "view_count": 40,
-          "like_count": 30,
-          "collect_count": 30,
-          "publish_date": 1559732518,
-          "publisher": {
-            "nickname": "Zhenly",
-          },
-        },
-      ],
+      missions: [],
+      total: 0,
+      page: 1,
     }
   },
   computed: {
@@ -191,7 +103,7 @@ export default {
         }
         return 0;
       })
-    }
+    },
   },
   methods: {
     leftMenuClick(event) {
@@ -199,6 +111,7 @@ export default {
         case '1':
           break;
         case '2': 
+          break;
         case '3':
           break;
       }
@@ -230,6 +143,18 @@ export default {
     onSearch(value) {
       console.log(this.searchText);
     },
+    async addMore() {
+      var parmas = {
+        page: this.page,
+        size: 4
+      }
+      var res = await this.$service.task.GetTasksList.call(this, parmas)
+      console.log(res)
+      this.missions = this.missions.concat(res.tasks)
+      //this.missions = this.missions.concat(res.tasks)
+      console.log(this.missions)
+      this.page = res.pagination.page + 1
+    },
     emitEmpty () {
       this.searchText = '';
     },
@@ -239,6 +164,17 @@ export default {
     createQuestionnaire() {
       this.$router.push('/create_questionnaire');
     }
+  },
+  created: async function() {
+    var parmas = {
+      page: 1,
+      size: 4
+    }
+    var res = await this.$service.task.GetTasksList.call(this, parmas)
+    console.log(res)
+    this.missions = res.tasks
+    this.page = res.pagination.page + 1
+    this.total = res.pagination.total
   }
 }
 </script>
@@ -321,22 +257,29 @@ export default {
       flex-wrap: wrap;
       flex-direction: row;
       justify-content: flex-start ;
-      left: 50px;
+      left: 30px;
       top: 30px;
-      margin-right: 100px;
-      width: calc(100vw - 340px);
-      min-width: 1000px;
-      height: 700px;
+      
+      width: auto;
+      min-width: 800px;
+      height: auto;
 
       .cards {
         height: auto;
         width: auto;
+        margin-bottom: 30px;
+        margin-right: 30px;
       }
     }
     .pagination {
       position: relative;
       top: 0px;
       margin-top: 30px;
+      margin-bottom: 50px;
+    }
+    .add-more {
+      margin-top: 30px;
+      margin-bottom: 50px;
     }
   }
   
