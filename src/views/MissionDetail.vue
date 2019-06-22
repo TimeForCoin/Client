@@ -10,25 +10,32 @@
 			</div>
 			<a-tag class="status-tag" :color="color">{{status}}</a-tag>
 			<div class="content-div">
+				<p>任务详情</p>
 				<p class="content">{{mission.content}}</p>
 			</div>
+			<p>开始时间</p>
 			<p>{{startDate}}</p>
+			<p>结束时间</p>
 			<p>{{endDate}}</p>
+			<p>任务标签</p>
 			<div>
 				<template v-for="tag in mission.tags">
 					<a-tag :key="tag">{{tag}}</a-tag>
 				</template>
 			</div>
+			<p>任务地点</p>
 			<div>
 				<template v-for="tag in mission.location" >
 					<a-tag :key="tag">{{tag}}</a-tag>
 				</template>
 			</div>
+			<p>相关图片</p>
 			<div class="image-div">
 				<div class="image" v-for="img in mission.images" :key="img.id">
 					<img :src="img.url"/>
 				</div>
 			</div>
+			<p>当前参与者</p>
 		</div>
 	</div>
 </template>

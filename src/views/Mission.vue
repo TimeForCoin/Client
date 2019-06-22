@@ -3,7 +3,7 @@
     <a-layout class="layout-container">
       <a-layout-sider width="240px" class="layout-sider">
         <div class="left-bar">
-          <a-menu class="left-menu"  mode="inline" @click="leftMenuClick">
+          <a-menu class="left-menu"  mode="inline" @click="leftMenuClick" :defaultSelectedKeys="['1']">
             <a-menu-item key="1" class="left-menu-item">
               <a-icon type="notification" />
               <span class="nav-text">发布的任务</span>
@@ -26,15 +26,15 @@
           <a-menu class="top-menu" mode="horizontal" style="lineHeight: 62px" @click="topMenuClick">
             <a-sub-menu class="top-menu-item">
               <span slot="title" class="submenu-title-wrapper">类型-{{subTypeTitle[missionType]}}</span>
-                <a-menu-item key="type0">{{subTypeTitle[0]}}</a-menu-item>
-                <a-menu-item key="type1">{{subTypeTitle[1]}}</a-menu-item>
-                <a-menu-item key="type2">{{subTypeTitle[2]}}</a-menu-item>
-                <a-menu-item key="type3">{{subTypeTitle[3]}}</a-menu-item>
+                <a-menu-item key="all">{{subTypeTitle['all']}}</a-menu-item>
+                <a-menu-item key="run">{{subTypeTitle['run']}}</a-menu-item>
+                <a-menu-item key="questionnaire">{{subTypeTitle['questionnaire']}}</a-menu-item>
+                <a-menu-item key="info">{{subTypeTitle['info']}}</a-menu-item>
             </a-sub-menu>
             <a-sub-menu class="top-menu-item">
               <span slot="title" class="submenu-title-wrapper">排序方式-{{subSortTitle[sortType]}}</span>
-              <a-menu-item key="new">{{subSortTitle[0]}}</a-menu-item>
-              <a-menu-item key="hot">{{subSortTitle[1]}}</a-menu-item>
+              <a-menu-item key="new">{{subSortTitle['new']}}</a-menu-item>
+              <a-menu-item key="hot">{{subSortTitle['hot']}}</a-menu-item>
             </a-sub-menu>
           </a-menu>
           <a-input placeholder="搜索" v-model="searchText" class="input-text">
@@ -63,10 +63,19 @@ export default {
   },
   data() {
     return {
-      missionType: 0,
-      sortType: 0,
-      subTypeTitle: ['全部', '跑腿任务', '问卷任务', '信息任务'],
-      subSortTitle: ['最新', '最热'],
+      missionType: 'all',
+      sortType: 'new',
+      show: 1,
+      subTypeTitle: {
+        'all': '全部',
+        'run': '跑腿任务',
+        'questionnaire': '问卷任务',
+        'info': '信息任务'
+      },
+      subSortTitle: {
+        'new': '最新',
+        'hot': '最热'
+      },
       totalPage: 10,
       searchText: '',
       missions: [],
@@ -82,63 +91,82 @@ export default {
                   || item.content.indexOf(this.searchText) !== -1);
         }
         return true;
-      }).filter((item) => {
-        if (this.missionType == 0
-            ||this.missionType == 1 && item.type == "run"             //跑腿
-            || this.missionType == 2 && item.type == "questionnaire"  //问卷
-            || this.missionType == 3 && item.type == "info") {        //信息
-          return true;
-        }
-        return false;
-      }).sort((a, b) => {
-        if (this.sortType == 0) {       //按时间排序
-          var x = a.publish_date;
-          var y = b.publish_date;
-          return ((x<y)?-1:(x>y)?1:0);
-        }
-        if (this.sortType == 1) {      //按热度排序
-          var x = a.view_count + a.like_count + a.collect_count;
-          var y = b.view_count + b.like_count + b.collect_count;
-          return ((x<y)?1:(x>y)?-1:0);
-        }
-        return 0;
       })
+      // .filter((item) => {
+      //   if (this.missionType == 0
+      //       ||this.missionType == 1 && item.type == "run"             //跑腿
+      //       || this.missionType == 2 && item.type == "questionnaire"  //问卷
+      //       || this.missionType == 3 && item.type == "info") {        //信息
+      //     return true;
+      //   }
+      //   return false;
+      // })
+      // .sort((a, b) => {
+      //   if (this.sortType == 0) {       //按时间排序
+      //     var x = a.publish_date;
+      //     var y = b.publish_date;
+      //     return ((x<y)?-1:(x>y)?1:0);
+      //   }
+      //   if (this.sortType == 1) {      //按热度排序
+      //     var x = a.view_count + a.like_count + a.collect_count;
+      //     var y = b.view_count + b.like_count + b.collect_count;
+      //     return ((x<y)?1:(x>y)?-1:0);
+      //   }
+      //  return 0;
+      //})
     },
   },
   methods: {
     leftMenuClick(event) {
       switch(event.key) {
         case '1':
+          this.getPublishedMission()
+          this.show = 1
           break;
         case '2': 
+          this.getPlayingMission()
+          this.show = 2
           break;
         case '3':
+          this.getCollectedMission()
+          this.show = 3
           break;
       }
       console.log(event.key);
     },
     topMenuClick(event) {
       switch(event.key) {
-        case 'type0':
-          this.missionType = 0;
+        case 'all':
+          this.missionType = 'all';
           break;
-        case 'type1':
-          this.missionType = 1;
+        case 'run':
+          this.missionType = 'run';
           break;
-        case 'type2':
-          this.missionType = 2;
+        case 'questionnaire':
+          this.missionType = 'questionnaire';
           break;
-        case 'type3':
-          this.missionType = 3;
+        case 'info':
+          this.missionType = 'info';
           break;
         case 'new':
-          this.sortType = 0;
+          this.sortType = 'new';
           break;
         case 'hot':
-          this.sortType = 1;
+          this.sortType = 'hot';
           break;
       }
       console.log(event.key);
+      switch(this.show) {
+        case 1:
+          this.getPublishedMission()
+          break;
+        case 2:
+          this.getPlayingMission()
+          break;
+        case 3:
+          this.getCollectedMission()
+          break;
+      }
     },
     onSearch(value) {
       console.log(this.searchText);
@@ -146,7 +174,7 @@ export default {
     async addMore() {
       var parmas = {
         page: this.page,
-        size: 4
+        size: 6
       }
       var res = await this.$service.task.GetTasksList.call(this, parmas)
       console.log(res)
@@ -167,18 +195,56 @@ export default {
     showDetail(id) {
       console.log(id)
       this.$router.push({ name: 'mission_detail', params: { id }});
+    },
+    async getCollectedMission() {
+      var parmas = {
+        page: 1,
+        size: 6,
+        sort: this.sortType,
+        type: this.missionType
+      }
+      var res = await this.$service.task.GetColllectedTaskList.call(this, 'me', parmas)
+      console.log(res)
+      this.missions = res.tasks
+      console.log(this.missions)
+      this.page = res.pagination.page + 1
+      this.total = res.pagination.total
+    },
+    async getPlayingMission() {
+      var parmas = {
+        page: 1,
+        size: 6
+      }
+      var res = await this.$service.task.GetPlayingTaskList.call(this, 'me', parmas)
+      console.log(res)
+      this.missions = []
+      for(var i = 0; i < res.data.length; i ++) {
+        this.missions.push(res.data[i].task)
+      }
+      console.log(this.missions)
+      this.page = res.pagination.page + 1
+      this.total = res.pagination.total
+    },
+    async getPublishedMission() {
+      var parmas = {
+        page: 1,
+        size: 6,
+        user: 'me',
+        sort: this.sortType,
+        type: this.missionType
+      }
+      var res = await this.$service.task.GetTasksList.call(this, parmas)
+      this.missions = res.tasks
+      this.page = res.pagination.page + 1
+      this.total = res.pagination.total
     }
   },
   created: async function() {
     var parmas = {
       page: 1,
-      size: 4
+      size: 6
     }
-    var res = await this.$service.task.GetTasksList.call(this, parmas)
-    console.log(res)
-    this.missions = res.tasks
-    this.page = res.pagination.page + 1
-    this.total = res.pagination.total
+    this.getPublishedMission()
   }
 }
 </script>
