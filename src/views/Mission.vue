@@ -70,174 +70,176 @@ export default {
       searchText: '',
       missions: [
         {
-          "title": "帮我洗澡",
-          "content": "过来至二634洗澡澡",
-          "type": "run",
-          "reward": "rmb",
-          "reward_value": 100,
-          "reward_object": "一个吻",
-          "view_count": 30,
-          "like_count": 30,
-          "collect_count": 30,
-          "publish_date": 1559732518,
-          "publisher": {
-            "nickname": "CTP",
-          },
+          'title': '帮我洗澡',
+          'content': '过来至二634洗澡澡',
+          'type': 'run',
+          'reward': 'rmb',
+          'reward_value': 100,
+          'reward_object': '一个吻',
+          'view_count': 30,
+          'like_count': 30,
+          'collect_count': 30,
+          'publish_date': 1559732518,
+          'publisher': {
+            'nickname': 'CTP'
+          }
         },
         {
-          "title": "天王盖地虎",
-          "content": "小鸡炖蘑菇",
-          "type": "questionnaire",
-          "reward": "rmb",
-          "reward_value": 0,
-          "reward_object": "蘑菇",
-          "view_count": 50,
-          "like_count": 30,
-          "collect_count": 30,
-          "publish_date": 1559732557,
-          "publisher": {
-            "nickname": "Eason",
-          },
+          'title': '天王盖地虎',
+          'content': '小鸡炖蘑菇',
+          'type': 'questionnaire',
+          'reward': 'rmb',
+          'reward_value': 0,
+          'reward_object': '蘑菇',
+          'view_count': 50,
+          'like_count': 30,
+          'collect_count': 30,
+          'publish_date': 1559732557,
+          'publisher': {
+            'nickname': 'Eason'
+          }
         },
         {
-          "title": "吃饭睡觉打游戏",
-          "content": "疯狂暗示荣真",
-          "type": "info",
-          "reward": "rmb",
-          "reward_value": 500,
-          "reward_object": "Zhenly",
-          "view_count": 60,
-          "like_count": 30,
-          "collect_count": 30,
-          "publish_date": 1559732561,
-          "publisher": {
-            "nickname": "DarkVan",
-          },
+          'title': '吃饭睡觉打游戏',
+          'content': '疯狂暗示荣真',
+          'type': 'info',
+          'reward': 'rmb',
+          'reward_value': 500,
+          'reward_object': 'Zhenly',
+          'view_count': 60,
+          'like_count': 30,
+          'collect_count': 30,
+          'publish_date': 1559732561,
+          'publisher': {
+            'nickname': 'DarkVan'
+          }
         },
         {
-          "title": "暗示荣真",
-          "content": "疯狂暗示荣真",
-          "type": "run",
-          "reward": "rmb",
-          "reward_value": 500,
-          "reward_object": "Zhenly",
-          "view_count": 10,
-          "like_count": 30,
-          "collect_count": 30,
-          "publish_date": 1559732563,
-          "publisher": {
-            "nickname": "User1",
-          },
+          'title': '暗示荣真',
+          'content': '疯狂暗示荣真',
+          'type': 'run',
+          'reward': 'rmb',
+          'reward_value': 500,
+          'reward_object': 'Zhenly',
+          'view_count': 10,
+          'like_count': 30,
+          'collect_count': 30,
+          'publish_date': 1559732563,
+          'publisher': {
+            'nickname': 'User1'
+          }
         },
         {
-          "title": "暗示荣真",
-          "content": "疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真",
-          "type": "questionnaire",
-          "reward": "rmb",
-          "reward_value": 500,
-          "reward_object": "Zhenly",
-          "view_count": 80,
-          "like_count": 30,
-          "collect_count": 30,
-          "publish_date": 1559732518,
-          "publisher": {
-            "nickname": "CSQ",
-          },
+          'title': '暗示荣真',
+          'content': '疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真疯狂暗示荣真',
+          'type': 'questionnaire',
+          'reward': 'rmb',
+          'reward_value': 500,
+          'reward_object': 'Zhenly',
+          'view_count': 80,
+          'like_count': 30,
+          'collect_count': 30,
+          'publish_date': 1559732518,
+          'publisher': {
+            'nickname': 'CSQ'
+          }
         },
         {
-          "title": "秀秀好强啊",
-          "content": "疯狂暗示秀秀",
-          "type": "info",
-          "reward": "rmb",
-          "reward_value": 500,
-          "reward_object": "Zhenly",
-          "view_count": 40,
-          "like_count": 30,
-          "collect_count": 30,
-          "publish_date": 1559732518,
-          "publisher": {
-            "nickname": "Zhenly",
-          },
-        },
-      ],
+          'title': '秀秀好强啊',
+          'content': '疯狂暗示秀秀',
+          'type': 'info',
+          'reward': 'rmb',
+          'reward_value': 500,
+          'reward_object': 'Zhenly',
+          'view_count': 40,
+          'like_count': 30,
+          'collect_count': 30,
+          'publish_date': 1559732518,
+          'publisher': {
+            'nickname': 'Zhenly'
+          }
+        }
+      ]
     }
   },
   computed: {
     missionShow: function() {
       return this.missions.filter((item) => {
-        if(this.searchText != null) {
-          return (item.title.indexOf(this.searchText) !== -1
-                  || item.content.indexOf(this.searchText) !== -1);
+        if (this.searchText != null) {
+          return (item.title.indexOf(this.searchText) !== -1 ||
+                  item.content.indexOf(this.searchText) !== -1)
         }
-        return true;
+        return true
       }).filter((item) => {
-        if (this.missionType == 0
-            ||this.missionType == 1 && item.type == "run"             //跑腿
-            || this.missionType == 2 && item.type == "questionnaire"  //问卷
-            || this.missionType == 3 && item.type == "info") {        //信息
-          return true;
+        if (this.missionType == 0 ||
+            this.missionType == 1 && item.type == 'run' || // 跑腿
+            this.missionType == 2 && item.type == 'questionnaire' || // 问卷
+            this.missionType == 3 && item.type == 'info') { // 信息
+          return true
         }
-        return false;
+        return false
       }).sort((a, b) => {
-        if (this.sortType == 0) {       //按时间排序
-          var x = a.publish_date;
-          var y = b.publish_date;
-          return ((x<y)?-1:(x>y)?1:0);
+        if (this.sortType == 0) { // 按时间排序
+          var x = a.publish_date
+          var y = b.publish_date
+          return ((x < y) ? -1 : (x > y) ? 1 : 0)
         }
-        if (this.sortType == 1) {      //按热度排序
-          var x = a.view_count + a.like_count + a.collect_count;
-          var y = b.view_count + b.like_count + b.collect_count;
-          return ((x<y)?1:(x>y)?-1:0);
+        if (this.sortType == 1) { // 按热度排序
+          var x = a.view_count + a.like_count + a.collect_count
+          var y = b.view_count + b.like_count + b.collect_count
+          return ((x < y) ? 1 : (x > y) ? -1 : 0)
         }
-        return 0;
+        return 0
       })
     }
   },
   methods: {
     leftMenuClick(event) {
-      switch(event.key) {
+      switch (event.key) {
         case '1':
-          break;
-        case '2': 
+          break
+        case '2':
         case '3':
-          break;
+          break
       }
-      console.log(event.key);
+      console.log(event.key)
     },
     topMenuClick(event) {
-      switch(event.key) {
+      switch (event.key) {
         case 'type0':
-          this.missionType = 0;
-          break;
+          this.missionType = 0
+          break
         case 'type1':
-          this.missionType = 1;
-          break;
+          this.missionType = 1
+          break
         case 'type2':
-          this.missionType = 2;
-          break;
+          this.missionType = 2
+          break
         case 'type3':
-          this.missionType = 3;
-          break;
+          this.missionType = 3
+          break
         case 'new':
-          this.sortType = 0;
-          break;
+          this.sortType = 0
+          break
         case 'hot':
-          this.sortType = 1;
-          break;
+          this.sortType = 1
+          break
       }
-      console.log(event.key);
+      console.log(event.key)
     },
     onSearch(value) {
-      console.log(this.searchText);
+      console.log(this.searchText)
     },
     emitEmpty () {
-      this.searchText = '';
+      this.searchText = ''
     },
     createMission() {
-      this.$router.push('/create_mission');
+      this.$router.push('/create_mission')
     },
-    createQuestionnaire() {
-      this.$router.push('/create_questionnaire');
+    async createQuestionnaire() {
+      let taskID = 123
+      // let res = await this.$.service.questionaire.createQuestionnaire(taskID)
+      this.$router.push({ path: '/create_questionnaire', query: { task_id: taskID } })
     }
   }
 }
@@ -267,7 +269,7 @@ export default {
       }
       .mission-btn {
         position: absolute;
-        
+
         top: 250px;
         left: 70px;
       }
@@ -339,6 +341,6 @@ export default {
       margin-top: 30px;
     }
   }
-  
+
 }
 </style>

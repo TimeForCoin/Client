@@ -20,9 +20,9 @@
                 <a-textarea class="description" :autosize="{ minRows: 3, maxRows: 3 }" v-model="questionnaire.description" />
               </div>
               <div class="question-wrapper" v-for="(question, qindex) in questionnaire.questions" :key="question.id">
-                <Choice v-bind:question="questionnaire.questions[qindex]" v-if="question.type == 'choose'"/>
-                <Fill v-bind:question="questionnaire.questions[qindex]" v-else-if="question.type == 'fill'"/>
-                <Score v-bind:question="questionnaire.questions[qindex]" v-else-if="question.type == 'score'"/>
+                <Choice @handleMsgFromChild="changeQuestionaire" :question="questionnaire.questions[qindex]" :index="qindex" v-if="question.type == 'choose'"/>
+                <Fill @handleMsgFromChild="changeQuestionaire" :question="questionnaire.questions[qindex]" :index="qindex" v-else-if="question.type == 'fill'"/>
+                <Score @handleMsgFromChild="changeQuestionaire" :question="questionnaire.questions[qindex]" :index="qindex" v-else-if="question.type == 'score'"/>
               </div>
             </a-layout-content>
         </a-layout>
@@ -45,7 +45,8 @@ export default {
         MULTI_CHOICE: 1,
         SINGLE_FILL: 2,
         MULTI_FILL: 3,
-        SCORE: 4
+        SCORE: 4,
+        SORT: 5
       },
       sider: [
         {
@@ -59,6 +60,10 @@ export default {
         {
           menu: '评分题',
           menuItem: ['量表']
+        },
+        {
+          menu: '排序题',
+          menuItem: ['排序']
         }
       ],
       questionnaire: {
@@ -77,6 +82,7 @@ export default {
     }
   },
   methods: {
+    // 添加问题
     addQuestion: function(mindex, offset) {
       let clickType = 0
       for (let i = 0; i < mindex; i++) {
@@ -125,6 +131,45 @@ export default {
           break
       }
       this.questionnaire.questions.push(question)
+    },
+    // 问题操作：复制、删除、上移、下移、最前和最后
+    changeQuestionaire: function(params) {
+      let index = params.index
+      let msg = params.msg
+      let temp
+      switch (msg) {
+        case 'copy':
+          let newQuestion = JSON.parse(JSON.stringify(this.questionnaire.questions[index]))
+          this.questionnaire.questions.splice(index, 0, newQuestion)
+          break
+        case 'delete':
+          this.questionnaire.questions.splice(index, 1)
+          break
+        case 'up':
+          if (index !== 0) {
+            temp = this.questionnaire.questions[index]
+            this.questionnaire.questions.splice(index, 1)
+            this.questionnaire.questions.splice(index - 1, 0, temp)
+          }
+          break
+        case 'down':
+          if (index !== this.questionnaire.questions.length - 1) {
+            temp = this.questionnaire.questions[index]
+            this.questionnaire.questions.splice(index, 1)
+            this.questionnaire.questions.splice(index + 1, 0, temp)
+          }
+          break
+        case 'first':
+          temp = this.questionnaire.questions[index]
+          this.questionnaire.questions.splice(index, 1)
+          this.questionnaire.questions.splice(0, 0, temp)
+          break
+        case 'last':
+          temp = this.questionnaire.questions[index]
+          this.questionnaire.questions.splice(index, 1)
+          this.questionnaire.questions.push(temp)
+          break
+      }
     }
   }
 }
@@ -159,7 +204,9 @@ export default {
         .content {
             height: calc(95vh - 70px);
             margin-left: 20px;
+            padding: 0px 20px 0px 0px;
             display: flex;
+
             flex-direction: column;
 
             .questionnaire-info{
