@@ -55,7 +55,7 @@
 
 <script>
 import MissionCard from '@/components/Mission/MissionCard.vue'
-import { async } from 'q';
+import { async } from 'q'
 
 export default {
   components: {
@@ -80,15 +80,15 @@ export default {
       searchText: '',
       missions: [],
       total: 0,
-      page: 1,
+      page: 1
     }
   },
   computed: {
     missionShow: function() {
       return this.missions.filter((item) => {
-        if(this.searchText != null) {
-          return (item.title.indexOf(this.searchText) !== -1
-                  || item.content.indexOf(this.searchText) !== -1);
+        if (this.searchText != null) {
+          return (item.title.indexOf(this.searchText) !== -1 ||
+                  item.content.indexOf(this.searchText) !== -1)
         }
         return true;
       })
@@ -118,7 +118,7 @@ export default {
   },
   methods: {
     leftMenuClick(event) {
-      switch(event.key) {
+      switch (event.key) {
         case '1':
           this.getPublishedMission()
           this.show = 1
@@ -132,7 +132,7 @@ export default {
           this.show = 3
           break;
       }
-      console.log(event.key);
+      console.log(event.key)
     },
     topMenuClick(event) {
       switch(event.key) {
@@ -169,7 +169,7 @@ export default {
       }
     },
     onSearch(value) {
-      console.log(this.searchText);
+      console.log(this.searchText)
     },
     async addMore() {
       var parmas = {
@@ -179,15 +179,15 @@ export default {
       var res = await this.$service.task.GetTasksList.call(this, parmas)
       console.log(res)
       this.missions = this.missions.concat(res.tasks)
-      //this.missions = this.missions.concat(res.tasks)
+      // this.missions = this.missions.concat(res.tasks)
       console.log(this.missions)
       this.page = res.pagination.page + 1
     },
     emitEmpty () {
-      this.searchText = '';
+      this.searchText = ''
     },
     createMission() {
-      this.$router.push('/create_mission');
+      this.$router.push('/create_mission')
     },
     createQuestionnaire() {
       this.$router.push('/create_questionnaire');
@@ -273,7 +273,7 @@ export default {
       }
       .mission-btn {
         position: absolute;
-        
+
         top: 250px;
         left: 70px;
       }
@@ -329,7 +329,7 @@ export default {
       justify-content: flex-start ;
       left: 30px;
       top: 30px;
-      
+
       width: auto;
       min-width: 800px;
       height: auto;
@@ -339,6 +339,7 @@ export default {
         width: auto;
         margin-bottom: 30px;
         margin-right: 30px;
+        cursor: pointer;
       }
     }
     .pagination {
@@ -352,6 +353,6 @@ export default {
       margin-bottom: 50px;
     }
   }
-  
+
 }
 </style>
