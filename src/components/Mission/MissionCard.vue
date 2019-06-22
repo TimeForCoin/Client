@@ -1,7 +1,7 @@
 <template>
   <div class="mission-card">
     <div class="image">
-      <div class="back-image"></div>
+      <div class="back-image" :style="imgURL"></div>
       <div class="triangle"></div>
     </div>
     <div class="content">
@@ -14,7 +14,7 @@
         <div class="text2">
           <p class="long-text">任务类型：{{missionType}}</p>
           <p class="long-text">任务内容：{{MissionModel.content}}</p>
-          <p class="long-text" id="reward">酬劳：{{MissionModel.reward_object}}</p>
+          <p class="long-text" id="reward">酬劳：{{missionReward}}</p>
         </div>
         <div class="text3">
           <p class="icon-number"><a-icon type="eye"/>{{MissionModel.view_count}}</p>
@@ -27,6 +27,7 @@
 
 <script>
 const moment = require('moment')
+      const defualtImage = require('../../assets/logo.png')
 export default {
   props: ['MissionModel'],
   data() {
@@ -53,6 +54,23 @@ export default {
       var newTime = new Date(this.MissionModel.publish_date * 1000)
       // return moment(newTime).format("YYYY-MM-DD")
       return moment(newTime).startOf('hour').fromNow()
+    },
+    missionReward: function() {
+      if(this.MissionModel.reward_object == '') {
+        if(this.MissionModel.reward == 'money') {
+          return this.MissionModel.reward_value.toString() + ' 闲币'
+        }
+        else {
+          return this.MissionModel.reward_value.toString() + ' RMB'
+        }
+      }
+      return this.MissionModel.reward_object
+    },
+    imgURL: function() {
+      if(this.MissionModel.images.length > 0) {
+        return "background-image: url(" + this.MissionModel.images[0].url + ")"
+      }
+      return "background-image: url(" + defualtImage + ")"
     }
   }
 }
@@ -63,7 +81,6 @@ export default {
   background-color: white;
   width: 250px;
   height: 320px;
-  margin-right: 50px;
   transition: 0.5s;
   position: relative;
 
@@ -75,7 +92,7 @@ export default {
       width: 100%;
       height: 130px;
       overflow: hidden;
-      background-image: url("../assets/MissionPage/test.jpg");
+      //background-image: url("../../assets/MissionPage/test.jpg");
       background-size: cover;
       background-repeat: no-repeat;
       background-position-y: center;
@@ -85,8 +102,8 @@ export default {
       width: 0px;
       height: 0px;
       border-bottom: 40px solid white;
-      border-right: 250px solid transparent;
-      transform: translate(0, -40px;)
+      border-right: 253px solid transparent;
+      transform: translate(0px, -39px;)
     }
   }
 
@@ -98,7 +115,7 @@ export default {
     .head-img {
       width: 40px;
       height: 40px;
-      background-image: url("../assets/MissionPage/head.jpg");
+      background-image: url("../../assets/MissionPage/head.jpg");
       background-size: cover;
       background-repeat: no-repeat;
       background-position-y: center;
@@ -136,7 +153,7 @@ export default {
       padding-left: 10px;
       border-left-style:solid;
       border-width:3px;
-      border-color:#ffd19a;
+      border-color:#F0B11B;
 
       .long-text {
         font-size: 13px;
@@ -184,5 +201,6 @@ export default {
 .mission-card:hover {
   box-shadow: 0 0px 10px 0 rgba(0, 0, 0, 0.2);
   transition: 0.5s;
+  transform: scale(1.03);
 }
 </style>
