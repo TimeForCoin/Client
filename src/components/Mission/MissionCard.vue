@@ -27,7 +27,7 @@
 
 <script>
 const moment = require('moment')
-      const defualtImage = require('../../assets/logo.png')
+const defualtImage = require('../../assets/logo.png')
 export default {
   props: ['MissionModel'],
   data() {

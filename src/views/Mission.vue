@@ -44,7 +44,7 @@
         </div>
         <div class="mission-cards">
           <div v-for="(item) in missionShow" class="cards" :key="item.id" >
-            <MissionCard :MissionModel="item"></MissionCard>
+            <MissionCard :MissionModel="item" @click.native="showDetail(item.id)"></MissionCard>
           </div>
         </div>
         <a-button type="primary" class="add-more" icon="plus" @click="addMore">加载更多</a-button>
@@ -163,6 +163,10 @@ export default {
     },
     createQuestionnaire() {
       this.$router.push('/create_questionnaire');
+    },
+    showDetail(id) {
+      console.log(id)
+      this.$router.push({ name: 'mission_detail', params: { id }});
     }
   },
   created: async function() {
