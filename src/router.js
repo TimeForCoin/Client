@@ -37,7 +37,12 @@ export default new Router({
     {
       path: '/create_mission',
       name: 'create_mission',
-      component: () => import(/* webpackChunkName: "create_mission" */ './views/Create/CreateMission.vue')
+      component: () => import(/* webpackChunkName: "create_mission" */ './views/MissionCenter/MissionTypeChoice.vue')
+    },
+    {
+      path: '/mission_information',
+      name: '/mission_information',
+      component: () => import(/* webpackChunkName: "create_normal_mission" */ './views/MissionCenter/MissionInformation.vue')
     },
     {
       path: '/create_questionnaire',
