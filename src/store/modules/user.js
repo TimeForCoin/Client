@@ -34,9 +34,6 @@ export default {
       for (let key in state.info) {
         state.info[key] = data.info[key]
       }
-      for (let key in state.data) {
-        state.data[key] = data.data[key]
-      }
     },
     removeUser: function (state) {
       window.localStorage.clear()
