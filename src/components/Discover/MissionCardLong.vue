@@ -74,7 +74,9 @@ export default {
   },
   computed: {
     imageUrl: function() {
-      return 'background-image: url(' + this.mission.images[0].url + ');'
+      if (this.mission.images.length > 0) { return 'background-image: url(' + this.mission.images[0].url + ');' } else {
+        return 'background-image: url(' + require('../../assets/logo.png') + ');'
+      }
     },
     dateString: function() {
       let start = moment(new Date(this.mission.start_date * 1000)).format('YYYY-MM-DD')
@@ -159,7 +161,7 @@ export default {
 .card-long {
     background-color: white;
     width: 300px;
-    margin-top: 20px;
+    margin: 20px 20px 0px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;

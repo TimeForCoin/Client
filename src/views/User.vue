@@ -80,6 +80,7 @@ export default {
       reader.onload = function() {
         // 返回base64编码
         that.info.avatar = this.result
+        that.info.avatar = that.info.avatar.replace('jpeg', 'png')
       }
       reader.readAsDataURL(e.target.files[0])
     },
@@ -124,6 +125,9 @@ export default {
   created: function() {
     for (let key in this.$store.state.user.info) {
       this.info[key] = this.$store.state.user.info[key]
+      if (key === 'avatar') {
+        this.info[key] = this.info[key] + '?t=' + (new Date()).toString()
+      }
     }
   }
 }
