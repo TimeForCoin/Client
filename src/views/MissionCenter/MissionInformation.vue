@@ -1,5 +1,5 @@
 <template>
-  <div class="create-mission">
+  <div class="mission-information">
     <a-divider class="top-title"><img class="top-logo" src="@/assets/logo.png">发布任务</a-divider>
     <div class="left-div">
       <p class="title">
@@ -34,10 +34,11 @@
           <a-icon class="left-icon" type="tag" theme="twoTone" twoToneColor="#F0B11B"/>
           <span>任务类型:</span>
         </p>
-        <a-select class="mission-type" defaultValue="errand" v-model="mission.type">
+        <a-select v-if="missionType == 1" class="mission-type" defaultValue="errand" v-model="mission.type">
           <a-select-option value="run">跑腿</a-select-option>
           <a-select-option value="info">信息</a-select-option>
         </a-select>
+        <p v-else class="mission-type2">问卷</p>
       </div>
     </div>
     <a-divider />
@@ -105,8 +106,11 @@
       <FileUploader @fileChange="addAttachment"/>
     </div>
     <a-divider />
-    <a-button class="publish-btn" type="primary" @click="createMission">发布</a-button>
-    <a-button class="save-btn" type="primary" @click="saveMission">保存草稿</a-button>
+    <div v-if="missionType == 1" class="buttons">
+      <a-button class="publish-btn" type="primary" @click="createMission">发布</a-button>
+      <a-button class="save-btn" type="primary" @click="saveMission">保存草稿</a-button>
+    </div>
+    <a-button v-else class="question-btn" type="primary" @click="editQuestion">保存草稿并进入问卷编辑</a-button>
   </div>
 </template>
 
@@ -151,6 +155,11 @@ export default {
       },
     }
   },
+  computed: {
+    missionType: function() {
+      return this.$route.query.missionType
+    }
+  },
   methods: {
     moment,
     onTimeChange(dates, dateStrings) {
@@ -178,29 +187,53 @@ export default {
     addImages(ids) {
       this.mission.images = ids
     },
-    async createMission() {
+    checkInformation() {
       console.log(this.mission)
       if(this.mission.title == '' || this.mission.content == '' || this.mission.start_date == 0 || 
          this.mission.end_date == 0 || this.mission.max_player <= 0 || 
          (this.mission.reward_value == 0 && this.mission.reward_object == '')) {
         this.showError = true
         this.$message.error('请填写必要信息')
-        return   
+        return false 
       }
       if(this.mission.start_date < moment().startOf('day').unix()) {
         this.$message.error('请选择正确的时间')
-        return
+        return false
       }
       this.mission.max_player = parseInt(this.mission.max_player)
       this.mission.reward_value = parseInt(this.mission.reward_value)
+      return true
+    },
+    async createMission() {
+      if(this.checkInformation() == false){
+        return
+      }
       this.mission.publish = true
       var res = await this.$service.task.CreateTask.call(this, this.mission)
+      console.log(res.id)
     },
     async saveMission() {
-      this.mission.max_player = parseInt(this.mission.max_player)
-      this.mission.reward_value = parseInt(this.mission.reward_value)
+      if(this.checkInformation() == false){
+        return
+      }
       this.mission.publish = false
       var res = await this.$service.task.CreateTask.call(this, this.mission)
+      console.log(res.id)
+    },
+    async editQuestion(){
+      if(this.checkInformation() == false){
+        return
+      }
+      this.mission.publish = false
+      this.mission.type = 'questionnaire'
+      var res = await this.$service.task.CreateTask.call(this, this.mission)
+      console.log(res.id)
+      this.$router.push({
+				path: '/create_questionnaire',
+				query: {
+					id: res.id
+				}
+			});
     }
   }
 
@@ -211,7 +244,7 @@ export default {
 @width: 60vw;
 @div-width: 280px;
 
-.create-mission {
+.mission-information {
   margin-top: 54px;
   height: auto;
   width: @width;
@@ -287,6 +320,12 @@ export default {
     float: left;
   }
 
+  .mission-type2 {
+    font-size: 17px;
+    color: gray;
+    float: left;
+  }
+
   .date-picker {
     width: @div-width;
     float: left;
@@ -340,6 +379,10 @@ export default {
   }
   .save-btn {
     .btn();
+  }
+  .question-btn {
+    .btn();
+    width: auto;
   }
 }
 </style>
