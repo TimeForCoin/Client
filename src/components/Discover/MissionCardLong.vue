@@ -1,5 +1,5 @@
 <template>
-    <div class="card-long">
+    <div @click="toDetail" class="card-long">
         <div class="card-top">
             <div class="image" :style="imageUrl"></div>
             <div class="triangle-outter"></div>
@@ -34,7 +34,7 @@
         </div>
         <div class="card-bottom">
             <div class="publisher-info-block">
-                <img class="avatar" src="../../assets/logo.png">
+                <img class="avatar" :src="mission.publisher.avatar">
                 <div class="mission-publisher-info">
                     <div>{{mission.publisher.nickname}}</div>
                     <div class="time">发布于{{publishDateString}}</div>
@@ -72,11 +72,18 @@ export default {
 
     }
   },
+  methods: {
+    toDetail: function() {
+      let id = this.mission.id
+      this.$router.push({ name: 'mission_detail', params: { id } })
+    }
+  },
   computed: {
     imageUrl: function() {
-      if (this.mission.images.length > 0) { return 'background-image: url(' + this.mission.images[0].url + ');' } else {
-        return 'background-image: url(' + require('../../assets/logo.png') + ');'
+      if (this.mission.images.length > 0) {
+        return 'background-image: url(' + this.mission.images[0].url + ');'
       }
+      return 'background-image: url(' + require('../../assets/logo.png') + ');'
     },
     dateString: function() {
       let start = moment(new Date(this.mission.start_date * 1000)).format('YYYY-MM-DD')
