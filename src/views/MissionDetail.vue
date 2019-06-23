@@ -45,6 +45,9 @@
 			<div class="player-div">
 				<p class="title"><span>当前参与者</span></p>
 			</div>
+			<div class="waiting-div" v-if="isPublisher == true">
+				<p class="title"><span>待审核参与者</span></p>
+			</div>
 		</div>
 	</div>
 </template>
@@ -59,6 +62,12 @@
 			}
 		},
 		computed: {
+			userID: function() {
+				return this.$store.getters.getID
+			},
+			isPublisher: function() {
+				return this.userID == this.mission.publisher.id
+			},
 			color: function() {
 				switch(this.mission.status) {
 					case "draft":
@@ -113,7 +122,7 @@
 	.main {
 		background: white;
 		width: 800px;
-		height: 100vh;
+		height: auto;
 		margin-left: auto;
 		margin-right: auto;
 		position: relative;
@@ -244,6 +253,9 @@
 		}
 
 		.player-div {
+			.block();
+		}
+		.waiting-div {
 			.block();
 		}
 	}

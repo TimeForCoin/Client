@@ -150,7 +150,7 @@ export default {
         start_date: 0,
         end_date: 0,
         max_player: 0,
-        auto_accept: true,
+        auto_accept: false,
         publish: false,
       },
     }

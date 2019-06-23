@@ -89,7 +89,7 @@ export default {
           return (item.title.indexOf(this.searchText) !== -1 ||
                   item.content.indexOf(this.searchText) !== -1)
         }
-        return true;
+        return true
       })
       // .filter((item) => {
       //   if (this.missionType == 0
@@ -112,8 +112,8 @@ export default {
       //     return ((x<y)?1:(x>y)?-1:0);
       //   }
       //  return 0;
-      //})
-    },
+      // })
+    }
   },
   methods: {
     leftMenuClick(event) {
@@ -121,50 +121,50 @@ export default {
         case '1':
           this.getPublishedMission()
           this.show = 1
-          break;
-        case '2': 
+          break
+        case '2':
           this.getPlayingMission()
           this.show = 2
-          break;
+          break
         case '3':
           this.getCollectedMission()
           this.show = 3
-          break;
+          break
       }
       console.log(event.key)
     },
     topMenuClick(event) {
-      switch(event.key) {
+      switch (event.key) {
         case 'all':
-          this.missionType = 'all';
-          break;
+          this.missionType = 'all'
+          break
         case 'run':
-          this.missionType = 'run';
-          break;
+          this.missionType = 'run'
+          break
         case 'questionnaire':
-          this.missionType = 'questionnaire';
-          break;
+          this.missionType = 'questionnaire'
+          break
         case 'info':
-          this.missionType = 'info';
-          break;
+          this.missionType = 'info'
+          break
         case 'new':
-          this.sortType = 'new';
-          break;
+          this.sortType = 'new'
+          break
         case 'hot':
-          this.sortType = 'hot';
-          break;
+          this.sortType = 'hot'
+          break
       }
-      console.log(event.key);
-      switch(this.show) {
+      console.log(event.key)
+      switch (this.show) {
         case 1:
           this.getPublishedMission()
-          break;
+          break
         case 2:
           this.getPlayingMission()
-          break;
+          break
         case 3:
           this.getCollectedMission()
-          break;
+          break
       }
     },
     onSearch(value) {
@@ -189,7 +189,7 @@ export default {
       this.$router.push('/create_mission')
     },
     createQuestionnaire() {
-      this.$router.push('/create_questionnaire');
+      this.$router.push('/create_questionnaire')
     },
     showDetail(id) {
       console.log(id)
@@ -222,7 +222,7 @@ export default {
       var res = await this.$service.task.GetPlayingTaskList.call(this, 'me', parmas)
       console.log(res)
       this.missions = []
-      for(var i = 0; i < res.data.length; i ++) {
+      for (var i = 0; i < res.data.length; i++) {
         this.missions.push(res.data[i].task)
       }
       console.log(this.missions)

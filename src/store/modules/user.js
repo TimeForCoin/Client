@@ -34,15 +34,15 @@ export default {
       for (let key in state.info) {
         state.info[key] = data.info[key]
       }
-      for (let key in state.data) {
-        state.data[key] = data.data[key]
-      }
     },
     removeUser: function (state) {
       window.localStorage.clear()
     }
   },
   getters: {
+    getID: function(state) {
+      return state.id
+    },
     getNickname: function(state) {
       return state.info.nickname
     },

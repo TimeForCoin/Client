@@ -1,67 +1,61 @@
 <template>
     <div class="card-long">
         <div class="card-top">
+            <div class="image" :style="imageUrl"></div>
+            <div class="triangle-outter"></div>
+            <div class="triangle-inner"></div>
+            <p class="reward">
+                <a-icon class="icon" type="money-collect"/>
+                <span class="reward-count">{{this.reward}}</span>
+            </p>
+        </div>
+        <div class="card-cotent">
+            <p class="title">任务名称: {{mission.title}}</p>
+            <p class="time">
+                <a-icon type="clock-circle"/>
+                {{dateString}}
+            </p>
+            <p class="location">
+                <a-icon type="environment"/>
+                {{mission.location.join("/")}}
+            </p>
+            <a-tag class="info" :color="typeColor">{{this.type}}</a-tag>
+            <a-tag class="info" :color="statusColor">{{this.status}}</a-tag>
+            <p class="info">{{mission.tags ? '标签:':'暂无标签'}}</p>
+            <div class="mission-tag-list">
+                <a-tag  v-for="tag in mission.tags" :key="tag.id" color="pink">{{tag}}</a-tag>
+            </div>
+            <a-popover class="content" title="任务内容">
+                <template slot="content">
+                    <p>{{mission.content}}</p>
+                </template>
+                <a-button type="primary">任务内容</a-button>
+            </a-popover>
+        </div>
+        <div class="card-bottom">
             <div class="publisher-info-block">
                 <img class="avatar" src="../../assets/logo.png">
                 <div class="mission-publisher-info">
-                    <div>{{test.publisher.name}}</div>
+                    <div>{{mission.publisher.nickname}}</div>
                     <div class="time">发布于{{publishDateString}}</div>
                 </div>
             </div>
-            <p class="title">任务名称: {{test.title}}</p>
-        </div>
-        <div class="card-cotent">
-            <div class="mission-info-block">
-                <div class="block-left">
-                    <div class="key-info-block">
-                        <p class="key-info">
-                            <a-icon type="clock-circle"/>
-                            {{dateString}}
-                        </p>
-                        <p class="key-info">
-                            <a-icon type="environment"/>
-                            {{test.location.join("/")}}
-                        </p>
-                    </div>
-                    <p class="info">{{test.type}}</p>
-                    <p class="info">{{test.status}}</p>
-                </div>
-                <div class="block-right">
-                    <div class="mission-tag-list">
-                        <p class="tag-title">标签:</p>
-                        <div v-for="tag in test.tags" :key="tag.id" class="mission-tag">{{tag}}</div>
-                    </div>
-                    <a-popover class="content" title="任务内容">
-                        <template slot="content">
-                            <p>{{test.content}}</p>
-                        </template>
-                        <a-button type="primary">任务内容</a-button>
-                    </a-popover>
-                </div>
-            </div>
-            <img class="image" src="../../assets/logo.png">
-        </div>
-        <div class="card-bottom">
-            <p class="reward">
-                <a-icon type="money-collect"/>
-                {{test.reward_value + test.reward}}
-            </p>
             <div class="icon-block">
                 <p class="icon">
                     <a-icon type="message"/>
-                    {{test.comment}}
+                    {{mission.comment_count}}
                 </p>
                 <p class="icon">
                     <a-icon type="eye"/>
-                    {{test.view}}
+                    {{mission.view_count}}
                 </p>
                 <p class="icon">
                     <a-icon type="star"/>
-                    {{test.collect}}
+                    {{mission.collect_count}}
                 </p>
                 <p class="icon">
                     <a-icon type="like"/>
-                    {{test.like}}
+                    {{mission.like_count}}
                 </p>
             </div>
         </div>
@@ -72,180 +66,213 @@
 const moment = require('moment')
 
 export default {
+  props: ['mission'],
   data() {
     return {
-      test: {
-        title: '秀秀打荣真',
-        type: '跑腿',
-        content: '拳打脚踢',
-        location: ['中山大学', '北京大学'],
-        reward: 'RMB',
-        reward_value: '100',
-        status: '正在进行中',
-        start_date: 1559732561,
-        end_date: 1559732561,
-        tags: ['打游戏', '打代码'],
-        comment: 66,
-        view: 77,
-        collect: 88,
-        like: 99,
-        publisher: {
-          name: 'CookiesChen',
-          time: 1559732561
-        }
-      }
+
     }
   },
   computed: {
+    imageUrl: function() {
+      if (this.mission.images.length > 0) { return 'background-image: url(' + this.mission.images[0].url + ');' } else {
+        return 'background-image: url(' + require('../../assets/logo.png') + ');'
+      }
+    },
     dateString: function() {
-      let start = moment(new Date(this.test.start_date * 1000)).format('YYYY-MM-DD')
-      let end = moment(new Date(this.test.end_date * 1000)).format('YYYY-MM-DD')
+      let start = moment(new Date(this.mission.start_date * 1000)).format('YYYY-MM-DD')
+      let end = moment(new Date(this.mission.end_date * 1000)).format('YYYY-MM-DD')
       return start + '~' + end
     },
     publishDateString: function() {
-      return moment(new Date(this.test.publisher.time * 1000)).format('YYYY-MM-DD')
+      return moment(new Date(this.mission.publish_date * 1000)).format('YYYY-MM-DD')
+    },
+    type: function() {
+      switch (this.mission.type) {
+        case 'run':
+          return '跑腿'
+        case 'info':
+          return '信息征集'
+        case 'questionnaire':
+          return '问卷'
+        default:
+          return ''
+      }
+    },
+    typeColor: function() {
+      switch (this.mission.type) {
+        case 'run':
+          return 'green'
+        case 'info':
+          return 'purple'
+        case 'questionnaire':
+          return 'blue'
+        default:
+          return ''
+      }
+    },
+    status: function() {
+      switch (this.mission.status) {
+        case 'draft':
+          return '草稿'
+        case 'wait':
+          return '执行中/等待接受'
+        case 'close':
+          return '已关闭'
+        case 'finish':
+          return '已完成'
+        default:
+          return ''
+      }
+    },
+    statusColor: function() {
+      switch (this.mission.status) {
+        case 'draft':
+          return 'green'
+        case 'wait':
+          return 'green'
+        case 'close':
+          return 'red'
+        case 'finish':
+          return 'blue'
+        default:
+          return ''
+      }
+    },
+    reward: function() {
+      switch (this.mission.reward) {
+        case 'rmb':
+          return this.mission.reward_value + ' RMB'
+        case 'money':
+          return this.mission.reward_value + ' 闲币'
+        case 'object':
+          return '实物'
+        default:
+          return ''
+      }
     }
   }
 }
 </script>
 
 <style lang="less" scoped>
+@triangle-width: 300px;
+@triangle-heigth: 75px;
+
 .card-long {
-    width: 45%;
-    padding: 20px 20px;
-    min-width: 570px;
     background-color: white;
+    width: 300px;
+    margin: 20px 20px 0px;
     display: flex;
     flex-direction: column;
-    margin-top: 20px;
+    justify-content: space-between;
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
 
     .card-top {
-        display: flex;
-        justify-content: space-between;
+        position: relative;
 
-        .publisher-info-block {
-            display: flex;
-            font-size: 13px;
-            font-weight: bold;
-
-            .avatar {
-                height: 35px;
-                width: 35px;
-            }
-
-            .mission-publisher-info {
-                text-align: left;
-
-                .time {
-                    font-weight: normal;
-                    color: rgba(0, 0, 0, 0.5);
-                }
-            }
+        .image {
+            width: 300px;
+            height: 300px;
+            overflow: hidden;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
         }
 
-        .title {
-            font-weight: bold;
-            font-size: 15px;
+        .triangle-outter {
+            width: 0px;
+            height: 0px;
+            border-bottom: @triangle-heigth #F0B11B solid;
+            border-right: @triangle-width transparent solid;
+            top: 300 - @triangle-heigth;
+            position: absolute;
+        }
+
+        .triangle-inner {
+            width: 0px;
+            height: 0px;
+            border-bottom: @triangle-heigth - 3   white solid;
+            border-right: @triangle-width - 8  transparent solid;
+            top: 300 - @triangle-heigth + 3;
+            position: absolute;
+        }
+
+        .reward {
+            position: absolute;
+            top: 270px;
+            left: 5px;
+
+            .icon {
+                color: rgba(255, 0, 0, 0.5);
+            }
+
+            .reward-count {
+                font-size: 18px;
+                margin-left: 5px;
+                color: red;
+            }
         }
     }
 
     .card-cotent {
         display: flex;
-        margin-top: 20px;
-        justify-content: space-between;
+        padding: 20px 5px;
+        flex-direction: column;
+        align-items: flex-start;
 
-        .image {
-            width: 100px;
-            height: 100px;
-        }
-
-        .mission-content {
+        .title {
+            font-weight: bold;
             font-size: 15px;
         }
 
-        .mission-info-block {
+        .time, .location, .info {
+            font-size: 15px;
+            margin: 0px;
+        }
+
+        .info {
+            margin-top: 5px;
+        }
+
+        .mission-tag-list {
             display: flex;
+            margin: 5px 0px;
+        }
 
-            .block-left {
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-
-                .mission-info {
-                    text-align: left;
-                    white-space: nowrap;
-                    font-size: 15px;
-                    margin: 0px;
-                    margin-right: 20px;
-                }
-
-                .key-info-block {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: flex-start;
-
-                    .key-info {
-                        font-size: 13px;
-                        margin: 0px;
-                    }
-                }
-
-                .info {
-                    margin: 0px;
-                    color: seagreen;
-                    font-size: 13px;
-                }
-            }
-
-            .block-right {
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                margin-left: 40px;
-
-                .mission-tag-list {
-                    display: flex;
-
-                    .tag-title {
-                        margin: 0px;
-                        margin-right: 10px;
-                    }
-                    .mission-tag {
-                        padding: 2px 10px;
-                        font-size: 12px;
-                        border-radius: 5px;
-                        margin-right: 5px;
-                        background-color: darkcyan;
-                        color: white;
-                        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
-                    }
-
-                    .mission-tag:hover {
-                        cursor: default;
-                    }
-                }
-                .content {
-                    margin-top: 20px;
-                }
-            }
+        .content {
+            margin-top: 10px;
         }
     }
 
     .card-bottom {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 10px;
 
-        .reward {
-            font-size: 20px;
-            color: red;
-            margin: 0px;
+        .publisher-info-block {
+            display: flex;
+            font-size: 13px;
+            color: white;
+            background-color: #F0B11B;
+            padding: 10px;
+
+            .avatar {
+                background-color: white;
+                height: 45px;
+                width: 45px;
+            }
+
+            .mission-publisher-info {
+                text-align: left;
+                margin-left: 10px;
+
+                .time {
+                    font-weight: normal;
+                    color: rgba(255, 255, 255, 0.7);
+                }
+            }
         }
 
         .icon-block {
             display: flex;
+            margin: 10px 0px;
 
             .icon {
                 margin: 0px;
