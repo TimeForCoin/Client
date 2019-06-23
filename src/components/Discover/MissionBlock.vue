@@ -16,18 +16,18 @@
                 <a-select-option value="money">现金报酬</a-select-option>
                 <a-select-option value="physical">实物报酬</a-select-option>
             </a-select>
-            <a-button class="mission-sort" type="primary" ghost>开始排序</a-button>
+            <a-button class="mission-sort" type="primary" ghost @click="onSortClick">开始排序</a-button>
         </div>
         <div class="mission-list">
-          <MissionCardLong />
-          <MissionCardLong />
+          <MissionCardLong v-for="mission in missions" :mission="mission"  :key="mission.id"/>
         </div>
-        <a-pagination :total="50" showQuickJumper />
+        <a-pagination :total="50" showQuickJumper hideOnSinglePage @change="onPageChange" />
     </div>
 </template>
 
 <script>
 import MissionCardLong from './MissionCardLong.vue'
+import { async } from 'q'
 
 export default {
   components: {
@@ -35,27 +35,29 @@ export default {
   },
   data: function() {
     return {
-      test: {
-        'title': '吃饭睡觉打游戏',
-        'content': '疯狂暗示荣真',
-        'type': 'info',
-        'reward': 'rmb',
-        'reward_value': 500,
-        'reward_object': 'Zhenly',
-        'view_count': 60,
-        'like_count': 30,
-        'collect_count': 30,
-        'publish_date': 1559732561,
-        'publisher': {
-          'nickname': 'DarkVan'
-        }
-      }
+      pageIndex: 1,
+      size: 8,
+      pageCount: 0,
+      missions: [
+      ]
     }
   },
   methods: {
-    OnSortClick: function() {
+    onSortClick: function() {
 
+    },
+    getMissions: async function() {
+      let params = {
+        page: this.pageIndex,
+        size: this.size
+      }
+      let res = await this.$service.task.GetTasksList.call(this, params)
+      this.missions.push.apply(this.missions, res.tasks)
+      this.pageCount = res.pagination.total / this.size
     }
+  },
+  created: async function() {
+    this.getMissions()
   }
 }
 </script>>
