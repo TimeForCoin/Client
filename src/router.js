@@ -50,7 +50,7 @@ export default new Router({
       component: () => import(/* webpackChunkName: "create_questionnaire" */ './views/Questionnaire.vue')
     },
     {
-      path: '/mission_detail/:id',
+      path: '/mission_detail',
       name: 'mission_detail',
       component: () => import(/* webpackChunkName: "create_mission" */ './views/MissionDetail.vue')
     }

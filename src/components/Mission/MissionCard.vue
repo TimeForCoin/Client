@@ -5,24 +5,24 @@
       <div class="triangle"></div>
     </div>
     <div class="content">
-      <div class="head-img"></div>
-        <div class="text1">
-          <p class="title">{{MissionModel.title}}</p>
-          <span class="user">{{MissionModel.publisher.nickname}}</span>
-          <span class="time">{{time}}</span>
-        </div>
-        <div class="text2">
-          <p class="long-text">任务类型：{{missionType}}</p>
-          <p class="long-text">任务内容：{{MissionModel.content}}</p>
-          <p class="long-text" id="reward">酬劳：{{missionReward}}</p>
-        </div>
-        <div class="text3">
-          <p class="icon-number"><a-icon type="eye"/>{{MissionModel.view_count}}</p>
-          <p class="icon-number"><a-icon type="like"/>{{MissionModel.like_count}}</p>
-          <p class="icon-number"><a-icon type="star"/>{{MissionModel.collect_count}}</p>
-        </div>
+      <img class="head-img" :src="MissionModel.publisher.avatar" />
+      <div class="text1">
+        <p class="title">{{MissionModel.title}}</p>
+        <span class="user">{{MissionModel.publisher.nickname}}</span>
+        <span class="time">{{time}}</span>
+      </div>
+      <div class="text2">
+        <p class="long-text">任务类型：{{missionType}}</p>
+        <p class="long-text">任务内容：{{MissionModel.content}}</p>
+        <p class="long-text" id="reward">酬劳：{{missionReward}}</p>
+      </div>
+      <div class="text3">
+        <p class="icon-number"><a-icon type="eye"/>{{MissionModel.view_count}}</p>
+        <p class="icon-number"><a-icon type="like"/>{{MissionModel.like_count}}</p>
+        <p class="icon-number"><a-icon type="star"/>{{MissionModel.collect_count}}</p>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -115,11 +115,8 @@ export default {
     .head-img {
       width: 40px;
       height: 40px;
-      background-image: url("../../assets/MissionPage/head.jpg");
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position-y: center;
-      border-radius: 50%;
+      display: block;
+      border-radius: 100%;
       transform: translate(10px, 15px);
     }
 

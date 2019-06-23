@@ -8,34 +8,43 @@
 				<div class="triangle-top"></div>
 				<div class="triangle-bottom"></div>
 			</div>
-			<a-tag class="status-tag" :color="color">{{status}}</a-tag>
+			<div class="status-div">
+				<p class="title"><span>任务状态</span></p>
+				<a-tag class="status-tag" :color="color">{{status}}</a-tag>
+			</div>
 			<div class="content-div">
-				<p>任务详情</p>
+				<p class="title"><span>任务详情</span></p>
 				<p class="content">{{mission.content}}</p>
 			</div>
-			<p>开始时间</p>
-			<p>{{startDate}}</p>
-			<p>结束时间</p>
-			<p>{{endDate}}</p>
-			<p>任务标签</p>
-			<div>
-				<template v-for="tag in mission.tags">
-					<a-tag :key="tag">{{tag}}</a-tag>
-				</template>
+			<div class="date-div">
+				<p class="title">任务时间</p>
+				<p class="content">{{startDate}} - {{endDate}}</p>
 			</div>
-			<p>任务地点</p>
-			<div>
-				<template v-for="tag in mission.location" >
-					<a-tag :key="tag">{{tag}}</a-tag>
-				</template>
+			<div class="block">
+				<p class="title">任务标签</p>
+				<div class="content">
+					<template v-for="tag in mission.tags">
+						<a-tag :key="tag">{{tag}}</a-tag>
+					</template>
+				</div>
 			</div>
-			<p>相关图片</p>
+			<div class="block">
+				<p class="title">任务地点</p>
+				<div class="content">
+					<template v-for="tag in mission.location" >
+						<a-tag :key="tag">{{tag}}</a-tag>
+					</template>
+				</div>
+			</div>
 			<div class="image-div">
+				<p class="title"><span>相关图片</span></p>
 				<div class="image" v-for="img in mission.images" :key="img.id">
 					<img :src="img.url"/>
 				</div>
 			</div>
-			<p>当前参与者</p>
+			<div class="player-div">
+				<p class="title"><span>当前参与者</span></p>
+			</div>
 		</div>
 	</div>
 </template>
@@ -46,6 +55,7 @@
 		data() {
 			return {
 				mission: {},
+				imgList: [],
 			}
 		},
 		computed: {
@@ -85,7 +95,7 @@
 			},
 		},
 		created: async function() {
-			var id = this.$route.params.id
+			var id = this.$route.query.id
 			console.log(id)
 			var res = await this.$service.task.GetTask.call(this, id)
 			console.log(res)
@@ -161,36 +171,69 @@
 			}
 		}
 
-		.status-tag {
-
-		}
-
-		.content-div {
-			width: 600px;
-			height: auto;
-			min-height: 100px;
-			margin-left: auto;
-			margin-right: auto;
-			transition: 0.5s;
-
-			.content {
-				text-align: left;
+		.title {
+			text-align: left;
+			padding-left: 10px;
+			border-left-style:solid;
+			border-width:5px;
+			border-color:#F0B11B;
+			color: #7c7c7c;
+			font-size: 18px;
+			font-weight: bold;
+			span {
+				vertical-align: middle;
+				margin-right: 10px;
 			}
 		}
 
-		.content-div:hover {
+		.content {
+			text-align: left;
+			padding: 10px;
+		}
+
+		.block {
+			width: 600px;
+			height: auto;
+			margin-left: auto;
+			margin-right: auto;
+			margin-top: 15px;
+			text-align: left;
+		}
+
+		.status-div {
+			.block();
+			text-align: left;
+
+			.title {
+				display: inline-block;
+			}
+			.status-tag {
+				font-size: 14px;
+				margin-left: 15px;
+			}
+		}
+
+		.content-div {
+			.block();
 			transition: 0.5s;
-			transform: scale(1.03);
-			box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.2);
+		}
+
+		// .content-div:hover {
+		// 	transition: 0.5s;
+		// 	transform: scale(1.03);
+		// 	box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.2);
+		// }
+
+		.date-div {
+			.block();
+		}
+
+		.tag-div {
+			.block();
 		}
 
 		.image-div {
-			height: auto;
-			width: 600px;
-			display: flex;
-			flex-direction: row;
-			flex-wrap: wrap;
-			justify-content: flex-start;
+			.block();
 
 			.image {
 				img {
@@ -198,6 +241,10 @@
 					width: 100px;
 				}
 			}
+		}
+
+		.player-div {
+			.block();
 		}
 	}
 	

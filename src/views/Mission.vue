@@ -18,7 +18,6 @@
             </a-menu-item>
           </a-menu>
           <a-button type="primary" class="mission-btn" @click="createMission">发布任务</a-button>
-          <a-button type="primary" class="questionnaire-btn" @click="createQuestionnaire">创建问卷</a-button>
         </div>
       </a-layout-sider>
       <a-layout-content>
@@ -194,7 +193,12 @@ export default {
     },
     showDetail(id) {
       console.log(id)
-      this.$router.push({ name: 'mission_detail', params: { id }});
+      this.$router.push({
+				path: '/mission_detail',
+				query: {
+					id: id
+				}
+			});
     },
     async getCollectedMission() {
       var parmas = {
