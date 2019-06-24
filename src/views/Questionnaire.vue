@@ -2,7 +2,8 @@
     <div class="questionnaire">
         <a-layout class="container">
             <a-layout-sider class="sider">
-              <a-collapse :activeKey="activeKey">
+              <div class="wrapper">
+                <a-collapse :activeKey="activeKey">
                   <a-collapse-panel v-for="(type, index) in sider" :header="type.menu" :bordered="false" :key="String(index)">
                         <div class="button-area">
                             <a-popover v-for="(menuItem, typeIndex) in type.menuItem" :title="menuItem" placement="right" :key="menuItem.id">
@@ -13,6 +14,11 @@
                         </div>
                     </a-collapse-panel>
               </a-collapse>
+              <div class="function-button-area">
+                <a-button type="primary" class="button" ghost @click="preview">问卷预览</a-button>
+                <a-button type="primary" class="button" @click="finish">编辑完成</a-button>
+              </div>
+              </div>
             </a-layout-sider>
             <a-layout-content class="content">
               <div class="questionnaire-info">
@@ -67,8 +73,8 @@ export default {
         }
       ],
       questionnaire: {
-        title: '问卷标题',
-        description: '为了给您提供更好的服务，希望您能抽出几分钟时间，将您的感受和建议告诉我们，我们非常重视每位用户的宝贵意见，期待您的参与！现在我们就马上开始吧！',
+        title: '',
+        description: '',
         anonymous: true,
         questions: []
       }
@@ -141,6 +147,7 @@ export default {
         case 'copy':
           let newQuestion = JSON.parse(JSON.stringify(this.questionnaire.questions[index]))
           this.questionnaire.questions.splice(index, 0, newQuestion)
+          this.autoSave()
           break
         case 'delete':
           this.questionnaire.questions.splice(index, 1)
@@ -150,6 +157,7 @@ export default {
             temp = this.questionnaire.questions[index]
             this.questionnaire.questions.splice(index, 1)
             this.questionnaire.questions.splice(index - 1, 0, temp)
+            this.autoSave()
           }
           break
         case 'down':
@@ -157,20 +165,56 @@ export default {
             temp = this.questionnaire.questions[index]
             this.questionnaire.questions.splice(index, 1)
             this.questionnaire.questions.splice(index + 1, 0, temp)
+            this.autoSave()
           }
           break
         case 'first':
-          temp = this.questionnaire.questions[index]
-          this.questionnaire.questions.splice(index, 1)
-          this.questionnaire.questions.splice(0, 0, temp)
+          if (index !== 0) {
+            temp = this.questionnaire.questions[index]
+            this.questionnaire.questions.splice(index, 1)
+            this.questionnaire.questions.splice(0, 0, temp)
+            this.autoSave()
+          }
           break
         case 'last':
-          temp = this.questionnaire.questions[index]
-          this.questionnaire.questions.splice(index, 1)
-          this.questionnaire.questions.push(temp)
+          if (index !== this.questionnaire.questions.length - 1) {
+            temp = this.questionnaire.questions[index]
+            this.questionnaire.questions.splice(index, 1)
+            this.questionnaire.questions.push(temp)
+          }
           break
       }
+    },
+    // 进入问卷预览
+    preview: function() {
+      console.log(this.$route.query.id)
+    },
+    // 完成问卷编辑
+    finish: function() {
+
+    },
+    // 自动保存
+    autoSave: async function() {
+      // 保存基本信息
+      let res = await this.$service.questionnaire.modifyInfo.call(this, this.$route.query.id, {
+        title: this.questionnaire.title,
+        description: this.questionnaire.description,
+        anonymous: this.questionnaire.anonymous
+      })
+      // 保存问题
+      res = await this.$service.questionnaire.modifyQuestions.call(this, this.$route.query.id, {
+        problems: this.questionnaire.questions
+      })
     }
+  },
+  mounted: async function() {
+    let info = await this.$service.questionnaire.getInfo.call(this, this.$route.query.id)
+    this.questionnaire.title = info.data.title
+    this.questionnaire.description = info.data.description
+    this.questionnaire.anonymous = true
+    // console.log(this.questionnaire)
+    let questions = await this.$service.questionnaire.getQuestions.call(this, this.$route.query.id)
+    this.questionnaire.questions = JSON.parse(JSON.stringify(questions.data.problems))
   }
 }
 </script>
@@ -190,14 +234,31 @@ export default {
             background-color: white;
             box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
 
-            .button-area {
+            .wrapper {
+              height: 100%;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+
+              .button-area {
+                  display: flex;
+                  flex-wrap: wrap;
+                  justify-content: space-between;
+
+                  .button {
+                      margin-bottom: 10px;
+                  }
+              }
+
+              .function-button-area {
+                margin: 0px 10px 20px;
                 display: flex;
-                flex-wrap: wrap;
-                justify-content: space-between;
+                flex-direction: column;
 
                 .button {
-                    margin-bottom: 10px;
+                  margin-bottom: 10px;
                 }
+              }
             }
         }
 
