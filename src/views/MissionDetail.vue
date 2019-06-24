@@ -54,8 +54,9 @@
 				</div>
 			</div>
 			<div class="block" v-if="mission.type == 'questionnaire'">
-				<p class="title"><span>问卷填写</span></p>
-				<a-button type="primary" @click="showQuestionnaire">进入问卷</a-button>
+				<p class="title"><span>任务问卷</span></p>
+				<a-button type="primary" v-if="isPlayer == true" @click="showQuestionnaire">填写问卷</a-button>
+				<a-button type="primary" v-else @click="showQuestionnaire">查看问卷</a-button>
 			</div>
 			<div class="image-div" v-if="mission.images.length != 0">
 				<p class="title"><span>相关图片</span></p>
@@ -189,7 +190,7 @@
 			var id = this.$route.query.id
 			//console.log(id)
 			var res = await this.$service.task.GetTask.call(this, id)
-			//console.log(res)
+			console.log(res)
 			this.mission = res
 			if (this.userID == this.mission.publisher.id) {
 				this.isPublisher = true
@@ -212,6 +213,7 @@
 				}
 				else {
 					this.$message.success('成功加入')
+					this.isPlayer = true
 				}
 			},
 			async closeTask() {
