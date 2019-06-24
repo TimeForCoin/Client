@@ -10,7 +10,7 @@
 			</div>
 			<div class="status-div">
 				<p class="title"><span>任务状态</span></p>
-				<a-tag class="status-tag" :color="color">{{status}}</a-tag>
+				<a-tag class="status-tag" :color="color">{{missionStatus}}</a-tag>
 			</div>
 			<div class="content-div">
 				<p class="title"><span>任务详情</span></p>
@@ -44,29 +44,42 @@
 			</div>
 			<div class="player-div">
 				<p class="title"><span>当前参与者</span></p>
+				<PlayerList :Players="runningPlayer"/>
 			</div>
 			<div class="waiting-div" v-if="isPublisher == true">
 				<p class="title"><span>待审核参与者</span></p>
+			</div>
+			<div class="btn-group">
+				<a-button type="primary" icon="like">点赞</a-button>
+				<a-button type="primary" icon="star">收藏</a-button>
+				<a-button v-if="isPublisher == false && isPlayer == false" type="primary" @click="joinTask">{{this.joinBtnText}}</a-button>
+				<a-button v-if="isPublisher == false && isPlayer == true" type="primary" @click="giveUpTask">放弃任务</a-button>
+				<a-button v-else type="primary" @click="deleteTask">中止任务</a-button>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
+	import PlayerList from '@/components/Mission/MissionDetail/PlayerList.vue'
 	const moment = require('moment')
+
   export default {
+		components: {
+			PlayerList
+		},
 		data() {
 			return {
 				mission: {},
 				imgList: [],
+				allPlayer: [],
+				isPublisher: false,
+				isPlayer: false,
 			}
 		},
 		computed: {
 			userID: function() {
 				return this.$store.getters.getID
-			},
-			isPublisher: function() {
-				return this.userID == this.mission.publisher.id
 			},
 			color: function() {
 				switch(this.mission.status) {
@@ -81,11 +94,14 @@
 				}
 				return "yellow"
 			},
-			status: function() {
+			missionStatus: function() {
 				switch(this.mission.status) {
 					case "draft":
 						return "草稿"
 					case "wait":
+						if(this.mission.start_date > moment().startOf('day').unix()) {
+							return "等待中"
+						}
 						return "进行中"
 					case "close":
 						return "已关闭"
@@ -93,6 +109,12 @@
 						return "已完成"
 				}
 				return "未知"
+			},
+			joinBtnText: function() {
+				if(this.mission.auto_accept == true) {
+					return "立即加入"
+				}
+				return "申请加入"
 			},
 			startDate: function() {
 				var newTime = new Date(this.mission.start_date * 1000)
@@ -102,13 +124,56 @@
 				var newTime = new Date(this.mission.end_date * 1000)
 				return moment(newTime).format("YYYY-MM-DD")
 			},
+			// 当前带审核的参与者
+			waitPlayer: function() {
+				return this.allPlayer.filter((item) => {
+					return item.status == 'wait'
+				})
+			},
+			// 当前已加入的参与者
+			runningPlayer: function() {
+				return this.allPlayer.filter((item) => {
+					return item.status == 'running'
+				})
+			}
 		},
+		// 加载任务消息和参与者信息
 		created: async function() {
 			var id = this.$route.query.id
-			console.log(id)
+			//console.log(id)
 			var res = await this.$service.task.GetTask.call(this, id)
-			console.log(res)
+			//console.log(res)
 			this.mission = res
+			if (this.userID == this.mission.publisher.id) {
+				this.isPublisher = true
+			}
+			var res2 = await this.$service.task.GetPlayerList.call(this, this.mission.id)
+			this.allPlayer = res2.data
+			console.log(this.allPlayer)
+			// 判断是否参与
+			this.allPlayer.forEach(element => {
+				if(element.player.id == this.userID) this.isPlayer = true
+			});
+		},
+		methods: {
+			async joinTask() {
+				let p = {}
+				if (this.mission.auto_accept == false) p.note = "我要参加"
+				var res = await this.$service.task.JoinTask.call(this, this.mission.id, p)
+				console.log(res)
+				if(res.result == 'wait') {
+					this.$message.success('申请成功，等待审核')
+				}
+				else {
+					this.$message.success('成功加入')
+				}
+			},
+			deleteTask() {
+
+			},
+			giveUpTask() {
+
+			}
 		}
 	}
 </script>
@@ -257,6 +322,18 @@
 		}
 		.waiting-div {
 			.block();
+		}
+
+		.btn-group {
+			width: 400px;
+			margin-top: 30px;
+			padding-bottom: 30px;
+			margin-left: auto;
+			margin-right: auto;
+			display: flex;
+			flex-wrap: wrap;
+			flex-direction: row;
+			justify-content: space-around;
 		}
 	}
 	

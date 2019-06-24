@@ -22,3 +22,18 @@ export async function CreateTask(params) {
   const res = await this.$axios.post('/tasks', params)
   return res.data
 }
+
+export async function JoinTask(id, p) {
+  const res = await this.$axios.post('/tasks/' + id + '/player', p)
+  return res.data
+}
+
+export async function GetPlayerList(task_id) {
+  const res = await this.$axios.get('/tasks/' + task_id + '/player')
+  return res.data
+}
+
+export async function GetPlayerStatusOfTask(task_id, user_id) {
+  const res = await this.$axios.get('/tasks/' + task_id + '/player/' + user_id)
+  return res.data
+}
