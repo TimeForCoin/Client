@@ -8,39 +8,61 @@
 				<div class="triangle-top"></div>
 				<div class="triangle-bottom"></div>
 			</div>
-			<div class="status-div">
-				<p class="title"><span>任务状态</span></p>
-				<a-tag class="status-tag" :color="color">{{missionStatus}}</a-tag>
-			</div>
+			<div class="flex-div">
+				<div class="left-div">
+					<p class="title"><span>任务状态</span></p>
+					<div class="content">
+						<a-tag class="status-tag" :color="color">{{missionStatus}}</a-tag>
+					</div>
+				</div>
+				<div class="right-div">
+					<p class="title"><span>发起者</span></p>
+					<img class="head-img" :src="mission.publisher.avatar" />
+					<span class="nickname">{{mission.publisher.nickname}}</span>
+				</div>
+			</div>	
 			<div class="content-div">
 				<p class="title"><span>任务详情</span></p>
 				<p class="content">{{mission.content}}</p>
 			</div>
-			<div class="date-div">
-				<p class="title">任务时间</p>
-				<p class="content">{{startDate}} - {{endDate}}</p>
-			</div>
-			<div class="block">
-				<p class="title">任务标签</p>
-				<div class="content">
-					<template v-for="tag in mission.tags">
-						<a-tag :key="tag">{{tag}}</a-tag>
-					</template>
+			<div class="flex-div">
+				<div class="left-div">
+					<p class="title">任务时间</p>
+					<p class="content">{{startDate}} - {{endDate}}</p>
+				</div>
+				<div class="right-div">
+					<p class="title">参与人数</p>
+					<p class="content">{{mission.player_count}} / {{mission.max_player}}</p>
 				</div>
 			</div>
-			<div class="block">
-				<p class="title">任务地点</p>
-				<div class="content">
-					<template v-for="tag in mission.location" >
-						<a-tag :key="tag">{{tag}}</a-tag>
-					</template>
+			<div class="flex-div">
+				<div class="left-div">
+					<p class="title">任务标签</p>
+					<div class="content">
+						<template v-for="tag in mission.tags">
+							<a-tag :key="tag">{{tag}}</a-tag>
+						</template>
+					</div>
+				</div>
+				<div class="right-div">
+					<p class="title">任务地点</p>
+					<div class="content">
+						<template v-for="tag in mission.location" >
+							<a-tag :key="tag">{{tag}}</a-tag>
+						</template>
+					</div>
 				</div>
 			</div>
-			<div class="image-div">
+			<div class="block" v-if="mission.type == 'questionnaire'">
+				<p class="title"><span>问卷填写</span></p>
+				<a-button type="primary" @click="showQuestionnaire">进入问卷</a-button>
+			</div>
+			<div class="image-div" v-if="mission.images.length != 0">
 				<p class="title"><span>相关图片</span></p>
-				<div class="image" v-for="img in mission.images" :key="img.id">
-					<img :src="img.url"/>
-				</div>
+				<ImgList :images="mission.images" />
+			</div>
+			<div class="file-div" v-if="mission.attachment.length != 0">
+				<p class="title"><span>相关附件</span></p>
 			</div>
 			<div class="player-div">
 				<p class="title"><span>当前参与者</span></p>
@@ -59,8 +81,9 @@
 				<a-button v-else type="primary" icon="like" @click="likeTask">点赞</a-button>
 				<a-button v-if="mission.collected" type="primary" icon="star" @click="cancelCollect" ghost>取消收藏</a-button>
 				<a-button v-else type="primary" icon="star" @click="collectTask">收藏</a-button>
-				<a-button v-if="isPublisher == false && isPlayer == false" type="primary" @click="joinTask">{{this.joinBtnText}}</a-button>
+				<a-button v-if="isPublisher == false && isPlayer == false && mission.player_count < mission.max_player" type="primary" @click="joinTask">{{this.joinBtnText}}</a-button>
 				<a-button v-if="isPublisher == false && isPlayer == true" type="primary" @click="giveUpTask">放弃任务</a-button>
+				<a-button v-if="isPublisher == false && isPlayer == false && mission.player_count >= mission.max_player" type="primary" disabled>人数已满</a-button>
 				<a-button v-if="isPublisher == true" type="primary" @click="closeTask">中止任务</a-button>
 			</div>
 		</div>
@@ -69,15 +92,21 @@
 
 <script>
 	import PlayerList from '@/components/Mission/MissionDetail/PlayerList.vue'
+	import ImgList from '@/components/Mission/MissionDetail/ImgList.vue'
 	const moment = require('moment')
 
   export default {
 		components: {
-			PlayerList
+			PlayerList,
+			ImgList
 		},
 		data() {
 			return {
-				mission: {},
+				mission: {
+					publisher: {},
+					attachment: [],
+					images: []
+				},
 				imgList: [],
 				allPlayer: [],
 				isPublisher: false,
@@ -214,6 +243,9 @@
 			async refreshPlayerData(){
 				var res = await this.$service.task.GetPlayerList.call(this, this.mission.id)
 				this.allPlayer = res.data
+			},
+			showQuestionnaire() {
+
 			}
 		}
 	}
@@ -315,19 +347,6 @@
 			text-align: left;
 		}
 
-		.status-div {
-			.block();
-			text-align: left;
-
-			.title {
-				display: inline-block;
-			}
-			.status-tag {
-				font-size: 14px;
-				margin-left: 15px;
-			}
-		}
-
 		.content-div {
 			.block();
 			transition: 0.5s;
@@ -343,19 +362,43 @@
 			.block();
 		}
 
-		.tag-div {
+		.flex-div {
 			.block();
+			display: flex;
+			flex-wrap: wrap;
+			flex-direction: row;
+			position: relative;
+			.left-div{
+			}
+			.right-div {
+				position: absolute;
+				left: 55%;
+
+				.head-img {
+					width: 40px;
+					height: 40px;
+					border-radius: 100%;
+					margin-left: 10px;
+				}
+				.nickname {
+					margin-left: 10px;
+					font-size: 14px;
+				}
+			}
 		}
 
 		.image-div {
 			.block();
-
 			.image {
 				img {
 					height: 100px;
 					width: 100px;
 				}
 			}
+		}
+
+		.file-div {
+			.block();
 		}
 
 		.player-div {

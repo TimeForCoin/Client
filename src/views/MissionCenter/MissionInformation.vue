@@ -98,7 +98,7 @@
     <a-divider />
     <div class="left-div">
       <p class="title">上传图片:</p>
-      <ImgUploader @fileChange="addImages"/>
+      <ImgUploader @fileChange="addImages" :parentFileList="imageList"/>
     </div>
     <a-divider />
     <div class="left-div">
@@ -134,6 +134,8 @@ export default {
   },
   data() {
     return {
+      taskID: '',
+      isDraft: false,
       completeInfo: false,
       showError: false,
       mission: {
@@ -153,6 +155,8 @@ export default {
         auto_accept: false,
         publish: false,
       },
+      imageList: [],
+      fileList: []
     }
   },
   computed: {
@@ -185,6 +189,7 @@ export default {
     },
     addImages(ids) {
       this.mission.images = ids
+      console.log('fuck', this.mission.images)
     },
     checkInformation() {
       // console.log(this.mission)
@@ -208,12 +213,23 @@ export default {
         return
       }
       this.mission.publish = true
-      var res = await this.$service.task.CreateTask.call(this, this.mission)
-      console.log(res.id)
+      //console.log(this.mission)
+      var res
+      var id
+      if(this.isDraft == true) {
+        this.mission.status = 'wait'
+        await this.$service.task.ChangeTask.call(this, this.taskID, this.mission)
+        id = taskID
+      }
+      else {
+        res = await this.$service.task.CreateTask.call(this, this.mission)
+        id = res.id
+      }
+      //console.log(res.id)
       this.$router.push({
 				path: '/mission_detail',
 				query: {
-					id: res.id
+					id: id
 				}
 			});
     },
@@ -221,9 +237,18 @@ export default {
       if (this.checkInformation() == false) {
         return
       }
-      this.mission.publish = false
-      var res = await this.$service.task.CreateTask.call(this, this.mission)
-      console.log(res.id)
+      var res
+      var id
+      if(this.isDraft == true) {
+        //this.mission.status = 'draft'
+        await this.$service.task.ChangeTask.call(this, this.taskID, this.mission)
+        id = taskID
+      }
+      else {
+        this.mission.publish = false
+        res = await this.$service.task.CreateTask.call(this, this.mission)
+        id = res.id
+      }
       this.$router.push({
 				path: '/mission_detail',
 				query: {
@@ -252,8 +277,21 @@ export default {
         }
       })
     }
-  }
+  },
+  created: async function() {
+    var id = this.$route.query.id
+    if(id != 'none') {
+      var res = await this.$service.task.GetTask.call(this, id)
+      this.mission = res
+      // 将任务images加载到子控件中，并修改任务中images数据结构
+      this.imageList = this.mission.images
+      //console.log(this.imageList)
+      this.mission.images = []
 
+      this.isDraft = true
+      this.taskID = id
+    }
+  }
 }
 </script>
 
