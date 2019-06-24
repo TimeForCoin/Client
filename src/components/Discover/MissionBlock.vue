@@ -72,13 +72,6 @@ export default {
       this.sortRewardType = type
     },
     onSortClick: async function() {
-      console.log({
-        page: 1,
-        size: this.size,
-        sort: this.sortTimeOrHit,
-        type: this.sortMissionType,
-        reward: this.sortRewardType
-      })
       this.getMissions({
         page: 1,
         size: this.size,

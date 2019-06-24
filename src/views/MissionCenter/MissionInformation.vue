@@ -30,7 +30,7 @@
         />
       </div>
       <div class="right-div">
-        <p class="title">          
+        <p class="title">
           <a-icon class="left-icon" type="tag" theme="twoTone" twoToneColor="#F0B11B"/>
           <span>任务类型:</span>
         </p>
@@ -44,7 +44,7 @@
     <a-divider />
     <div class="flex-div">
       <div class="left-div">
-        <p class="title">          
+        <p class="title">
           <a-icon class="left-icon" type="environment" theme="twoTone" twoToneColor="#F0B11B"/>
           <span>任务地点:</span>
         </p>
@@ -61,7 +61,7 @@
     <a-divider />
     <div class="flex-div">
       <div class="reward-div">
-        <p class="title">         
+        <p class="title">
           <a-icon class="left-icon" type="money-collect" theme="twoTone" twoToneColor="#F0B11B"/>
           <span>任务报酬:</span>
           <a-icon class="exclamation-icon" type="exclamation-circle" v-show="showError && mission.reward_value == 0 && mission.reward_object == ''" theme="twoTone" twoToneColor="red"/>
@@ -84,7 +84,7 @@
         </div>
       </div>
       <div class="player-div">
-        <p class="title">          
+        <p class="title">
           <a-icon class="left-icon" type="idcard" theme="twoTone" twoToneColor="#F0B11B"/>
           <span>参与者设置:</span>
           <a-icon class="exclamation-icon" type="exclamation-circle" v-show="showError && mission.max_player <= 0" theme="twoTone" twoToneColor="red"/>
@@ -115,7 +115,7 @@
 </template>
 
 <script>
-import moment from 'moment';
+import moment from 'moment'
 import TagBlock from '@/components/Mission/CreateMission/TagBlock.vue'
 import ImgUploader from '@/components/Mission/CreateMission/ImgUploader.vue'
 import FileUploader from '@/components/Mission/CreateMission/FileUploader.vue'
@@ -163,20 +163,19 @@ export default {
   methods: {
     moment,
     onTimeChange(dates, dateStrings) {
-      if(dates[0] && dates[1]) {
+      if (dates[0] && dates[1]) {
         this.mission.start_date = dates[0].unix()
         this.mission.end_date = dates[1].unix()
-      }
-      else {
+      } else {
         this.mission.start_date = 0
         this.mission.end_date = 0
       }
     },
     addMissionTag(tags) {
-      this.mission.tags = tags;
+      this.mission.tags = tags
     },
     addMissionLocation(tags) {
-      this.mission.location = tags;
+      this.mission.location = tags
     },
     onCheckedChange(e) {
       this.mission.auto_accept = e.target.checked
@@ -188,15 +187,15 @@ export default {
       this.mission.images = ids
     },
     checkInformation() {
-      console.log(this.mission)
-      if(this.mission.title == '' || this.mission.content == '' || this.mission.start_date == 0 || 
-         this.mission.end_date == 0 || this.mission.max_player <= 0 || 
+      // console.log(this.mission)
+      if (this.mission.title == '' || this.mission.content == '' || this.mission.start_date == 0 ||
+         this.mission.end_date == 0 || this.mission.max_player <= 0 ||
          (this.mission.reward_value == 0 && this.mission.reward_object == '')) {
         this.showError = true
         this.$message.error('请填写必要信息')
-        return false 
+        return false
       }
-      if(this.mission.start_date < moment().startOf('day').unix()) {
+      if (this.mission.start_date < moment().startOf('day').unix()) {
         this.$message.error('请选择正确的时间')
         return false
       }
@@ -205,7 +204,7 @@ export default {
       return true
     },
     async createMission() {
-      if(this.checkInformation() == false){
+      if (this.checkInformation() == false) {
         return
       }
       this.mission.publish = true
@@ -219,7 +218,7 @@ export default {
 			});
     },
     async saveMission() {
-      if(this.checkInformation() == false){
+      if (this.checkInformation() == false) {
         return
       }
       this.mission.publish = false
@@ -232,20 +231,26 @@ export default {
 				}
 			});
     },
-    async editQuestion(){
-      if(this.checkInformation() == false){
+    async editQuestion() {
+      if (this.checkInformation() == false) {
         return
       }
       this.mission.publish = false
       this.mission.type = 'questionnaire'
       var res = await this.$service.task.CreateTask.call(this, this.mission)
-      console.log(res.id)
+      let id = res.id
+      let temp = await this.$service.questionnaire.create.call(this, id, {
+        title: '问卷标题',
+        description: '为了给您提供更好的服务，希望您能抽出几分钟时间，将您的感受和建议告诉我们，我们非常重视每位用户的宝贵意见，期待您的参与！现在我们就马上开始吧！',
+        anonymous: true
+      })
+      // console.log(res.id)
       this.$router.push({
-				path: '/create_questionnaire',
-				query: {
-					id: res.id
-				}
-			});
+        path: '/create_questionnaire',
+        query: {
+          id: res.id
+        }
+      })
     }
   }
 

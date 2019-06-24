@@ -178,6 +178,7 @@ export default {
     flex-direction: column;
     justify-content: space-between;
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
+    transition: 0.1s;
 
     .card-top {
         position: relative;
@@ -194,7 +195,7 @@ export default {
         .triangle-outter {
             width: 0px;
             height: 0px;
-            border-bottom: @triangle-heigth #F0B11B solid;
+            border-bottom: @triangle-heigth rgb(24, 144, 255) solid;
             border-right: @triangle-width transparent solid;
             top: 300 - @triangle-heigth;
             position: absolute;
@@ -262,7 +263,7 @@ export default {
             display: flex;
             font-size: 13px;
             color: white;
-            background-color: #F0B11B;
+            background-color: rgb(24, 144, 255);
             padding: 10px;
 
             .avatar {
@@ -293,4 +294,11 @@ export default {
         }
     }
 }
+
+.card-long:hover {
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+  transform: translateY(10px);
+  cursor: pointer;
+}
+
 </style>

@@ -22,31 +22,31 @@
 <script>
 
 export default {
-	data() {
-		return {
-			logoPath: [ 
-				{ path: require('../../assets/HomePage/errand.png'), text: '普通任务' },
-				{ path: require('../../assets/HomePage/questionnaire.png'), text: '问卷任务' }]
-		}
-	},
-	methods: {
-		createNormalMission() {
-			this.$router.push({
-				path: '/mission_information',
-				query: {
-					missionType: 1
-				}
-			});
+  data() {
+    return {
+      logoPath: [
+        { path: require('../../assets/HomePage/errand.png'), text: '普通任务' },
+        { path: require('../../assets/HomePage/questionnaire.png'), text: '问卷任务' }]
+    }
+  },
+  methods: {
+    createNormalMission() {
+      this.$router.push({
+        path: '/mission_information',
+        query: {
+          missionType: 1
+        }
+      })
 		},
-		createQuestionnaireMission() {
-			this.$router.push({
-				path: '/mission_information',
-				query: {
-					missionType: 2
-				}
-			});
+    createQuestionnaireMission() {
+      this.$router.push({
+        path: '/mission_information',
+        query: {
+          missionType: 2
+        }
+      })
 		}
-	}
+  }
 }
 
 </script>
@@ -94,7 +94,7 @@ export default {
         background-color: white;
         border-radius: 100%;
 				transition: 0.5s;
-				
+
 
         img {
           height: 70px;

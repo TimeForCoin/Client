@@ -44,17 +44,24 @@
 			</div>
 			<div class="player-div">
 				<p class="title"><span>当前参与者</span></p>
-				<PlayerList :Players="runningPlayer"/>
+				<p class="none" v-if="runningPlayer.length == 0 && finishPlayer.length == 0">暂无</p>
+				<PlayerList :Players="runningPlayer" :isPublisher="isPublisher" :playerStatus="'running'" :taskID="mission.id" @onChange="refreshPlayerData"/>
+				<PlayerList :Players="finishPlayer" :isPublisher="isPublisher" :playerStatus="'finish'" :taskID="mission.id"/>
+				<PlayerList :Players="failurePlayer" :isPublisher="isPublisher" :playerStatus="'failure'" :taskID="mission.id"/>
 			</div>
 			<div class="waiting-div" v-if="isPublisher == true">
 				<p class="title"><span>待审核参与者</span></p>
+				<p class="none" v-if="waitPlayer.length == 0">暂无</p>
+				<PlayerList v-else :Players="waitPlayer" :isPublisher="isPublisher" :playerStatus="'wait'" :taskID="mission.id" @onChange="refreshPlayerData"/>
 			</div>
 			<div class="btn-group">
-				<a-button type="primary" icon="like">点赞</a-button>
-				<a-button type="primary" icon="star">收藏</a-button>
+				<a-button v-if="mission.liked" type="primary" icon="like" @click="dislike" ghost>取消点赞</a-button>
+				<a-button v-else type="primary" icon="like" @click="likeTask">点赞</a-button>
+				<a-button v-if="mission.collected" type="primary" icon="star" @click="cancelCollect" ghost>取消收藏</a-button>
+				<a-button v-else type="primary" icon="star" @click="collectTask">收藏</a-button>
 				<a-button v-if="isPublisher == false && isPlayer == false" type="primary" @click="joinTask">{{this.joinBtnText}}</a-button>
 				<a-button v-if="isPublisher == false && isPlayer == true" type="primary" @click="giveUpTask">放弃任务</a-button>
-				<a-button v-else type="primary" @click="deleteTask">中止任务</a-button>
+				<a-button v-if="isPublisher == true" type="primary" @click="closeTask">中止任务</a-button>
 			</div>
 		</div>
 	</div>
@@ -135,6 +142,17 @@
 				return this.allPlayer.filter((item) => {
 					return item.status == 'running'
 				})
+			},
+			// 当前已完成任务的参与者
+			finishPlayer: function() {
+				return this.allPlayer.filter((item) => {
+					return item.status == 'finish'
+				})
+			},
+			failurePlayer: function() {
+				return this.allPlayer.filter((item) => {
+					return item.status == 'failure'
+				})
 			}
 		},
 		// 加载任务消息和参与者信息
@@ -149,7 +167,6 @@
 			}
 			var res2 = await this.$service.task.GetPlayerList.call(this, this.mission.id)
 			this.allPlayer = res2.data
-			console.log(this.allPlayer)
 			// 判断是否参与
 			this.allPlayer.forEach(element => {
 				if(element.player.id == this.userID) this.isPlayer = true
@@ -168,11 +185,35 @@
 					this.$message.success('成功加入')
 				}
 			},
-			deleteTask() {
+			async closeTask() {
 
 			},
-			giveUpTask() {
+			async giveUpTask() {
 
+			},
+			async likeTask(){
+				await this.$service.task.AddLikeTask.call(this, this.mission.id)
+				this.mission.liked = true
+				this.$message.success('点赞成功')
+			},
+			async dislike() {
+				await this.$service.task.DeleteLikeTask.call(this, this.mission.id)
+				this.mission.liked = false
+				this.$message.success('取消点赞')
+			},
+			async collectTask(){
+				await this.$service.task.AddCollectTask.call(this, this.mission.id)
+				this.mission.collected = true
+				this.$message.success('收藏成功')
+			},
+			async cancelCollect() {
+				await this.$service.task.DeleteCollectTask.call(this, this.mission.id)
+				this.mission.collected = false
+				this.$message.success('取消收藏')
+			},
+			async refreshPlayerData(){
+				var res = await this.$service.task.GetPlayerList.call(this, this.mission.id)
+				this.allPlayer = res.data
 			}
 		}
 	}
@@ -335,6 +376,11 @@
 			flex-direction: row;
 			justify-content: space-around;
 		}
+	}
+
+	.none {
+		color: gray;
+		margin-left: 15px;
 	}
 	
 }
