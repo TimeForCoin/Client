@@ -75,7 +75,12 @@ export default {
   methods: {
     toDetail: function() {
       let id = this.mission.id
-      this.$router.push({ name: 'mission_detail', params: { id } })
+      this.$router.push({
+				path: '/mission_detail',
+				query: {
+					id: id
+				}
+			});
     }
   },
   computed: {

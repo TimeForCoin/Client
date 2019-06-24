@@ -40,6 +40,9 @@ export default {
     }
   },
   getters: {
+    getID: function(state) {
+      return state.id
+    },
     getNickname: function(state) {
       return state.info.nickname
     },

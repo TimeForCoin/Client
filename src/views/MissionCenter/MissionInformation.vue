@@ -150,9 +150,9 @@ export default {
         start_date: 0,
         end_date: 0,
         max_player: 0,
-        auto_accept: true,
-        publish: false
-      }
+        auto_accept: false,
+        publish: false,
+      },
     }
   },
   computed: {
@@ -210,6 +210,12 @@ export default {
       this.mission.publish = true
       var res = await this.$service.task.CreateTask.call(this, this.mission)
       console.log(res.id)
+      this.$router.push({
+				path: '/mission_detail',
+				query: {
+					id: res.id
+				}
+			});
     },
     async saveMission() {
       if (this.checkInformation() == false) {
@@ -217,7 +223,13 @@ export default {
       }
       this.mission.publish = false
       var res = await this.$service.task.CreateTask.call(this, this.mission)
-      // console.log(res.id)
+      console.log(res.id)
+      this.$router.push({
+				path: '/mission_detail',
+				query: {
+					id: res.id
+				}
+			});
     },
     async editQuestion() {
       if (this.checkInformation() == false) {
