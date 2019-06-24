@@ -53,6 +53,12 @@ export default new Router({
       path: '/mission_detail',
       name: 'mission_detail',
       component: () => import(/* webpackChunkName: "create_mission" */ './views/MissionDetail.vue')
+    },
+    {
+      path: '/questionnaire_answer',
+      name: 'questionnaire_answer',
+      props: { state: 'answer' },
+      component: () => import(/* webpackChunkName: "create_mission" */ './views/Presentation.vue')
     }
   ]
 })
