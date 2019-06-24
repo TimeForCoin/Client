@@ -16,6 +16,10 @@
               <a-icon type="star" />
               <span class="nav-text">我的收藏</span>
             </a-menu-item>
+            <a-menu-item key="4" class="left-menu-item">
+              <a-icon type="edit" />
+              <span class="nav-text">草稿箱</span>
+            </a-menu-item>
           </a-menu>
           <a-button type="primary" class="mission-btn" @click="createMission">发布任务</a-button>
         </div>
@@ -43,7 +47,7 @@
         </div>
         <div class="mission-cards">
           <div v-for="(item) in missionShow" class="cards" :key="item.id" >
-            <MissionCard :MissionModel="item" @click.native="showDetail(item.id)"></MissionCard>
+            <MissionCard :MissionModel="item" @click.native="showDetail(item.id, item.status, item.type)"></MissionCard>
           </div>
         </div>
         <a-button type="primary" class="add-more" icon="plus" @click="addMore">加载更多</a-button>
@@ -130,6 +134,10 @@ export default {
           this.getCollectedMission()
           this.show = 3
           break
+        case '4':
+          this.getDraftMission()
+          this.show = 4
+          break
       }
       console.log(event.key)
     },
@@ -165,6 +173,9 @@ export default {
         case 3:
           this.getCollectedMission()
           break
+        case 4:
+          this.getDraftMission()
+          break
       }
     },
     onSearch(value) {
@@ -191,14 +202,36 @@ export default {
     createQuestionnaire() {
       this.$router.push('/create_questionnaire')
     },
-    showDetail(id) {
-      console.log(id)
-      this.$router.push({
-				path: '/mission_detail',
-				query: {
-					id: id
-				}
-			});
+    showDetail(id, status, type) {
+      console.log(id, status, type)
+      if(status == 'draft') {
+        if(type == 'questionnaire') {
+          this.$router.push({
+            path: '/mission_information',
+            query: {
+              missionType: 2,
+              id: id
+            }
+          })
+        }
+        else {
+          this.$router.push({
+            path: '/mission_information',
+            query: {
+              missionType: 1,
+              id: id
+            }
+          })
+        }
+      }
+      else {
+        this.$router.push({
+          path: '/mission_detail',
+          query: {
+            id: id
+          }
+        });
+      }
     },
     async getCollectedMission() {
       var parmas = {
@@ -220,12 +253,12 @@ export default {
         size: 6
       }
       var res = await this.$service.task.GetPlayingTaskList.call(this, 'me', parmas)
-      console.log(res)
+      //console.log(res)
       this.missions = []
       for (var i = 0; i < res.data.length; i++) {
         this.missions.push(res.data[i].task)
       }
-      console.log(this.missions)
+      //console.log(this.missions)
       this.page = res.pagination.page + 1
       this.total = res.pagination.total
     },
@@ -241,6 +274,14 @@ export default {
       this.missions = res.tasks
       this.page = res.pagination.page + 1
       this.total = res.pagination.total
+    },
+    async getDraftMission(){
+      let parmas = {
+        user: 'me',
+        status: 'draft'
+      }
+      var res = await this.$service.task.GetTasksList.call(this, parmas)
+      this.missions = res.tasks
     }
   },
   created: async function() {
@@ -278,7 +319,7 @@ export default {
       .mission-btn {
         position: absolute;
 
-        top: 250px;
+        top: 300px;
         left: 70px;
       }
       .questionnaire-btn {
