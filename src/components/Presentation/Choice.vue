@@ -1,7 +1,7 @@
 <template>
     <div>
         <a-radio-group
-            v-show="question.choose_problem.max_choose == 1"
+            v-show="state !== 'statistics' && question.choose_problem.max_choose == 1"
             @change="onSingle"
             class="group"
         >
@@ -15,13 +15,20 @@
             </div>
         </a-radio-group>
         <a-checkbox-group
-            v-show="question.choose_problem.max_choose >= 2"
+            v-show="state !== 'statistics' && question.choose_problem.max_choose >= 2"
             class="group"
             :options="checkboxList"
             v-model="checkList"
             @change="onClick"
         />
-        <p class="tips" v-if="question.choose_problem.max_choose >= 2">(最多可选{{question.choose_problem.max_choose}}个选项)</p>
+        <p class="tips" v-if="state !== 'statistics' && question.choose_problem.max_choose >= 2">(最多可选{{question.choose_problem.max_choose}}个选项)</p>
+        <div v-if="state === 'statistics' && isFinish">
+          <div class="wrapper" v-for="option in question.choose_problem.options" :key="option.id">
+            <a-progress class="progress" :percent="parseInt(option.count*100/total)"/>
+            <p class="content">{{option.content}}</p>
+            <p class="content">{{option.count}}人</p>
+          </div>
+        </div>
     </div>
 </template>
 
@@ -29,7 +36,7 @@
 const defaultList = []
 
 export default {
-  props: ['question'],
+  props: ['question', 'state', 'isFinish', 'total'],
   data() {
     return {
       checkList: defaultList
@@ -57,10 +64,20 @@ export default {
           value: index
         }
       })
+    },
+    options: function() {
+      return this.question.choose_problem.options
     }
+  },
+  created: function() {
   },
   mounted: function() {
     this.question.answer = []
+    this.question.choose_problem.options.forEach((option) => {
+      if (option.count === undefined) {
+        option.count = 0
+      }
+    })
   }
 }
 </script>
@@ -81,5 +98,19 @@ export default {
     margin-top: 20px;
     font-size: 12px;
     color: red;
+}
+
+.wrapper {
+  display: flex;
+  align-content: center;
+  white-space: nowrap;
+
+  .progress {
+    width: 150px;
+  }
+
+  .content {
+    margin-left: 5px;
+  }
 }
 </style>

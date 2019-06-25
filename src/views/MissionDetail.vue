@@ -63,6 +63,7 @@
 				<a-button v-if="isPublisher == false && isPlayer == true" type="primary" @click="giveUpTask">放弃任务</a-button>
 				<a-button v-if="isPublisher == true" type="primary" @click="closeTask">中止任务</a-button>
 				<a-button type="primary" @click="answer">答题</a-button>
+				<a-button type="primary" @click="statistics">统计数据</a-button>
 			</div>
 		</div>
 	</div>
@@ -190,6 +191,9 @@ export default {
     },
     answer: function() {
       this.$router.push({ path: '/questionnaire_answer', query: { id: this.mission.id } })
+    },
+    statistics: function() {
+      this.$router.push({ path: '/questionnaire_statistics', query: { id: this.mission.id } })
     },
     async giveUpTask() {
 

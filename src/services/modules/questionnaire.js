@@ -23,8 +23,8 @@ export async function modifyQuestions(taskID, questions) {
   return res
 }
 
-export async function getAnswers(taskID) {
-  const res = await this.$axios.get('/questionnaires/' + taskID + '/answers')
+export async function getAnswers(taskID, params) {
+  const res = await this.$axios.get('/questionnaires/' + taskID + '/answers', { params: params })
   return res
 }
 

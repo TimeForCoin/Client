@@ -77,7 +77,7 @@
         <div class="content">
             <div class="rate-area" v-show="!isModify">
                 <div class="text">{{question.score_problem.min_text}}</div>
-                <a-rate class="rate" :count="question.score_problem.score"/>
+                <a-rate class="rate" :count="question.anwser"/>
                 <div class="text">{{question.score_problem.max_text}}</div>
             </div>
             <div class="modify-input" v-show="isModify">
