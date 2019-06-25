@@ -65,6 +65,12 @@ export default new Router({
       name: 'questionnaire_statistics',
       props: { state: 'statistics' },
       component: () => import(/* webpackChunkName: "create_mission" */ './views/Presentation.vue')
+    },
+    {
+      path: '/questionnaire_preview',
+      name: 'questionnaire_preview',
+      props: { state: 'preview' },
+      component: () => import(/* webpackChunkName: "create_mission" */ './views/Presentation.vue')
     }
   ]
 })

@@ -4,9 +4,9 @@
             <div class="question-info">
                 <div class="index">{{this.index}}</div>
                 <div class="title" v-show="!isModify">{{question.content}}</div>
-                <a-input class="title" v-show="isModify" :value="question.content"/>
+                <a-input class="title" v-show="isModify" v-model="question.content"/>
                 <div class="note" v-show="!isModify">{{question.note}}</div>
-                <a-input class="note" v-show="isModify" :value="question.note"/>
+                <a-input class="note" v-show="isModify" v-model="question.note"/>
             </div>
             <div class="button-area" v-show="!isModify && isEnter">
                 <a-popover>
