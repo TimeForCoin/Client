@@ -153,7 +153,7 @@ export default {
         end_date: 0,
         max_player: 0,
         auto_accept: false,
-        publish: false,
+        publish: false
       },
       imageList: [],
       fileList: []
@@ -213,25 +213,24 @@ export default {
         return
       }
       this.mission.publish = true
-      //console.log(this.mission)
+      // console.log(this.mission)
       var res
       var id
-      if(this.isDraft == true) {
+      if (this.isDraft == true) {
         this.mission.status = 'wait'
         await this.$service.task.ChangeTask.call(this, this.taskID, this.mission)
         id = taskID
-      }
-      else {
+      } else {
         res = await this.$service.task.CreateTask.call(this, this.mission)
         id = res.id
       }
-      //console.log(res.id)
+      // console.log(res.id)
       this.$router.push({
-				path: '/mission_detail',
-				query: {
-					id: id
-				}
-			});
+        path: '/mission_detail',
+        query: {
+          id: id
+        }
+      })
     },
     async saveMission() {
       if (this.checkInformation() == false) {
@@ -239,22 +238,21 @@ export default {
       }
       var res
       var id
-      if(this.isDraft == true) {
-        //this.mission.status = 'draft'
+      if (this.isDraft == true) {
+        // this.mission.status = 'draft'
         await this.$service.task.ChangeTask.call(this, this.taskID, this.mission)
         id = taskID
-      }
-      else {
+      } else {
         this.mission.publish = false
         res = await this.$service.task.CreateTask.call(this, this.mission)
         id = res.id
       }
       this.$router.push({
-				path: '/mission_detail',
-				query: {
-					id: res.id
-				}
-			});
+        path: '/mission_detail',
+        query: {
+          id: res.id
+        }
+      })
     },
     async editQuestion() {
       if (this.checkInformation() == false) {
@@ -262,30 +260,22 @@ export default {
       }
       this.mission.publish = false
       this.mission.type = 'questionnaire'
-      var res = await this.$service.task.CreateTask.call(this, this.mission)
-      let id = res.id
-      let temp = await this.$service.questionnaire.create.call(this, id, {
-        title: '问卷标题',
-        description: '为了给您提供更好的服务，希望您能抽出几分钟时间，将您的感受和建议告诉我们，我们非常重视每位用户的宝贵意见，期待您的参与！现在我们就马上开始吧！',
-        anonymous: true
-      })
-      // console.log(res.id)
       this.$router.push({
         path: '/create_questionnaire',
         query: {
-          id: res.id
+          id: this.taskID
         }
       })
     }
   },
   created: async function() {
     var id = this.$route.query.id
-    if(id != 'none') {
+    if (id != 'none') {
       var res = await this.$service.task.GetTask.call(this, id)
       this.mission = res
       // 将任务images加载到子控件中，并修改任务中images数据结构
       this.imageList = this.mission.images
-      //console.log(this.imageList)
+      // console.log(this.imageList)
       this.mission.images = []
 
       this.isDraft = true
