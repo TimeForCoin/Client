@@ -15,6 +15,7 @@
 
 <script>
 export default {
+	props: ['parentFileList'],
   data() {
     return {
 			fileList: [],
@@ -43,12 +44,29 @@ export default {
 			formData.append("type", "file");
 			
 			const res = await this.$service.file.UploadFile.call(this, formData);
-			console.log(res);
+			//console.log(res);
 			this.fileIDList.push(res.id)
 			this.$emit("fileChange", this.fileIDList)
 			throw "Finsih"
       return false;
     },
+	},
+	watch: {
+		parentFileList(val) {
+			//console.log(this.parentFileList)
+			this.parentFileList.forEach(element => {
+				let f = {
+        	uid: element.id,
+					name: element.name,
+					status: 'done',
+					url: element.url,
+					thumbUrl: element.url,
+				}
+				this.fileList.push(f)
+				this.fileIDList.push(element.id)
+			});
+			this.$emit("fileChange", this.fileIDList)
+		}
 	}
 }
 </script>
