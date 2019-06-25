@@ -7,7 +7,7 @@
       <a-button class="menu-button" type="primary" @click="login">登录</a-button>
       <a-modal
         class="login-modal"
-        title="请在新窗口中完成登陆"
+        title="登陆"
         centered
         :maskClosable="false"
         :footer="null"
@@ -15,20 +15,28 @@
         v-model="loginModalVisible"
         @ok="() => loginModalVisible = false"
       >
-        <p>{{loginModalText}}</p>
-        <a-button v-if="failedLogin" class="modal-button" type="primary" @click="login">重试</a-button>
-        <a-button
-          v-if="failedLogin"
-          class="modal-button"
-          type="primary"
-          @click="()=>{loginModalVisible = false}"
-        >取消</a-button>
+        <a-button @click="loginByViolet" >Violet授权登陆</a-button>
+        <a-button @click="loginByWechat">微信扫码登陆</a-button>
+        <div v-if="loginType === 'violet'">
+          <p>{{loginModalText}}</p>
+          <a-button v-if="failedLogin" class="modal-button" type="primary" @click="login">重试</a-button>
+          <a-button
+            v-if="failedLogin"
+            class="modal-button"
+            type="primary"
+            @click="()=>{loginModalVisible = false}"
+          >取消</a-button>
+        </div>
+        <div v-if="loginType === 'wechat'">
+          <p>{{loginModalText}}</p>
+          <img src="/api/session/wechat"/>
+        </div>
       </a-modal>
     </div>
     <div v-if="user !== null" class="right-menu">
       <a-dropdown>
         <div>
-          <img class="user-avatar" :src="avatar"/>
+          <img class="user-avatar" :src="avatar">
           <span class="user-name" @click="userClick">{{nickname}}</span>
         </div>
         <a-menu slot="overlay" class="login-dropdown">
@@ -52,8 +60,9 @@
 <script>
 import { setInterval, clearInterval, setTimeout } from 'timers'
 export default {
-  data() {
+  data () {
     return {
+      loginType: '',
       user: null,
       failedLogin: false,
       loginModalText: '',
@@ -64,19 +73,19 @@ export default {
     }
   },
   computed: {
-    nickname: function() {
+    nickname: function () {
       return this.$store.getters.getNickname
     },
-    avatar: function() {
+    avatar: function () {
       return this.$store.getters.getAvatar
     }
   },
   methods: {
-    logoClick(event) {
+    logoClick (event) {
       this.menuSelected = []
       this.$router.push('/')
     },
-    menuClick(event) {
+    menuClick (event) {
       switch (event.key) {
         case 'discover':
           this.$router.push('/discover')
@@ -86,19 +95,8 @@ export default {
           break
       }
     },
-    async getUserInfo() {
-      try {
-        const res = await this.$service.user.GetInfo.call(this)
-        this.user = res
-        this.$store.commit('setUser', res)
-      } catch (error) {}
-    },
-    async userClick() {
-      this.$router.push('/user')
-    },
-    async login(event) {
-      // this.$router.push('/user')
-      this.loginModalVisible = true
+    async loginByViolet() {
+      this.loginType = 'violet'
       this.failedLogin = false
       this.loginModalText = '等待授权中...'
       try {
@@ -135,7 +133,49 @@ export default {
         this.loginModalVisible = false
       }
     },
-    async logout() {
+    async loginByWechat() {
+      this.loginType = 'wechat'
+      try {
+        const timer = () => {
+          setTimeout(async () => {
+            const res = await this.$service.user.GetLoginStatus.call(this)
+            const status = res.status
+            if (status === 'wechat_pc') {
+              this.loginModalVisible = false
+              this.$message.info('登陆成功')
+              this.getUserInfo()
+            } else if (status === 'none') {
+              this.loginModalText = '登陆已取消'
+            } else if (status === 'wechat_qr') {
+              timer()
+              this.loginModalText = '等待授权中...'
+            } else {
+              this.loginModalText = '登陆失败'
+            }
+          }, 1000)
+        }
+        timer()
+      } catch (error) {
+        this.$message.error('请求失败:' + error)
+        this.loginModalVisible = false
+      }
+
+    },
+    async getUserInfo () {
+      try {
+        const res = await this.$service.user.GetInfo.call(this)
+        this.user = res
+        this.$store.commit('setUser', res)
+      } catch (error) { }
+    },
+    async userClick () {
+      this.$router.push('/user')
+    },
+    async login (event) {
+      this.loginType = ''
+      this.loginModalVisible = true
+    },
+    async logout () {
       try {
         await this.$service.user.Logout.call(this)
         this.$store.commit('removeUser')
@@ -145,7 +185,7 @@ export default {
         this.$message.error('请求失败:' + error)
       }
     },
-    onScroll() {
+    onScroll () {
       let top = document.scrollingElement.scrollTop
       if (this.oldTop >= top) {
         this.isShow = true
@@ -155,14 +195,14 @@ export default {
       this.oldTop = top
     }
   },
-  mounted() {
+  mounted () {
     // 屏幕滚动事件监听
     window.addEventListener('scroll', this.onScroll)
     this.oldTop = document.scrollingElement.scrollTop
 
     this.getUserInfo()
   },
-  destroyed() {
+  destroyed () {
     window.removeEventListener('scroll', this.onScroll)
   }
 }

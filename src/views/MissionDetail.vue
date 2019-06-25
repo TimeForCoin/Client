@@ -20,7 +20,7 @@
 					<img class="head-img" :src="mission.publisher.avatar" />
 					<span class="nickname">{{mission.publisher.nickname}}</span>
 				</div>
-			</div>	
+			</div>
 			<div class="content-div">
 				<p class="title"><span>任务详情</span></p>
 				<p class="content">{{mission.content}}</p>
@@ -92,180 +92,188 @@
 				<a-button v-if="isPublisher == false && isPlayer == false && mission.player_count >= mission.max_player" type="primary" disabled>人数已满</a-button>
 				<a-button v-if="isPublisher == true && mission.status != 'draft' && mission.status != 'close'" type="primary" @click="closeTask">关闭任务</a-button>
 				<a-button v-if="isPublisher == true && mission.status == 'close'" type="primary" @click="closeTask" disabled>已关闭</a-button>
+				<a-button type="primary" @click="answer">答题</a-button>
+				<a-button type="primary" @click="statistics">统计数据</a-button>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-	import PlayerList from '@/components/Mission/MissionDetail/PlayerList.vue'
-	import ImgList from '@/components/Mission/MissionDetail/ImgList.vue'
-	const moment = require('moment')
+import PlayerList from '@/components/Mission/MissionDetail/PlayerList.vue'
+import ImgList from '@/components/Mission/MissionDetail/ImgList.vue'
+const moment = require('moment')
 
-  export default {
-		components: {
-			PlayerList,
-			ImgList
+export default {
+	components: {
+		PlayerList,
+		ImgList
+	},
+	data() {
+		return {
+			mission: {
+				publisher: {},
+				attachment: [],
+				images: []
+			},
+			imgList: [],
+			allPlayer: [],
+			isPublisher: false,
+			isPlayer: false,
+		}
+	},
+	computed: {
+		userID: function() {
+			return this.$store.getters.getID
 		},
-		data() {
-			return {
-				mission: {
-					publisher: {},
-					attachment: [],
-					images: []
-				},
-				imgList: [],
-				allPlayer: [],
-				isPublisher: false,
-				isPlayer: false,
+		color: function() {
+			switch(this.mission.status) {
+				case "draft":
+					return "blue"
+				case "wait":
+					return "orange"
+				case "close":
+					return "red"
+				case "finish":
+					return "gray"
 			}
+			return "yellow"
 		},
-		computed: {
-			userID: function() {
-				return this.$store.getters.getID
-			},
-			color: function() {
-				switch(this.mission.status) {
-					case "draft":
-						return "blue"
-					case "wait":
-						return "orange"
-					case "close":
-						return "red"
-					case "finish":
-						return "gray"
-				}
-				return "yellow"
-			},
-			missionStatus: function() {
-				switch(this.mission.status) {
-					case "draft":
-						return "草稿"
-					case "wait":
-						if(this.mission.start_date > moment().startOf('day').unix()) {
-							return "等待中"
-						}
-						return "进行中"
-					case "close":
-						return "已关闭"
-					case "finish":
-						return "已结束"
-				}
-				return "未知"
-			},
-			joinBtnText: function() {
-				if(this.mission.auto_accept == true) {
-					return "立即加入"
-				}
-				return "申请加入"
-			},
-			startDate: function() {
-				var newTime = new Date(this.mission.start_date * 1000)
-				return moment(newTime).format("YYYY-MM-DD")
-			},
-			endDate: function() {
-				var newTime = new Date(this.mission.end_date * 1000)
-				return moment(newTime).format("YYYY-MM-DD")
-			},
-			// 当前带审核的参与者
-			waitPlayer: function() {
-				return this.allPlayer.filter((item) => {
-					return item.status == 'wait'
-				})
-			},
-			// 当前已加入的参与者
-			runningPlayer: function() {
-				return this.allPlayer.filter((item) => {
-					return item.status == 'running'
-				})
-			},
-			// 当前已完成任务的参与者
-			finishPlayer: function() {
-				return this.allPlayer.filter((item) => {
-					return item.status == 'finish'
-				})
-			},
-			failurePlayer: function() {
-				return this.allPlayer.filter((item) => {
-					return item.status == 'failure'
-				})
+		missionStatus: function() {
+			switch(this.mission.status) {
+				case "draft":
+					return "草稿"
+				case "wait":
+					if(this.mission.start_date > moment().startOf('day').unix()) {
+						return "等待中"
+					}
+					return "进行中"
+				case "close":
+					return "已关闭"
+				case "finish":
+					return "已结束"
 			}
+			return "未知"
 		},
-		// 加载任务消息和参与者信息
-		created: async function() {
-			var id = this.$route.query.id
-			//console.log(id)
-			var res = await this.$service.task.GetTask.call(this, id)
+		joinBtnText: function() {
+			if(this.mission.auto_accept == true) {
+				return "立即加入"
+			}
+			return "申请加入"
+		},
+		startDate: function() {
+			var newTime = new Date(this.mission.start_date * 1000)
+			return moment(newTime).format("YYYY-MM-DD")
+		},
+		endDate: function() {
+			var newTime = new Date(this.mission.end_date * 1000)
+			return moment(newTime).format("YYYY-MM-DD")
+		},
+		// 当前带审核的参与者
+		waitPlayer: function() {
+			return this.allPlayer.filter((item) => {
+				return item.status == 'wait'
+			})
+		},
+		// 当前已加入的参与者
+		runningPlayer: function() {
+			return this.allPlayer.filter((item) => {
+				return item.status == 'running'
+			})
+		},
+		// 当前已完成任务的参与者
+		finishPlayer: function() {
+			return this.allPlayer.filter((item) => {
+				return item.status == 'finish'
+			})
+		},
+		failurePlayer: function() {
+			return this.allPlayer.filter((item) => {
+				return item.status == 'failure'
+			})
+		}
+	},
+	// 加载任务消息和参与者信息
+	created: async function() {
+		var id = this.$route.query.id
+		//console.log(id)
+		var res = await this.$service.task.GetTask.call(this, id)
+		//console.log(res)
+		this.mission = res
+		if (this.userID == this.mission.publisher.id) {
+			this.isPublisher = true
+		}
+		var res2 = await this.$service.task.GetPlayerList.call(this, this.mission.id)
+		this.allPlayer = res2.data
+		// 判断是否参与
+		this.allPlayer.forEach(element => {
+			if(element.player.id == this.userID) this.isPlayer = true
+		});
+	},
+	methods: {
+		async joinTask() {
+			let p = {}
+			if (this.mission.auto_accept == false) p.note = "我要参加"
+			var res = await this.$service.task.JoinTask.call(this, this.mission.id, p)
 			//console.log(res)
-			this.mission = res
-			if (this.userID == this.mission.publisher.id) {
-				this.isPublisher = true
+			if(res.result == 'wait') {
+				this.$message.success('申请成功，等待审核')
 			}
-			var res2 = await this.$service.task.GetPlayerList.call(this, this.mission.id)
-			this.allPlayer = res2.data
-			// 判断是否参与
-			this.allPlayer.forEach(element => {
-				if(element.player.id == this.userID) this.isPlayer = true
-			});
+			else {
+				this.$message.success('成功加入')
+				this.isPlayer = true
+			}
 		},
-		methods: {
-			async joinTask() {
-				let p = {}
-				if (this.mission.auto_accept == false) p.note = "我要参加"
-				var res = await this.$service.task.JoinTask.call(this, this.mission.id, p)
-				//console.log(res)
-				if(res.result == 'wait') {
-					this.$message.success('申请成功，等待审核')
-				}
-				else {
-					this.$message.success('成功加入')
-					this.isPlayer = true
-				}
-			},
-			async closeTask() {
-				this.mission.status = 'close'
-				let p = {
-					status: 'close'
-				}
-				var res = await this.$service.task.ChangeTask.call(this, this.mission.id, p)
-				//console.log(res)
-			},
-			async giveUpTask() {
-				let p = {
-					status: 'give_up',
-				}
-				var res = await this.$service.task.ChangePlayerStatusOfTask.call(this, this.mission.id, 'me', p)
-				//console.log(res)
-			},
-			async likeTask(){
-				await this.$service.task.AddLikeTask.call(this, this.mission.id)
-				this.mission.liked = true
-				this.$message.success('点赞成功')
-			},
-			async dislike() {
-				await this.$service.task.DeleteLikeTask.call(this, this.mission.id)
-				this.mission.liked = false
-				this.$message.success('取消点赞')
-			},
-			async collectTask(){
-				await this.$service.task.AddCollectTask.call(this, this.mission.id)
-				this.mission.collected = true
-				this.$message.success('收藏成功')
-			},
-			async cancelCollect() {
-				await this.$service.task.DeleteCollectTask.call(this, this.mission.id)
-				this.mission.collected = false
-				this.$message.success('取消收藏')
-			},
-			async refreshPlayerData(){
-				var res = await this.$service.task.GetPlayerList.call(this, this.mission.id)
-				this.allPlayer = res.data
-			},
-			showQuestionnaire() {
-
+		async closeTask() {
+			this.mission.status = 'close'
+			let p = {
+				status: 'close'
 			}
+			var res = await this.$service.task.ChangeTask.call(this, this.mission.id, p)
+			//console.log(res)
+		},
+		async giveUpTask() {
+			let p = {
+				status: 'give_up',
+			}
+			var res = await this.$service.task.ChangePlayerStatusOfTask.call(this, this.mission.id, 'me', p)
+			//console.log(res)
+		},
+		async likeTask(){
+			await this.$service.task.AddLikeTask.call(this, this.mission.id)
+			this.mission.liked = true
+			this.$message.success('点赞成功')
+		},
+		async dislike() {
+			await this.$service.task.DeleteLikeTask.call(this, this.mission.id)
+			this.mission.liked = false
+			this.$message.success('取消点赞')
+		},
+		async collectTask(){
+			await this.$service.task.AddCollectTask.call(this, this.mission.id)
+			this.mission.collected = true
+			this.$message.success('收藏成功')
+		},
+		async cancelCollect() {
+			await this.$service.task.DeleteCollectTask.call(this, this.mission.id)
+			this.mission.collected = false
+			this.$message.success('取消收藏')
+		},
+		async refreshPlayerData(){
+			var res = await this.$service.task.GetPlayerList.call(this, this.mission.id)
+			this.allPlayer = res.data
+		},
+		answer: function() {
+			this.$router.push({ path: '/questionnaire_answer', query: { id: this.mission.id } })
+		},
+		statistics: function() {
+			this.$router.push({ path: '/questionnaire_statistics', query: { id: this.mission.id } })
+		},
+		showQuestionnaire() {
+
 		}
 	}
+}
 </script>
 
 <style lang="less" scoped>
@@ -273,7 +281,7 @@
 
 .mission-detail {
 	margin-top: 70px;
-	
+
 	.main {
 		background: white;
 		width: 800px;
@@ -290,7 +298,7 @@
 			background-size: cover;
 			background-position: center;
 			position: relative;
-			
+
 			.black {
 				width: 100%;
 				height: 100%;
@@ -299,7 +307,7 @@
 				display: flex;
 				justify-content: center;
 				align-items: center;
-				
+
 				.mission-title {
 					color: white;
 					font-size: 40px;
@@ -319,7 +327,7 @@
 				height: 0px;
 				border-width: 40px 160px 0 640px;
 				border-style: solid;
-				border-color: white transparent transparent transparent; 
+				border-color: white transparent transparent transparent;
 				position: absolute;
 				top: 0px;
 			}
@@ -329,7 +337,7 @@
 				height: 0px;
 				border-width: 0 640px 45px 160px;
 				border-style: solid;
-				border-color: transparent transparent white transparent; 
+				border-color: transparent transparent white transparent;
 				position: relative;
 				top: -45px;
 			}
@@ -450,6 +458,5 @@
 	}
 	
 }
-
 
 </style>
