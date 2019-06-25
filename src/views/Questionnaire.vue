@@ -236,7 +236,7 @@ export default {
       let questions = await this.$service.questionnaire.getQuestions.call(this, this.$route.query.id)
       this.questionnaire.questions = JSON.parse(JSON.stringify(questions.data.problems))
     } catch (err) {
-      this.$message.error(err)
+      this.$utils.handler.check.call(this, err)
     }
   }
 }
