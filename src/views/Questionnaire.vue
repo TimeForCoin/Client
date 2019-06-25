@@ -23,8 +23,8 @@
             <a-layout-content class="content">
               <div v-if="!isPresentation">
                 <div class="questionnaire-info">
-                  <a-input class="title" v-model="questionnaire.title" />
-                  <a-textarea class="description" :autosize="{ minRows: 3, maxRows: 3 }" v-model="questionnaire.description" />
+                  <a-input class="title" @blur="autoSave" v-model="questionnaire.title" />
+                  <a-textarea class="description" @blur="autoSave" :autosize="{ minRows: 3, maxRows: 3 }" v-model="questionnaire.description" />
                 </div>
                 <div class="question-wrapper" v-for="(question, qindex) in questionnaire.questions" :key="question.id">
                   <Choice @handleMsgFromChild="changeQuestionaire" :question="questionnaire.questions[qindex]" :index="qindex" v-if="question.type == 'choose'"/>
@@ -92,6 +92,9 @@ export default {
     }
   },
   methods: {
+    test: function() {
+      console.log('test')
+    },
     // 添加问题
     addQuestion: function(mindex, offset) {
       let clickType = 0

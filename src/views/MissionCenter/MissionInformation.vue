@@ -158,7 +158,7 @@ export default {
       imageList: [],
       fileList: [],
       tagList: [],
-      locationList: [],
+      locationList: []
     }
   },
   computed: {
@@ -222,8 +222,7 @@ export default {
         this.mission.status = 'wait'
         await this.$service.task.ChangeTask.call(this, this.taskID, this.mission)
         id = this.taskID
-      }
-      else {
+      } else {
         res = await this.$service.task.CreateTask.call(this, this.mission)
         id = res.id
       }
@@ -246,18 +245,17 @@ export default {
         await this.$service.task.ChangeTask.call(this, this.taskID, this.mission)
         id = this.taskID
         console.log('draft', id)
-      }
-      else {
+      } else {
         this.mission.publish = false
         res = await this.$service.task.CreateTask.call(this, this.mission)
         id = res.id
       }
       this.$router.push({
-				path: '/mission_detail',
-				query: {
-					id: id
-				}
-			});
+        path: '/mission_detail',
+        query: {
+          id: id
+        }
+      })
     },
     async editQuestion() {
       if (this.checkInformation() == false) {
