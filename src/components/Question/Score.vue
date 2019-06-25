@@ -71,13 +71,13 @@
                 type="primary"
                 class="edit-finish-button"
                 size="small"
-                @mousedown="isModify = false; isEnter = false"
+                @mousedown="modifyFinish"
             >完成编辑</a-button>
         </div>
         <div class="content">
             <div class="rate-area" v-show="!isModify">
                 <div class="text">{{question.score_problem.min_text}}</div>
-                <a-rate class="rate" :count="question.score_problem.score"/>
+                <a-rate class="rate" :count="question.anwser"/>
                 <div class="text">{{question.score_problem.max_text}}</div>
             </div>
             <div class="modify-input" v-show="isModify">
@@ -116,6 +116,11 @@ export default {
   methods: {
     sendMsgToParent: function(msg) {
       this.$emit('handleMsgFromChild', { msg: msg, index: this.index })
+    },
+    modifyFinish: function() {
+      this.$emit('handleMsgFromChild', { msg: 'finish', index: this.index })
+      this.isModify = false
+      this.isEnter = false
     }
   }
 }
@@ -133,6 +138,8 @@ export default {
         position: relative;
 
         .question-info {
+            text-align: left;
+
             .index {
                 position: absolute;
                 left: -30px;
@@ -158,7 +165,6 @@ export default {
     }
 
     .content {
-        width: 60%;
         display: flex;
         flex-direction: column;
         position: relative;
@@ -180,6 +186,7 @@ export default {
         }
 
         .modify-input {
+            width: 60%;
             margin-top: 10px;
 
             .input {

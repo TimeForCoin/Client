@@ -3,7 +3,7 @@
         <a-layout class="container">
             <a-layout-sider class="sider">
               <div class="wrapper">
-                <a-collapse :activeKey="activeKey">
+                <a-collapse :activeKey="activeKey" v-if="!isPresentation">
                   <a-collapse-panel v-for="(type, index) in sider" :header="type.menu" :bordered="false" :key="String(index)">
                         <div class="button-area">
                             <a-popover v-for="(menuItem, typeIndex) in type.menuItem" :title="menuItem" placement="right" :key="menuItem.id">
@@ -15,21 +15,24 @@
                     </a-collapse-panel>
               </a-collapse>
               <div class="function-button-area">
-                <a-button type="primary" class="button" ghost @click="preview">问卷预览</a-button>
-                <a-button type="primary" class="button" @click="finish">编辑完成</a-button>
+                <a-button type="primary" class="button" ghost @click="preview">{{isPresentation?'返回':'问卷预览'}}</a-button>
+                <a-button type="primary" class="button" v-show="!isPresentation" @click="finish">编辑完成</a-button>
               </div>
               </div>
             </a-layout-sider>
             <a-layout-content class="content">
-              <div class="questionnaire-info">
-                <a-input class="title" v-model="questionnaire.title" />
-                <a-textarea class="description" :autosize="{ minRows: 3, maxRows: 3 }" v-model="questionnaire.description" />
+              <div v-if="!isPresentation">
+                <div class="questionnaire-info">
+                  <a-input class="title" v-model="questionnaire.title" />
+                  <a-textarea class="description" :autosize="{ minRows: 3, maxRows: 3 }" v-model="questionnaire.description" />
+                </div>
+                <div class="question-wrapper" v-for="(question, qindex) in questionnaire.questions" :key="question.id">
+                  <Choice @handleMsgFromChild="changeQuestionaire" :question="questionnaire.questions[qindex]" :index="qindex" v-if="question.type == 'choose'"/>
+                  <Fill @handleMsgFromChild="changeQuestionaire" :question="questionnaire.questions[qindex]" :index="qindex" v-else-if="question.type == 'fill'"/>
+                  <Score @handleMsgFromChild="changeQuestionaire" :question="questionnaire.questions[qindex]" :index="qindex" v-else-if="question.type == 'score'"/>
+                </div>
               </div>
-              <div class="question-wrapper" v-for="(question, qindex) in questionnaire.questions" :key="question.id">
-                <Choice @handleMsgFromChild="changeQuestionaire" :question="questionnaire.questions[qindex]" :index="qindex" v-if="question.type == 'choose'"/>
-                <Fill @handleMsgFromChild="changeQuestionaire" :question="questionnaire.questions[qindex]" :index="qindex" v-else-if="question.type == 'fill'"/>
-                <Score @handleMsgFromChild="changeQuestionaire" :question="questionnaire.questions[qindex]" :index="qindex" v-else-if="question.type == 'score'"/>
-              </div>
+              <Presentation :questionnaire="questionnaire" v-else />
             </a-layout-content>
         </a-layout>
     </div>
@@ -39,20 +42,21 @@
 import Choice from '../components/Question/Choice.vue'
 import Score from '../components/Question/Score.vue'
 import Fill from '../components/Question/Fill.vue'
+import Presentation from './Presentation.vue'
 
 export default {
   components: {
-    Choice, Score, Fill
+    Choice, Score, Fill, Presentation
   },
   data() {
     return {
+      isPresentation: false,
       questionType: {
         SINGLE_CHOICE: 0,
         MULTI_CHOICE: 1,
         SINGLE_FILL: 2,
-        MULTI_FILL: 3,
-        SCORE: 4,
-        SORT: 5
+        SCORE: 3,
+        SORT: 4
       },
       sider: [
         {
@@ -61,7 +65,7 @@ export default {
         },
         {
           menu: '填空题',
-          menuItem: ['单项', '多项']
+          menuItem: ['单项']
         },
         {
           menu: '评分题',
@@ -96,7 +100,7 @@ export default {
       }
       clickType += offset
       let question = {
-        index: this.questionnaire.questions.length + 1,
+        index: 1,
         content: '问题内容',
         note: '问题备注'
       }
@@ -107,19 +111,16 @@ export default {
           question.choose_problem = JSON.parse(JSON.stringify({
             options: [{
               index: 1,
-              content: '选项',
-              image: ''
+              content: '选项'
             },
             {
               index: 2,
-              content: '选项',
-              image: ''
+              content: '选项'
             }],
             max_choose: clickType === this.questionType.MULTI_CHOICE ? 2 : 1
           }))
           break
         case this.questionType.SINGLE_FILL:
-        case this.questionType.MULTI_FILL:
           question.type = 'fill'
           question.fill_problem = JSON.parse(JSON.stringify({
             type: 'all',
@@ -137,6 +138,7 @@ export default {
           break
       }
       this.questionnaire.questions.push(question)
+      this.autoSave()
     },
     // 问题操作：复制、删除、上移、下移、最前和最后
     changeQuestionaire: function(params) {
@@ -151,6 +153,7 @@ export default {
           break
         case 'delete':
           this.questionnaire.questions.splice(index, 1)
+          this.autoSave()
           break
         case 'up':
           if (index !== 0) {
@@ -181,40 +184,62 @@ export default {
             temp = this.questionnaire.questions[index]
             this.questionnaire.questions.splice(index, 1)
             this.questionnaire.questions.push(temp)
+            this.autoSave()
           }
+          break
+        case 'finish':
+          this.autoSave()
           break
       }
     },
     // 进入问卷预览
     preview: function() {
-      console.log(this.$route.query.id)
+      this.isPresentation = !this.isPresentation
     },
     // 完成问卷编辑
     finish: function() {
-
+      this.$router.push({
+        path: '/mission_information',
+        query: {
+          missionType: 2,
+          id: this.$route.query.id
+        }
+      })
     },
     // 自动保存
     autoSave: async function() {
-      // 保存基本信息
-      let res = await this.$service.questionnaire.modifyInfo.call(this, this.$route.query.id, {
-        title: this.questionnaire.title,
-        description: this.questionnaire.description,
-        anonymous: this.questionnaire.anonymous
-      })
-      // 保存问题
-      res = await this.$service.questionnaire.modifyQuestions.call(this, this.$route.query.id, {
-        problems: this.questionnaire.questions
-      })
+      try {
+        this.questionnaire.questions.forEach((v, i) => {
+          v.index = i + 1
+        })
+        // 保存基本信息
+        await this.$service.questionnaire.modifyInfo.call(this, this.$route.query.id, {
+          title: this.questionnaire.title,
+          description: this.questionnaire.description,
+          anonymous: this.questionnaire.anonymous
+        })
+        // 保存问题
+        await this.$service.questionnaire.modifyQuestions.call(this, this.$route.query.id, {
+          problems: this.questionnaire.questions
+        })
+        this.$message.success('自动保存')
+      } catch (err) {
+        this.$message.error(err)
+      }
     }
   },
   mounted: async function() {
-    let info = await this.$service.questionnaire.getInfo.call(this, this.$route.query.id)
-    this.questionnaire.title = info.data.title
-    this.questionnaire.description = info.data.description
-    this.questionnaire.anonymous = true
-    // console.log(this.questionnaire)
-    let questions = await this.$service.questionnaire.getQuestions.call(this, this.$route.query.id)
-    this.questionnaire.questions = JSON.parse(JSON.stringify(questions.data.problems))
+    try {
+      let info = await this.$service.questionnaire.getInfo.call(this, this.$route.query.id)
+      this.questionnaire.title = info.data.title
+      this.questionnaire.description = info.data.description
+      this.questionnaire.anonymous = true
+      // console.log(this.questionnaire)
+      let questions = await this.$service.questionnaire.getQuestions.call(this, this.$route.query.id)
+      this.questionnaire.questions = JSON.parse(JSON.stringify(questions.data.problems))
+    } catch (err) {
+      this.$message.error(err)
+    }
   }
 }
 </script>
@@ -227,7 +252,7 @@ export default {
 
     .container {
         height: calc(100vh - 80px);
-        margin: 10px 20vw 0px 20vw;
+        margin: 10px 10vw 0px;
 
         .sider {
             height: calc(95vh - 70px);
@@ -251,7 +276,7 @@ export default {
               }
 
               .function-button-area {
-                margin: 0px 10px 20px;
+                margin: 20px 10px 20px;
                 display: flex;
                 flex-direction: column;
 
@@ -264,10 +289,9 @@ export default {
 
         .content {
             height: calc(95vh - 70px);
-            margin-left: 20px;
+            margin-left: 100px;
             padding: 0px 20px 0px 0px;
             display: flex;
-
             flex-direction: column;
 
             .questionnaire-info{

@@ -4,9 +4,9 @@
             <div class="question-info">
                 <div class="index">{{this.index}}</div>
                 <div class="title" v-show="!isModify">{{question.content}}</div>
-                <a-input class="title" v-show="isModify" :value="question.content"/>
+                <a-input class="title" v-show="isModify" v-model="question.content"/>
                 <div class="note" v-show="!isModify">{{question.note}}</div>
-                <a-input class="note" v-show="isModify" :value="question.note"/>
+                <a-input class="note" v-show="isModify" v-model="question.note"/>
             </div>
             <div class="button-area" v-show="!isModify && isEnter">
                 <a-popover>
@@ -71,7 +71,7 @@
                 type="primary"
                 class="edit-finish-button"
                 size="small"
-                @mousedown="isModify = false; isEnter = false"
+                @mousedown="modifyFinish"
             >完成编辑</a-button>
         </div>
         <div class="content">
@@ -104,6 +104,11 @@ export default {
     },
     sendMsgToParent: function(msg) {
       this.$emit('handleMsgFromChild', { msg: msg, index: this.index })
+    },
+    modifyFinish: function() {
+      this.$emit('handleMsgFromChild', { msg: 'finish', index: this.index })
+      this.isModify = false
+      this.isEnter = false
     }
   }
 }
@@ -121,6 +126,8 @@ export default {
         position: relative;
 
         .question-info {
+            text-align: left;
+
             .index {
                 position: absolute;
                 left: -30px;

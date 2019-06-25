@@ -1,5 +1,5 @@
 export async function GetTasksList(p) {
-  const res = await this.$axios.get('/tasks', {params: p})
+  const res = await this.$axios.get('/tasks', { params: p })
   return res.data
 }
 
@@ -9,12 +9,12 @@ export async function GetTask(id) {
 }
 
 export async function GetPlayingTaskList(id, p) {
-  const res = await this.$axios.get('/users/task/' + id, {params: p})
+  const res = await this.$axios.get('/users/task/' + id, { params: p })
   return res.data
 }
 
 export async function GetColllectedTaskList(id, p) {
-  const res = await this.$axios.get('/users/collect/' + id, {params: p})
+  const res = await this.$axios.get('/users/collect/' + id, { params: p })
   return res.data
 }
 
@@ -65,5 +65,10 @@ export async function AddCollectTask(task_id) {
 
 export async function DeleteCollectTask(task_id) {
   const res = await this.$axios.delete('/tasks/' + task_id + '/collect')
+  return res.data
+}
+
+export async function ChangeTaskInfomation(task_id, information) {
+  const res = await this.$axios.put('/tasks/' + task_id, information)
   return res.data
 }
