@@ -35,7 +35,7 @@ export default {
       this.previewVisible = false
     },
     handlePreview (file) {
-			console.log(file)
+			//console.log(file)
       this.previewImage = file.url || file.thumbUrl
       this.previewVisible = true
 		},
@@ -65,9 +65,9 @@ export default {
 			formData.append("data", file);
 			formData.append("owner", "user");
 			formData.append("type", "image");
-			console.log(formData);
+			//console.log(formData);
 			const res = await this.$service.file.UploadFile.call(this, formData);
-			console.log(res);
+			//console.log(res);
 			this.fileIDList.push(res.id)
 			this.$emit("fileChange", this.fileIDList)
 			throw "Finsih"
