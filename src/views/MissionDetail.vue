@@ -55,8 +55,9 @@
 			</div>
 			<div class="block" v-if="mission.type == 'questionnaire'">
 				<p class="title"><span>任务问卷</span></p>
-				<a-button type="primary" v-if="isPlayer == true" @click="showQuestionnaire">填写问卷</a-button>
-				<a-button type="primary" v-else @click="showQuestionnaire">查看问卷</a-button>
+				<a-button type="primary" class="question-btn" v-if="isPlayer == false" @click="showQuestionnaire">查看问卷</a-button>
+				<a-button type="primary" class="question-btn" v-if="isPlayer == true || isPublisher == true" @click="answer">答题</a-button>
+				<a-button type="primary" class="question-btn" v-if="isPublisher == true" @click="statistics">统计数据</a-button>
 			</div>
 			<div class="image-div" v-if="mission.images.length != 0">
 				<p class="title"><span>相关图片</span></p>
@@ -92,8 +93,6 @@
 				<a-button v-if="isPublisher == false && isPlayer == false && mission.player_count >= mission.max_player" type="primary" disabled>人数已满</a-button>
 				<a-button v-if="isPublisher == true && mission.status != 'draft' && mission.status != 'close'" type="primary" @click="closeTask">关闭任务</a-button>
 				<a-button v-if="isPublisher == true && mission.status == 'close'" type="primary" @click="closeTask" disabled>已关闭</a-button>
-				<a-button type="primary" @click="answer">答题</a-button>
-				<a-button type="primary" @click="statistics">统计数据</a-button>
 			</div>
 		</div>
 	</div>
@@ -443,6 +442,10 @@ export default {
 			flex-wrap: wrap;
 			flex-direction: row;
 			justify-content: space-around;
+		}
+
+		.question-btn {
+			margin-left: 15px;
 		}
 	}
 

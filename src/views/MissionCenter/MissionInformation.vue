@@ -106,11 +106,16 @@
       <FileUploader @fileChange="addAttachment" :parentFileList="fileList"/>
     </div>
     <a-divider />
-    <div v-if="missionType == 1" class="buttons">
-      <a-button class="publish-btn" type="primary" @click="createMission">发布</a-button>
+    <div v-if="missionType == 1" class="btn-group">
+      <a-button class="publish-btn" type="primary" @click="createMission">发布任务</a-button>
       <a-button class="save-btn" type="primary" @click="saveMission">保存草稿</a-button>
     </div>
-    <a-button v-else class="question-btn" type="primary" @click="editQuestion">保存草稿并进入问卷编辑</a-button>
+    <div v-if="missionType == 2 && isDraft == true" class="btn-group">
+      <a-button type="primary" @click="createMission">发布任务</a-button>
+      <a-button type="primary" @click="saveMission">保存草稿</a-button>
+      <a-button type="primary" @click="editQuestion">编辑问卷</a-button>
+    </div>
+    <a-button v-if="missionType == 2 && isDraft == false" class="question-btn" type="primary" @click="editQuestion">保存草稿并进入问卷编辑</a-button>
   </div>
 </template>
 
@@ -261,13 +266,26 @@ export default {
       if (this.checkInformation() == false) {
         return
       }
-      this.mission.publish = false
-      this.mission.type = 'questionnaire'
-      var res = await this.$service.task.CreateTask.call(this, this.mission)
+      var id
+      if(this.isDraft == true) {
+        id = this.taskID
+      }
+      else {
+        this.mission.publish = false
+        this.mission.type = 'questionnaire'
+        let res = await this.$service.task.CreateTask.call(this, this.mission)
+        id = res.id
+        let p = {
+          title: '问卷标题',
+          description: '为了给您提供更好的服务，希望您能抽出几分钟时间，将您的感受和建议告诉我们，我们非常重视每位用户的宝贵意见，期待您的参与！现在我们就马上开始吧！',
+          anonymous: true
+        }
+        res = await this.$service.questionnaire.create.call(this, id, p)
+      }
       this.$router.push({
         path: '/create_questionnaire',
         query: {
-          id: res.id
+          id: id
         }
       })
     }
@@ -419,6 +437,18 @@ export default {
       width: 75px;
       margin-top: 10px;
     }
+  }
+
+  .btn-group {
+    width: 400px;
+    margin-top: 30px;
+    padding-bottom: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: space-around;
   }
 
   .btn {
