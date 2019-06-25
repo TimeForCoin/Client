@@ -76,14 +76,13 @@ export default {
 	},
 	watch: {
 		parentFileList(val) {
-			console.log(this.parentFileList)
+			this.fileList = []
 			this.parentFileList.forEach(element => {
 				let f = {
-        	uid: '-1',
-					name: 'xxx.png',
+        	uid: element.id,
+					name: element.id,
 					status: 'done',
 					url: element.url,
-					thumbUrl: element.url,
 				}
 				this.fileList.push(f)
 				this.fileIDList.push(element.id)

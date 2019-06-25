@@ -48,14 +48,14 @@
           <a-icon class="left-icon" type="environment" theme="twoTone" twoToneColor="#F0B11B"/>
           <span>任务地点:</span>
         </p>
-        <TagBlock @addTag="addMissionLocation" :text="'添加地点'"/>
+        <TagBlock @addTag="addMissionLocation" :text="'添加地点'" :parentTags="locationList"/>
       </div>
       <div class="right-div">
         <p class="title">
           <a-icon class="left-icon" type="tags" theme="twoTone" twoToneColor="#F0B11B"/>
           <span>任务标签:</span>
         </p>
-        <TagBlock @addTag="addMissionTag" :text="'添加标签'"/>
+        <TagBlock @addTag="addMissionTag" :text="'添加标签'" :parentTags="tagList"/>
       </div>
     </div>
     <a-divider />
@@ -103,7 +103,7 @@
     <a-divider />
     <div class="left-div">
       <p class="title">上传附件:</p>
-      <FileUploader @fileChange="addAttachment"/>
+      <FileUploader @fileChange="addAttachment" :parentFileList="fileList"/>
     </div>
     <a-divider />
     <div v-if="missionType == 1" class="buttons">
@@ -156,7 +156,9 @@ export default {
         publish: false,
       },
       imageList: [],
-      fileList: []
+      fileList: [],
+      tagList: [],
+      locationList: [],
     }
   },
   computed: {
@@ -189,7 +191,7 @@ export default {
     },
     addImages(ids) {
       this.mission.images = ids
-      console.log('fuck', this.mission.images)
+      // console.log('fuck', this.mission.images)
     },
     checkInformation() {
       // console.log(this.mission)
@@ -219,7 +221,7 @@ export default {
       if(this.isDraft == true) {
         this.mission.status = 'wait'
         await this.$service.task.ChangeTask.call(this, this.taskID, this.mission)
-        id = taskID
+        id = this.taskID
       }
       else {
         res = await this.$service.task.CreateTask.call(this, this.mission)
@@ -242,7 +244,8 @@ export default {
       if(this.isDraft == true) {
         //this.mission.status = 'draft'
         await this.$service.task.ChangeTask.call(this, this.taskID, this.mission)
-        id = taskID
+        id = this.taskID
+        console.log('draft', id)
       }
       else {
         this.mission.publish = false
@@ -252,7 +255,7 @@ export default {
       this.$router.push({
 				path: '/mission_detail',
 				query: {
-					id: res.id
+					id: id
 				}
 			});
     },
@@ -287,6 +290,12 @@ export default {
       this.imageList = this.mission.images
       //console.log(this.imageList)
       this.mission.images = []
+      this.fileList = this.mission.attachment
+      this.mission.attachment = []
+      this.tagList = this.mission.tags
+      this.mission.tags = []
+      this.locationList = this.mission.location
+      this.mission.location = []
 
       this.isDraft = true
       this.taskID = id

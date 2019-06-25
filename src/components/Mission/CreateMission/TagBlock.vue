@@ -27,7 +27,7 @@
 
 <script>
 export default {
-	props: ['text'],
+	props: ['text', 'parentTags'],
   data() {
     return {
 			inputVisible: false,
@@ -63,6 +63,17 @@ export default {
 			})
 			this.$emit("addTag", tags)
     },
+	},
+	watch: {
+		parentTags(val) {
+			let tags = this.parentTags
+			Object.assign(this, {
+        tags,
+        inputVisible: false,
+        inputValue: '',
+			})
+			this.$emit("addTag", tags)
+		}
 	}
 }
 </script>

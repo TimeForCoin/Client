@@ -64,6 +64,9 @@
 			</div>
 			<div class="file-div" v-if="mission.attachment.length != 0">
 				<p class="title"><span>相关附件</span></p>
+				<template v-for="file in mission.attachment" >
+					<a class="file-url" :key="file.id" :href="file.url">{{file.name}}</a>
+				</template>
 			</div>
 			<div class="player-div">
 				<p class="title"><span>当前参与者</span></p>
@@ -426,6 +429,12 @@
 	.none {
 		color: gray;
 		margin-left: 15px;
+	}
+
+	.file-url {
+		margin-left: 15px;
+		margin-bottom: 5px;
+		display: block;
 	}
 	
 }

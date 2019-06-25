@@ -50,7 +50,8 @@
             <MissionCard :MissionModel="item" @click.native="showDetail(item.id, item.status, item.type)"></MissionCard>
           </div>
         </div>
-        <a-button type="primary" class="add-more" icon="plus" @click="addMore">加载更多</a-button>
+        <a-button v-if="(page-1) * 6 < total" type="primary" class="add-more" icon="plus" @click="addMore">加载更多</a-button>
+        <a-button v-else type="primary" class="add-more" icon="plus" disabled>已无更多</a-button>
       </a-layout-content>
     </a-layout>
   </div>
@@ -123,23 +124,23 @@ export default {
     leftMenuClick(event) {
       switch (event.key) {
         case '1':
-          this.getPublishedMission()
+          this.getPublishedMission(1)
           this.show = 1
           break
         case '2':
-          this.getPlayingMission()
+          this.getPlayingMission(1)
           this.show = 2
           break
         case '3':
-          this.getCollectedMission()
+          this.getCollectedMission(1)
           this.show = 3
           break
         case '4':
-          this.getDraftMission()
+          this.getDraftMission(1)
           this.show = 4
           break
       }
-      console.log(event.key)
+      // console.log(event.key)
     },
     topMenuClick(event) {
       switch (event.key) {
@@ -162,19 +163,19 @@ export default {
           this.sortType = 'hot'
           break
       }
-      console.log(event.key)
+      // console.log(event.key)
       switch (this.show) {
         case 1:
-          this.getPublishedMission()
+          this.getPublishedMission(1)
           break
         case 2:
-          this.getPlayingMission()
+          this.getPlayingMission(1)
           break
         case 3:
-          this.getCollectedMission()
+          this.getCollectedMission(1)
           break
         case 4:
-          this.getDraftMission()
+          this.getDraftMission(1)
           break
       }
     },
@@ -182,16 +183,20 @@ export default {
       console.log(this.searchText)
     },
     async addMore() {
-      var parmas = {
-        page: this.page,
-        size: 6
+      switch (this.show) {
+        case 1:
+          this.getPublishedMission(this.page)
+          break
+        case 2:
+          this.getPlayingMission(this.page)
+          break
+        case 3:
+          this.getCollectedMission(this.page)
+          break
+        case 4:
+          this.getDraftMission(this.page)
+          break
       }
-      var res = await this.$service.task.GetTasksList.call(this, parmas)
-      console.log(res)
-      this.missions = this.missions.concat(res.tasks)
-      // this.missions = this.missions.concat(res.tasks)
-      console.log(this.missions)
-      this.page = res.pagination.page + 1
     },
     emitEmpty () {
       this.searchText = ''
@@ -233,55 +238,82 @@ export default {
         });
       }
     },
-    async getCollectedMission() {
+    async getCollectedMission(p) {
       var parmas = {
-        page: 1,
+        page: p,
         size: 6,
         sort: this.sortType,
         type: this.missionType
       }
       var res = await this.$service.task.GetColllectedTaskList.call(this, 'me', parmas)
       console.log(res)
-      this.missions = res.tasks
-      console.log(this.missions)
+      if(p > 1) {
+        this.missions = this.missions.concat(res.tasks)
+      }
+      else {
+        this.missions = res.tasks
+      }
+      // console.log(this.missions)
       this.page = res.pagination.page + 1
       this.total = res.pagination.total
     },
-    async getPlayingMission() {
+    async getPlayingMission(p) {
       var parmas = {
-        page: 1,
+        page: p,
         size: 6
       }
       var res = await this.$service.task.GetPlayingTaskList.call(this, 'me', parmas)
-      //console.log(res)
-      this.missions = []
+      console.log(res)
+      var tasks = []
       for (var i = 0; i < res.data.length; i++) {
-        this.missions.push(res.data[i].task)
+        tasks.push(res.data[i].task)
+      }
+      if(p > 1) {
+        this.missions = this.missions.concat(tasks)
+      }
+      else {
+        this.missions = tasks
       }
       //console.log(this.missions)
       this.page = res.pagination.page + 1
       this.total = res.pagination.total
     },
-    async getPublishedMission() {
+    async getPublishedMission(p) {
       var parmas = {
-        page: 1,
+        page: p,
         size: 6,
         user: 'me',
         sort: this.sortType,
         type: this.missionType
       }
       var res = await this.$service.task.GetTasksList.call(this, parmas)
-      this.missions = res.tasks
+      console.log(res)
+      if(p > 1) {
+        this.missions = this.missions.concat(res.tasks)
+      }
+      else {
+        this.missions = res.tasks
+      }
       this.page = res.pagination.page + 1
       this.total = res.pagination.total
     },
-    async getDraftMission(){
+    async getDraftMission(p){
       let parmas = {
+        page: p,
+        size: 6,
         user: 'me',
         status: 'draft'
       }
       var res = await this.$service.task.GetTasksList.call(this, parmas)
-      this.missions = res.tasks
+      console.log(res)
+      if(p > 1) {
+        this.missions = this.missions.concat(res.tasks)
+      }
+      else {
+        this.missions = res.tasks
+      }
+      this.page = res.pagination.page + 1
+      this.total = res.pagination.total
     }
   },
   created: async function() {
@@ -289,7 +321,7 @@ export default {
       page: 1,
       size: 6
     }
-    this.getPublishedMission()
+    this.getPublishedMission(1)
   }
 }
 </script>
