@@ -100,7 +100,11 @@ export default {
     },
     submit: async function() {
       if (!this.verifyAnswer()) return
-      await this.$service.questionnaire.addAnswer.call(this, this.$route.query.id, this.getAnswer())
+      try {
+        await this.$service.questionnaire.addAnswer.call(this, this.$route.query.id, this.getAnswer())
+      } catch (err) {
+        this.$message.error(err)
+      }
     },
     back: function() {
       this.$router.go(-1)
@@ -147,17 +151,21 @@ export default {
     }
   },
   mounted: async function() {
-    // 获取题信息
-    let questions = await this.$service.questionnaire.getQuestions.call(this, this.$route.query.id)
-    this.questions = JSON.parse(JSON.stringify(questions.data.problems))
-    // 获取问卷信息
-    let info = await this.$service.questionnaire.getInfo.call(this, this.$route.query.id)
-    this.info = JSON.parse(JSON.stringify(info.data))
-    this.total = this.info.answer
-    // 获取并统计数据
-    let answer = await this.$service.questionnaire.getAnswers.call(this, this.$route.query.id, { page: 1, size: this.info.answer })
-    this.statistics(answer.data)
-    this.isFinish = true
+    try {
+      // 获取题信息
+      let questions = await this.$service.questionnaire.getQuestions.call(this, this.$route.query.id)
+      this.questions = JSON.parse(JSON.stringify(questions.data.problems))
+      // 获取问卷信息
+      let info = await this.$service.questionnaire.getInfo.call(this, this.$route.query.id)
+      this.info = JSON.parse(JSON.stringify(info.data))
+      this.total = this.info.answer
+      // 获取并统计数据
+      let answer = await this.$service.questionnaire.getAnswers.call(this, this.$route.query.id, { page: 1, size: this.info.answer })
+      this.statistics(answer.data)
+      this.isFinish = true
+    } catch (err) {
+      this.$message.error(err)
+    }
   }
 }
 </script>

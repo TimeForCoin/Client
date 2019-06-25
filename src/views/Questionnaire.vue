@@ -197,35 +197,49 @@ export default {
       this.isPresentation = !this.isPresentation
     },
     // 完成问卷编辑
-    finish: async function() {
-      // await this.$service.task.ChangeTaskInfomation.call(this, this.$route.query.id, { status: 'wait' })
+    finish: function() {
+      this.$router.push({
+        path: '/mission_information',
+        query: {
+          missionType: 2,
+          id: this.$route.query.id
+        }
+      })
     },
     // 自动保存
     autoSave: async function() {
-      this.questionnaire.questions.forEach((v, i) => {
-        v.index = i + 1
-      })
-      // 保存基本信息
-      await this.$service.questionnaire.modifyInfo.call(this, this.$route.query.id, {
-        title: this.questionnaire.title,
-        description: this.questionnaire.description,
-        anonymous: this.questionnaire.anonymous
-      })
-      // 保存问题
-      await this.$service.questionnaire.modifyQuestions.call(this, this.$route.query.id, {
-        problems: this.questionnaire.questions
-      })
-      this.$message.success('自动保存')
+      try {
+        this.questionnaire.questions.forEach((v, i) => {
+          v.index = i + 1
+        })
+        // 保存基本信息
+        await this.$service.questionnaire.modifyInfo.call(this, this.$route.query.id, {
+          title: this.questionnaire.title,
+          description: this.questionnaire.description,
+          anonymous: this.questionnaire.anonymous
+        })
+        // 保存问题
+        await this.$service.questionnaire.modifyQuestions.call(this, this.$route.query.id, {
+          problems: this.questionnaire.questions
+        })
+        this.$message.success('自动保存')
+      } catch (err) {
+        this.$message.error(err)
+      }
     }
   },
   mounted: async function() {
-    let info = await this.$service.questionnaire.getInfo.call(this, this.$route.query.id)
-    this.questionnaire.title = info.data.title
-    this.questionnaire.description = info.data.description
-    this.questionnaire.anonymous = true
-    // console.log(this.questionnaire)
-    let questions = await this.$service.questionnaire.getQuestions.call(this, this.$route.query.id)
-    this.questionnaire.questions = JSON.parse(JSON.stringify(questions.data.problems))
+    try {
+      let info = await this.$service.questionnaire.getInfo.call(this, this.$route.query.id)
+      this.questionnaire.title = info.data.title
+      this.questionnaire.description = info.data.description
+      this.questionnaire.anonymous = true
+      // console.log(this.questionnaire)
+      let questions = await this.$service.questionnaire.getQuestions.call(this, this.$route.query.id)
+      this.questionnaire.questions = JSON.parse(JSON.stringify(questions.data.problems))
+    } catch (err) {
+      this.$message.error(err)
+    }
   }
 }
 </script>
