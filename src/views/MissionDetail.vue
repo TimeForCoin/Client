@@ -86,9 +86,12 @@
 				<a-button v-if="mission.collected" type="primary" icon="star" @click="cancelCollect" ghost>取消收藏</a-button>
 				<a-button v-else type="primary" icon="star" @click="collectTask">收藏</a-button>
 				<a-button v-if="isPublisher == false && isPlayer == false && mission.player_count < mission.max_player" type="primary" @click="joinTask">{{this.joinBtnText}}</a-button>
-				<a-button v-if="isPublisher == false && isPlayer == true" type="primary" @click="giveUpTask">放弃任务</a-button>
+				<a-button v-if="isPublisher == false && isPlayer == true && mission.status != 'finish' && mission.status != 'close'" type="primary" @click="giveUpTask">放弃任务</a-button>
+				<a-button v-if="isPublisher == false && isPlayer == true && mission.status == 'finish'" type="primary" disabled>任务已结束</a-button>
+				<a-button v-if="isPublisher == false && isPlayer == true && mission.status == 'close'" type="primary" @click="closeTask" disabled>任务已关闭</a-button>
 				<a-button v-if="isPublisher == false && isPlayer == false && mission.player_count >= mission.max_player" type="primary" disabled>人数已满</a-button>
-				<a-button v-if="isPublisher == true" type="primary" @click="closeTask">中止任务</a-button>
+				<a-button v-if="isPublisher == true && mission.status != 'draft' && mission.status != 'close'" type="primary" @click="closeTask">关闭任务</a-button>
+				<a-button v-if="isPublisher == true && mission.status == 'close'" type="primary" @click="closeTask" disabled>已关闭</a-button>
 			</div>
 		</div>
 	</div>
@@ -130,7 +133,7 @@
 					case "close":
 						return "red"
 					case "finish":
-						return "green"
+						return "gray"
 				}
 				return "yellow"
 			},
@@ -146,7 +149,7 @@
 					case "close":
 						return "已关闭"
 					case "finish":
-						return "已完成"
+						return "已结束"
 				}
 				return "未知"
 			},
@@ -193,7 +196,7 @@
 			var id = this.$route.query.id
 			//console.log(id)
 			var res = await this.$service.task.GetTask.call(this, id)
-			console.log(res)
+			//console.log(res)
 			this.mission = res
 			if (this.userID == this.mission.publisher.id) {
 				this.isPublisher = true
@@ -210,7 +213,7 @@
 				let p = {}
 				if (this.mission.auto_accept == false) p.note = "我要参加"
 				var res = await this.$service.task.JoinTask.call(this, this.mission.id, p)
-				console.log(res)
+				//console.log(res)
 				if(res.result == 'wait') {
 					this.$message.success('申请成功，等待审核')
 				}
@@ -220,10 +223,19 @@
 				}
 			},
 			async closeTask() {
-
+				this.mission.status = 'close'
+				let p = {
+					status: 'close'
+				}
+				var res = await this.$service.task.ChangeTask.call(this, this.mission.id, p)
+				//console.log(res)
 			},
 			async giveUpTask() {
-
+				let p = {
+					status: 'give_up',
+				}
+				var res = await this.$service.task.ChangePlayerStatusOfTask.call(this, this.mission.id, 'me', p)
+				//console.log(res)
 			},
 			async likeTask(){
 				await this.$service.task.AddLikeTask.call(this, this.mission.id)

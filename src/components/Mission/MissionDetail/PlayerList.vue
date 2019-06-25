@@ -74,7 +74,7 @@ export default {
 				note: this.note
 			}
 			var res = await this.$service.task.ChangePlayerStatusOfTask.call(this, this.taskID, this.currentUserID, p)
-			console.log(res)
+			//console.log(res)
 			this.note = ""
 			this.$emit("onChange")
 			this.modelVisible = false

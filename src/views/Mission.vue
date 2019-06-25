@@ -20,6 +20,10 @@
               <a-icon type="edit" />
               <span class="nav-text">草稿箱</span>
             </a-menu-item>
+            <a-menu-item key="5" class="left-menu-item">
+              <a-icon type="delete" />
+              <span class="nav-text">历史任务</span>
+            </a-menu-item>
           </a-menu>
           <a-button type="primary" class="mission-btn" @click="createMission">发布任务</a-button>
         </div>
@@ -208,7 +212,7 @@ export default {
       this.$router.push('/create_questionnaire')
     },
     showDetail(id, status, type) {
-      console.log(id, status, type)
+      //console.log(id, status, type)
       if(status == 'draft') {
         if(type == 'questionnaire') {
           this.$router.push({
@@ -246,7 +250,7 @@ export default {
         type: this.missionType
       }
       var res = await this.$service.task.GetColllectedTaskList.call(this, 'me', parmas)
-      console.log(res)
+      //console.log(res)
       if(p > 1) {
         this.missions = this.missions.concat(res.tasks)
       }
@@ -263,7 +267,7 @@ export default {
         size: 6
       }
       var res = await this.$service.task.GetPlayingTaskList.call(this, 'me', parmas)
-      console.log(res)
+      //console.log(res)
       var tasks = []
       for (var i = 0; i < res.data.length; i++) {
         tasks.push(res.data[i].task)
@@ -287,7 +291,7 @@ export default {
         type: this.missionType
       }
       var res = await this.$service.task.GetTasksList.call(this, parmas)
-      console.log(res)
+      //console.log(res)
       if(p > 1) {
         this.missions = this.missions.concat(res.tasks)
       }
@@ -305,7 +309,7 @@ export default {
         status: 'draft'
       }
       var res = await this.$service.task.GetTasksList.call(this, parmas)
-      console.log(res)
+      //console.log(res)
       if(p > 1) {
         this.missions = this.missions.concat(res.tasks)
       }
@@ -351,7 +355,7 @@ export default {
       .mission-btn {
         position: absolute;
 
-        top: 300px;
+        top: 350px;
         left: 70px;
       }
       .questionnaire-btn {

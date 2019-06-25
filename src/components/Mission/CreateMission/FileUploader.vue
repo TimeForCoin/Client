@@ -44,7 +44,7 @@ export default {
 			formData.append("type", "file");
 			
 			const res = await this.$service.file.UploadFile.call(this, formData);
-			console.log(res);
+			//console.log(res);
 			this.fileIDList.push(res.id)
 			this.$emit("fileChange", this.fileIDList)
 			throw "Finsih"
