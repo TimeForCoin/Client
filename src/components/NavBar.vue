@@ -15,9 +15,11 @@
         v-model="loginModalVisible"
         @ok="() => loginModalVisible = false"
       >
-        <a-button @click="loginByViolet" >Violet授权登陆</a-button>
-        <a-button @click="loginByWechat">微信扫码登陆</a-button>
-        <div v-if="loginType === 'violet'">
+        <div class="login-type">
+          <a-button type="primary" class="type-btn" @click="loginByViolet">Violet授权登陆</a-button>
+          <a-button type="primary" class="type-btn" @click="loginByWechat">微信扫码登陆</a-button>
+        </div>
+        <div class="login-type" v-if="loginType === 'violet'">
           <p>{{loginModalText}}</p>
           <a-button v-if="failedLogin" class="modal-button" type="primary" @click="login">重试</a-button>
           <a-button
@@ -27,9 +29,9 @@
             @click="()=>{loginModalVisible = false}"
           >取消</a-button>
         </div>
-        <div v-if="loginType === 'wechat'">
+        <div class="login-type" v-if="loginType === 'wechat'">
           <p>{{loginModalText}}</p>
-          <img src="/api/session/wechat"/>
+          <img src="/api/session/wechat">
         </div>
       </a-modal>
     </div>
@@ -95,7 +97,7 @@ export default {
           break
       }
     },
-    async loginByViolet() {
+    async loginByViolet () {
       this.loginType = 'violet'
       this.failedLogin = false
       this.loginModalText = '等待授权中...'
@@ -133,7 +135,7 @@ export default {
         this.loginModalVisible = false
       }
     },
-    async loginByWechat() {
+    async loginByWechat () {
       this.loginType = 'wechat'
       try {
         const timer = () => {
@@ -280,6 +282,12 @@ export default {
   text-align: center;
   .modal-button {
     margin-left: 20px;
+  }
+  .login-type {
+    text-align: center;
+    .type-btn {
+      margin: 20px;
+    }
   }
 }
 
