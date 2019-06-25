@@ -14,7 +14,7 @@
         </div>
         <div class="wrapper">
           <a-button class="submit" v-if="this.state == 'answer'" @click="submit" type="primary" ghost>提交问卷</a-button>
-          <a-button type="primary" v-if="this.state == 'statistics'" @click="back" ghost>完成</a-button>
+          <a-button type="primary" v-if="this.state == 'statistics' || this.state == 'preview'" @click="back" ghost>完成</a-button>
         </div>
     </div>
 </template>
@@ -95,13 +95,14 @@ export default {
           errIndex.push(index)
         }
       })
-      if (errIndex.length) this.$message.error(errIndex.map((v) => v + 1).join(' ') + '题未完成')
+      if (errIndex.length) this.$message.error('No.' + errIndex.map((v) => v + 1).join(' ') + '题未完成')
       return !errIndex.length
     },
     submit: async function() {
       if (!this.verifyAnswer()) return
       try {
         await this.$service.questionnaire.addAnswer.call(this, this.$route.query.id, this.getAnswer())
+        this.back()
       } catch (err) {
         this.$message.error(err)
       }

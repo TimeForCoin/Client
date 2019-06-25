@@ -55,8 +55,7 @@ export default {
         SINGLE_CHOICE: 0,
         MULTI_CHOICE: 1,
         SINGLE_FILL: 2,
-        SCORE: 3,
-        SORT: 4
+        SCORE: 3
       },
       sider: [
         {
@@ -70,10 +69,6 @@ export default {
         {
           menu: '评分题',
           menuItem: ['量表']
-        },
-        {
-          menu: '排序题',
-          menuItem: ['排序']
         }
       ],
       questionnaire: {
