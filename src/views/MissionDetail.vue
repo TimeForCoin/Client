@@ -87,11 +87,11 @@
 				<a-button v-if="mission.collected" type="primary" icon="star" @click="cancelCollect" ghost>取消收藏</a-button>
 				<a-button v-else type="primary" icon="star" @click="collectTask">收藏</a-button>
 				<a-button v-if="isPublisher == false && isPlayer == false && mission.player_count < mission.max_player" type="primary" @click="joinTask">{{this.joinBtnText}}</a-button>
-				<a-button v-if="isPublisher == false && isPlayer == true && mission.status != 'finish' && mission.status != 'close'" type="primary" @click="giveUpTask">放弃任务</a-button>
-				<a-button v-if="isPublisher == false && isPlayer == true && mission.status == 'finish'" type="primary" disabled>任务已结束</a-button>
-				<a-button v-if="isPublisher == false && isPlayer == true && mission.status == 'close'" type="primary" @click="closeTask" disabled>任务已关闭</a-button>
+				<a-button v-if="isPublisher == false && isPlayer == true && mission.status == 'wait' && (player_status == 'running' || player_status == 'wait')" type="primary" @click="giveUpTask">放弃任务</a-button>
+				<a-button v-if="isPublisher == false && mission.status == 'finish'" type="primary" disabled>任务已结束</a-button>
+				<a-button v-if="isPublisher == false && mission.status == 'close'" type="primary" disabled>任务已关闭</a-button>
 				<a-button v-if="isPublisher == false && isPlayer == false && mission.player_count >= mission.max_player" type="primary" disabled>人数已满</a-button>
-				<a-button v-if="isPublisher == true && mission.status != 'draft' && mission.status != 'close'" type="primary" @click="closeTask">关闭任务</a-button>
+				<a-button v-if="isPublisher == true && mission.status == 'wait'" type="primary" @click="closeTask">关闭任务</a-button>
 				<a-button v-if="isPublisher == true && mission.status == 'close'" type="primary" @click="closeTask" disabled>已关闭</a-button>
 			</div>
 		</div>
@@ -119,6 +119,7 @@ export default {
 			allPlayer: [],
 			isPublisher: false,
 			isPlayer: false,
+			player_status: '',
 		}
 	},
 	computed: {
@@ -208,6 +209,11 @@ export default {
 		this.allPlayer.forEach(element => {
 			if(element.player.id == this.userID) this.isPlayer = true
 		});
+		if(this.isPlayer == true) {
+			let res3 = await this.$service.task.GetPlayerStatusOfTask.call(this, this.mission.id, this.userID)
+			this.player_status = res3.data.status
+			console.log(this.player_status)
+		}
 	},
 	methods: {
 		async joinTask() {
