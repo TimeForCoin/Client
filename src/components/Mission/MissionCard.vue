@@ -40,13 +40,10 @@ export default {
       switch (this.MissionModel.type) {
         case 'run':
           return '跑腿'
-          break
         case 'questionnaire':
           return '问卷'
-          break
         case 'info':
           return '信息'
-          break
       }
       return '跑腿'
     },
@@ -56,21 +53,20 @@ export default {
       return moment(newTime).startOf('hour').fromNow()
     },
     missionReward: function() {
-      if(this.MissionModel.reward_object == '') {
-        if(this.MissionModel.reward == 'money') {
+      if (this.MissionModel.reward_object === '') {
+        if (this.MissionModel.reward === 'money') {
           return this.MissionModel.reward_value.toString() + ' 闲币'
-        }
-        else {
+        } else {
           return this.MissionModel.reward_value.toString() + ' RMB'
         }
       }
       return this.MissionModel.reward_object
     },
     imgURL: function() {
-      if(this.MissionModel.images.length > 0) {
-        return "background-image: url(" + this.MissionModel.images[0].url + ")"
+      if (this.MissionModel.images.length > 0) {
+        return 'background-image: url(' + this.MissionModel.images[0].url + ')'
       }
-      return "background-image: url(" + defualtImage + ")"
+      return 'background-image: url(' + defualtImage + ')'
     }
   }
 }

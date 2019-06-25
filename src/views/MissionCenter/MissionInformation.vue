@@ -1,30 +1,51 @@
 <template>
   <div class="mission-information">
-    <a-divider class="top-title"><img class="top-logo" src="@/assets/logo.png">发布任务</a-divider>
+    <a-divider class="top-title">
+      <img class="top-logo" src="@/assets/logo.png">发布任务
+    </a-divider>
     <div class="left-div">
       <p class="title">
         <span>任务名称:</span>
-        <a-icon class="exclamation-icon" type="exclamation-circle" v-show="showError && mission.title == ''" theme="twoTone" twoToneColor="red"/>
+        <a-icon
+          class="exclamation-icon"
+          type="exclamation-circle"
+          v-show="showError && mission.title == ''"
+          theme="twoTone"
+          twoToneColor="red"
+        />
       </p>
       <a-input class="mission-title-input" v-model="mission.title"/>
     </div>
-    <a-divider />
+    <a-divider/>
     <div class="left-div">
       <p class="title">
         <span>任务内容描述:</span>
-        <a-icon class="exclamation-icon" type="exclamation-circle" v-show="showError && mission.content == ''" theme="twoTone" twoToneColor="red"/>
+        <a-icon
+          class="exclamation-icon"
+          type="exclamation-circle"
+          v-show="showError && mission.content == ''"
+          theme="twoTone"
+          twoToneColor="red"
+        />
       </p>
       <a-textarea class="mission-content-input" :autosize="{minRows: 4}" v-model="mission.content"/>
     </div>
-    <a-divider />
+    <a-divider/>
     <div class="flex-div">
       <div class="left-div" id="time-div">
         <p class="title">
           <a-icon class="left-icon" type="clock-circle" theme="twoTone" twoToneColor="#F0B11B"/>
           <span>任务时间:</span>
-          <a-icon class="exclamation-icon" type="exclamation-circle" v-show="showError && (mission.start_date == 0 || mission.end_date == 0)" theme="twoTone" twoToneColor="red"/>
+          <a-icon
+            class="exclamation-icon"
+            type="exclamation-circle"
+            v-show="showError && (mission.start_date == 0 || mission.end_date == 0)"
+            theme="twoTone"
+            twoToneColor="red"
+          />
         </p>
-        <a-range-picker class="date-picker"
+        <a-range-picker
+          class="date-picker"
           :ranges="{ Today: [moment(), moment()], 'This Month': [moment(), moment().endOf('month')] }"
           @change="onTimeChange"
         />
@@ -34,14 +55,19 @@
           <a-icon class="left-icon" type="tag" theme="twoTone" twoToneColor="#F0B11B"/>
           <span>任务类型:</span>
         </p>
-        <a-select v-if="missionType == 1" class="mission-type" defaultValue="errand" v-model="mission.type">
+        <a-select
+          v-if="missionType == 1"
+          class="mission-type"
+          defaultValue="errand"
+          v-model="mission.type"
+        >
           <a-select-option value="run">跑腿</a-select-option>
           <a-select-option value="info">信息</a-select-option>
         </a-select>
         <p v-else class="mission-type2">问卷</p>
       </div>
     </div>
-    <a-divider />
+    <a-divider/>
     <div class="flex-div">
       <div class="left-div">
         <p class="title">
@@ -58,13 +84,19 @@
         <TagBlock @addTag="addMissionTag" :text="'添加标签'" :parentTags="tagList"/>
       </div>
     </div>
-    <a-divider />
+    <a-divider/>
     <div class="flex-div">
       <div class="reward-div">
         <p class="title">
           <a-icon class="left-icon" type="money-collect" theme="twoTone" twoToneColor="#F0B11B"/>
           <span>任务报酬:</span>
-          <a-icon class="exclamation-icon" type="exclamation-circle" v-show="showError && mission.reward_value == 0 && mission.reward_object == ''" theme="twoTone" twoToneColor="red"/>
+          <a-icon
+            class="exclamation-icon"
+            type="exclamation-circle"
+            v-show="showError && mission.reward_value == 0 && mission.reward_object == ''"
+            theme="twoTone"
+            twoToneColor="red"
+          />
         </p>
         <div class="reward-type">
           <span>类型:</span>
@@ -80,32 +112,42 @@
         </div>
         <div v-else>
           <span class="reward-object-span">报酬详情:</span>
-          <a-textarea class="reward-object" :autosize="{minRows: 3}" v-model="mission.reward_object"/>
+          <a-textarea
+            class="reward-object"
+            :autosize="{minRows: 3}"
+            v-model="mission.reward_object"
+          />
         </div>
       </div>
       <div class="player-div">
         <p class="title">
           <a-icon class="left-icon" type="idcard" theme="twoTone" twoToneColor="#F0B11B"/>
           <span>参与者设置:</span>
-          <a-icon class="exclamation-icon" type="exclamation-circle" v-show="showError && mission.max_player <= 0" theme="twoTone" twoToneColor="red"/>
+          <a-icon
+            class="exclamation-icon"
+            type="exclamation-circle"
+            v-show="showError && mission.max_player <= 0"
+            theme="twoTone"
+            twoToneColor="red"
+          />
         </p>
         <a-checkbox @change="onCheckedChange">自动同意领取任务</a-checkbox>
-        <br />
+        <br>
         <span>人数上限:</span>
         <a-input class="player-account" v-model="mission.max_player"/>
       </div>
     </div>
-    <a-divider />
+    <a-divider/>
     <div class="left-div">
       <p class="title">上传图片:</p>
       <ImgUploader @fileChange="addImages" :parentFileList="imageList"/>
     </div>
-    <a-divider />
+    <a-divider/>
     <div class="left-div">
       <p class="title">上传附件:</p>
       <FileUploader @fileChange="addAttachment" :parentFileList="fileList"/>
     </div>
-    <a-divider />
+    <a-divider/>
     <div v-if="missionType == 1" class="btn-group">
       <a-button class="publish-btn" type="primary" @click="createMission">发布任务</a-button>
       <a-button class="save-btn" type="primary" @click="saveMission">保存草稿</a-button>
@@ -115,7 +157,12 @@
       <a-button type="primary" @click="saveMission">保存草稿</a-button>
       <a-button type="primary" @click="editQuestion">编辑问卷</a-button>
     </div>
-    <a-button v-if="missionType == 2 && isDraft == false" class="question-btn" type="primary" @click="editQuestion">保存草稿并进入问卷编辑</a-button>
+    <a-button
+      v-if="missionType == 2 && isDraft == false"
+      class="question-btn"
+      type="primary"
+      @click="editQuestion"
+    >保存草稿并进入问卷编辑</a-button>
   </div>
 </template>
 
@@ -125,7 +172,7 @@ import TagBlock from '@/components/Mission/CreateMission/TagBlock.vue'
 import ImgUploader from '@/components/Mission/CreateMission/ImgUploader.vue'
 import FileUploader from '@/components/Mission/CreateMission/FileUploader.vue'
 
-function getBase64 (img, callback) {
+function getBase64(img, callback) {
   const reader = new FileReader()
   reader.addEventListener('load', () => callback(reader.result))
   reader.readAsDataURL(img)
@@ -200,14 +247,24 @@ export default {
     },
     checkInformation() {
       // console.log(this.mission)
-      if (this.mission.title == '' || this.mission.content == '' || this.mission.start_date == 0 ||
-         this.mission.end_date == 0 || this.mission.max_player <= 0 ||
-         (this.mission.reward_value == 0 && this.mission.reward_object == '')) {
+      if (
+        this.mission.title === '' ||
+        this.mission.content === '' ||
+        this.mission.start_date === 0 ||
+        this.mission.end_date === 0 ||
+        this.mission.max_player <= 0 ||
+        (this.mission.reward_value === 0 && this.mission.reward_object === '')
+      ) {
         this.showError = true
         this.$message.error('请填写必要信息')
         return false
       }
-      if (this.mission.start_date < moment().startOf('day').unix()) {
+      if (
+        this.mission.start_date <
+        moment()
+          .startOf('day')
+          .unix()
+      ) {
         this.$message.error('请选择正确的时间')
         return false
       }
@@ -216,14 +273,14 @@ export default {
       return true
     },
     async createMission() {
-      if (this.checkInformation() == false) {
+      if (this.checkInformation() === false) {
         return
       }
       this.mission.publish = true
       // console.log(this.mission)
       var res
       var id
-      if (this.isDraft == true) {
+      if (this.isDraft === true) {
         this.mission.status = 'wait'
         await this.$service.task.ChangeTask.call(this, this.taskID, this.mission)
         id = this.taskID
@@ -240,12 +297,12 @@ export default {
       })
     },
     async saveMission() {
-      if (this.checkInformation() == false) {
+      if (this.checkInformation() === false) {
         return
       }
       var res
       var id
-      if (this.isDraft == true) {
+      if (this.isDraft === true) {
         // this.mission.status = 'draft'
         await this.$service.task.ChangeTask.call(this, this.taskID, this.mission)
         id = this.taskID
@@ -263,11 +320,11 @@ export default {
       })
     },
     async editQuestion() {
-      if (this.checkInformation() == false) {
+      if (this.checkInformation() === false) {
         return
       }
       var id
-      if (this.isDraft == true) {
+      if (this.isDraft === true) {
         id = this.taskID
       } else {
         try {
@@ -277,7 +334,8 @@ export default {
           id = res.id
           let p = {
             title: '问卷标题',
-            description: '为了给您提供更好的服务，希望您能抽出几分钟时间，将您的感受和建议告诉我们，我们非常重视每位用户的宝贵意见，期待您的参与！现在我们就马上开始吧！',
+            description:
+              '为了给您提供更好的服务，希望您能抽出几分钟时间，将您的感受和建议告诉我们，我们非常重视每位用户的宝贵意见，期待您的参与！现在我们就马上开始吧！',
             anonymous: true
           }
           res = await this.$service.questionnaire.create.call(this, id, p)
@@ -295,7 +353,7 @@ export default {
   },
   created: async function() {
     var id = this.$route.query.id
-    if (id != 'none') {
+    if (id !== 'none') {
       var res = await this.$service.task.GetTask.call(this, id)
       this.mission = res
       // 将任务images加载到子控件中，并修改任务中images数据结构
@@ -368,9 +426,9 @@ export default {
   .title {
     text-align: left;
     padding-left: 10px;
-    border-left-style:solid;
-    border-width:5px;
-    border-color:#F0B11B;
+    border-left-style: solid;
+    border-width: 5px;
+    border-color: #f0b11b;
     color: #7c7c7c;
     font-size: 18px;
     font-weight: bold;
