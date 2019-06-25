@@ -23,6 +23,11 @@ export async function CreateTask(params) {
   return res.data
 }
 
+export async function ChangeTask(id, params) {
+  const res = await this.$axios.put('/tasks/' + id, params)
+  return res.data
+}
+
 export async function JoinTask(id, p) {
   const res = await this.$axios.post('/tasks/' + id + '/player', p)
   return res.data

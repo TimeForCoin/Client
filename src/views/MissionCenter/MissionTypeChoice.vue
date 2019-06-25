@@ -34,7 +34,8 @@ export default {
       this.$router.push({
         path: '/mission_information',
         query: {
-          missionType: 1
+					missionType: 1,
+					id: 'none'
         }
       })
 		},
@@ -42,7 +43,8 @@ export default {
       this.$router.push({
         path: '/mission_information',
         query: {
-          missionType: 2
+					missionType: 2,
+					id: 'none'
         }
       })
 		}

@@ -21,6 +21,7 @@
 
 <script>
 export default {
+	props: ['parentFileList'],
   data() {
     return {
 			previewVisible: false,
@@ -71,6 +72,23 @@ export default {
 			this.$emit("fileChange", this.fileIDList)
 			throw "Finsih"
       return false;
+		}
+	},
+	watch: {
+		parentFileList(val) {
+			console.log(this.parentFileList)
+			this.parentFileList.forEach(element => {
+				let f = {
+        	uid: '-1',
+					name: 'xxx.png',
+					status: 'done',
+					url: element.url,
+					thumbUrl: element.url,
+				}
+				this.fileList.push(f)
+				this.fileIDList.push(element.id)
+			});
+			this.$emit("fileChange", this.fileIDList)
 		}
 	}
 }

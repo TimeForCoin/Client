@@ -8,39 +8,62 @@
 				<div class="triangle-top"></div>
 				<div class="triangle-bottom"></div>
 			</div>
-			<div class="status-div">
-				<p class="title"><span>任务状态</span></p>
-				<a-tag class="status-tag" :color="color">{{missionStatus}}</a-tag>
-			</div>
+			<div class="flex-div">
+				<div class="left-div">
+					<p class="title"><span>任务状态</span></p>
+					<div class="content">
+						<a-tag class="status-tag" :color="color">{{missionStatus}}</a-tag>
+					</div>
+				</div>
+				<div class="right-div">
+					<p class="title"><span>发起者</span></p>
+					<img class="head-img" :src="mission.publisher.avatar" />
+					<span class="nickname">{{mission.publisher.nickname}}</span>
+				</div>
+			</div>	
 			<div class="content-div">
 				<p class="title"><span>任务详情</span></p>
 				<p class="content">{{mission.content}}</p>
 			</div>
-			<div class="date-div">
-				<p class="title">任务时间</p>
-				<p class="content">{{startDate}} - {{endDate}}</p>
-			</div>
-			<div class="block">
-				<p class="title">任务标签</p>
-				<div class="content">
-					<template v-for="tag in mission.tags">
-						<a-tag :key="tag">{{tag}}</a-tag>
-					</template>
+			<div class="flex-div">
+				<div class="left-div">
+					<p class="title">任务时间</p>
+					<p class="content">{{startDate}} - {{endDate}}</p>
+				</div>
+				<div class="right-div">
+					<p class="title">参与人数</p>
+					<p class="content">{{mission.player_count}} / {{mission.max_player}}</p>
 				</div>
 			</div>
-			<div class="block">
-				<p class="title">任务地点</p>
-				<div class="content">
-					<template v-for="tag in mission.location" >
-						<a-tag :key="tag">{{tag}}</a-tag>
-					</template>
+			<div class="flex-div">
+				<div class="left-div">
+					<p class="title">任务标签</p>
+					<div class="content">
+						<template v-for="tag in mission.tags">
+							<a-tag :key="tag">{{tag}}</a-tag>
+						</template>
+					</div>
+				</div>
+				<div class="right-div">
+					<p class="title">任务地点</p>
+					<div class="content">
+						<template v-for="tag in mission.location" >
+							<a-tag :key="tag">{{tag}}</a-tag>
+						</template>
+					</div>
 				</div>
 			</div>
-			<div class="image-div">
+			<div class="block" v-if="mission.type == 'questionnaire'">
+				<p class="title"><span>任务问卷</span></p>
+				<a-button type="primary" v-if="isPlayer == true" @click="showQuestionnaire">填写问卷</a-button>
+				<a-button type="primary" v-else @click="showQuestionnaire">查看问卷</a-button>
+			</div>
+			<div class="image-div" v-if="mission.images.length != 0">
 				<p class="title"><span>相关图片</span></p>
-				<div class="image" v-for="img in mission.images" :key="img.id">
-					<img :src="img.url"/>
-				</div>
+				<ImgList :images="mission.images" />
+			</div>
+			<div class="file-div" v-if="mission.attachment.length != 0">
+				<p class="title"><span>相关附件</span></p>
 			</div>
 			<div class="player-div">
 				<p class="title"><span>当前参与者</span></p>
@@ -59,8 +82,9 @@
 				<a-button v-else type="primary" icon="like" @click="likeTask">点赞</a-button>
 				<a-button v-if="mission.collected" type="primary" icon="star" @click="cancelCollect" ghost>取消收藏</a-button>
 				<a-button v-else type="primary" icon="star" @click="collectTask">收藏</a-button>
-				<a-button v-if="isPublisher == false && isPlayer == false" type="primary" @click="joinTask">{{this.joinBtnText}}</a-button>
+				<a-button v-if="isPublisher == false && isPlayer == false && mission.player_count < mission.max_player" type="primary" @click="joinTask">{{this.joinBtnText}}</a-button>
 				<a-button v-if="isPublisher == false && isPlayer == true" type="primary" @click="giveUpTask">放弃任务</a-button>
+				<a-button v-if="isPublisher == false && isPlayer == false && mission.player_count >= mission.max_player" type="primary" disabled>人数已满</a-button>
 				<a-button v-if="isPublisher == true" type="primary" @click="closeTask">中止任务</a-button>
 				<a-button type="primary" @click="answer">答题</a-button>
 				<a-button type="primary" @click="statistics">统计数据</a-button>
@@ -70,123 +94,131 @@
 </template>
 
 <script>
-import PlayerList from '@/components/Mission/MissionDetail/PlayerList.vue'
-const moment = require('moment')
+	import PlayerList from '@/components/Mission/MissionDetail/PlayerList.vue'
+	import ImgList from '@/components/Mission/MissionDetail/ImgList.vue'
+	const moment = require('moment')
 
-export default {
-  components: {
-    PlayerList
-  },
-  data() {
-    return {
-      mission: {},
-      imgList: [],
-      allPlayer: [],
-      isPublisher: false,
-      isPlayer: false
-    }
-  },
-  computed: {
-    userID: function() {
-      return this.$store.getters.getID
-    },
-    color: function() {
-      switch (this.mission.status) {
-        case 'draft':
-          return 'blue'
-        case 'wait':
-          return 'orange'
-        case 'close':
-          return 'red'
-        case 'finish':
-          return 'green'
-      }
-      return 'yellow'
-    },
-    missionStatus: function() {
-      switch (this.mission.status) {
-        case 'draft':
-          return '草稿'
-        case 'wait':
-          if (this.mission.start_date > moment().startOf('day').unix()) {
-            return '等待中'
-          }
-          return '进行中'
-        case 'close':
-          return '已关闭'
-        case 'finish':
-          return '已完成'
-      }
-      return '未知'
-    },
-    joinBtnText: function() {
-      if (this.mission.auto_accept == true) {
-        return '立即加入'
-      }
-      return '申请加入'
-    },
-    startDate: function() {
-      var newTime = new Date(this.mission.start_date * 1000)
-      return moment(newTime).format('YYYY-MM-DD')
-    },
-    endDate: function() {
-      var newTime = new Date(this.mission.end_date * 1000)
-      return moment(newTime).format('YYYY-MM-DD')
-    },
-    // 当前带审核的参与者
-    waitPlayer: function() {
-      return this.allPlayer.filter((item) => {
-        return item.status == 'wait'
-      })
-    },
-    // 当前已加入的参与者
-    runningPlayer: function() {
-      return this.allPlayer.filter((item) => {
-        return item.status == 'running'
-      })
-    },
-    // 当前已完成任务的参与者
-    finishPlayer: function() {
-      return this.allPlayer.filter((item) => {
-        return item.status == 'finish'
-      })
-    },
-    failurePlayer: function() {
-      return this.allPlayer.filter((item) => {
-        return item.status == 'failure'
-      })
-    }
-  },
-  // 加载任务消息和参与者信息
-  created: async function() {
-    var id = this.$route.query.id
-    // console.log(id)
-    var res = await this.$service.task.GetTask.call(this, id)
-    // console.log(res)
-    this.mission = res
-    if (this.userID == this.mission.publisher.id) {
-      this.isPublisher = true
-    }
-    var res2 = await this.$service.task.GetPlayerList.call(this, this.mission.id)
-    this.allPlayer = res2.data
-    // 判断是否参与
-    this.allPlayer.forEach(element => {
-      if (element.player.id == this.userID) this.isPlayer = true
-    })
-  },
-  methods: {
-    async joinTask() {
-      let p = {}
-      if (this.mission.auto_accept == false) p.note = '我要参加'
-      var res = await this.$service.task.JoinTask.call(this, this.mission.id, p)
-      console.log(res)
-      if (res.result == 'wait') {
-        this.$message.success('申请成功，等待审核')
-      } else {
-        this.$message.success('成功加入')
-      }
-    },
-    async closeTask() {
+  export default {
+		components: {
+			PlayerList,
+			ImgList
+		},
+		data() {
+			return {
+				mission: {
+					publisher: {},
+					attachment: [],
+					images: []
+				},
+				imgList: [],
+				allPlayer: [],
+				isPublisher: false,
+				isPlayer: false,
+			}
+		},
+		computed: {
+			userID: function() {
+				return this.$store.getters.getID
+			},
+			color: function() {
+				switch(this.mission.status) {
+					case "draft":
+						return "blue"
+					case "wait":
+						return "orange"
+					case "close":
+						return "red"
+					case "finish":
+						return "green"
+				}
+				return "yellow"
+			},
+			missionStatus: function() {
+				switch(this.mission.status) {
+					case "draft":
+						return "草稿"
+					case "wait":
+						if(this.mission.start_date > moment().startOf('day').unix()) {
+							return "等待中"
+						}
+						return "进行中"
+					case "close":
+						return "已关闭"
+					case "finish":
+						return "已完成"
+				}
+				return "未知"
+			},
+			joinBtnText: function() {
+				if(this.mission.auto_accept == true) {
+					return "立即加入"
+				}
+				return "申请加入"
+			},
+			startDate: function() {
+				var newTime = new Date(this.mission.start_date * 1000)
+				return moment(newTime).format("YYYY-MM-DD")
+			},
+			endDate: function() {
+				var newTime = new Date(this.mission.end_date * 1000)
+				return moment(newTime).format("YYYY-MM-DD")
+			},
+			// 当前带审核的参与者
+			waitPlayer: function() {
+				return this.allPlayer.filter((item) => {
+					return item.status == 'wait'
+				})
+			},
+			// 当前已加入的参与者
+			runningPlayer: function() {
+				return this.allPlayer.filter((item) => {
+					return item.status == 'running'
+				})
+			},
+			// 当前已完成任务的参与者
+			finishPlayer: function() {
+				return this.allPlayer.filter((item) => {
+					return item.status == 'finish'
+				})
+			},
+			failurePlayer: function() {
+				return this.allPlayer.filter((item) => {
+					return item.status == 'failure'
+				})
+			}
+		},
+		// 加载任务消息和参与者信息
+		created: async function() {
+			var id = this.$route.query.id
+			//console.log(id)
+			var res = await this.$service.task.GetTask.call(this, id)
+			console.log(res)
+			this.mission = res
+			if (this.userID == this.mission.publisher.id) {
+				this.isPublisher = true
+			}
+			var res2 = await this.$service.task.GetPlayerList.call(this, this.mission.id)
+			this.allPlayer = res2.data
+			// 判断是否参与
+			this.allPlayer.forEach(element => {
+				if(element.player.id == this.userID) this.isPlayer = true
+			});
+		},
+		methods: {
+			async joinTask() {
+				let p = {}
+				if (this.mission.auto_accept == false) p.note = "我要参加"
+				var res = await this.$service.task.JoinTask.call(this, this.mission.id, p)
+				console.log(res)
+				if(res.result == 'wait') {
+					this.$message.success('申请成功，等待审核')
+				}
+				else {
+					this.$message.success('成功加入')
+					this.isPlayer = true
+				}
+			},
+			async closeTask() {
 
     },
     answer: function() {
@@ -197,6 +229,7 @@ export default {
     },
     async giveUpTask() {
 
+<<<<<<< HEAD
     },
     async likeTask() {
       await this.$service.task.AddLikeTask.call(this, this.mission.id)
@@ -224,6 +257,38 @@ export default {
     }
   }
 }
+=======
+			},
+			async likeTask(){
+				await this.$service.task.AddLikeTask.call(this, this.mission.id)
+				this.mission.liked = true
+				this.$message.success('点赞成功')
+			},
+			async dislike() {
+				await this.$service.task.DeleteLikeTask.call(this, this.mission.id)
+				this.mission.liked = false
+				this.$message.success('取消点赞')
+			},
+			async collectTask(){
+				await this.$service.task.AddCollectTask.call(this, this.mission.id)
+				this.mission.collected = true
+				this.$message.success('收藏成功')
+			},
+			async cancelCollect() {
+				await this.$service.task.DeleteCollectTask.call(this, this.mission.id)
+				this.mission.collected = false
+				this.$message.success('取消收藏')
+			},
+			async refreshPlayerData(){
+				var res = await this.$service.task.GetPlayerList.call(this, this.mission.id)
+				this.allPlayer = res.data
+			},
+			showQuestionnaire() {
+
+			}
+		}
+	}
+>>>>>>> upstream/master
 </script>
 
 <style lang="less" scoped>
@@ -322,19 +387,6 @@ export default {
 			text-align: left;
 		}
 
-		.status-div {
-			.block();
-			text-align: left;
-
-			.title {
-				display: inline-block;
-			}
-			.status-tag {
-				font-size: 14px;
-				margin-left: 15px;
-			}
-		}
-
 		.content-div {
 			.block();
 			transition: 0.5s;
@@ -350,19 +402,43 @@ export default {
 			.block();
 		}
 
-		.tag-div {
+		.flex-div {
 			.block();
+			display: flex;
+			flex-wrap: wrap;
+			flex-direction: row;
+			position: relative;
+			.left-div{
+			}
+			.right-div {
+				position: absolute;
+				left: 55%;
+
+				.head-img {
+					width: 40px;
+					height: 40px;
+					border-radius: 100%;
+					margin-left: 10px;
+				}
+				.nickname {
+					margin-left: 10px;
+					font-size: 14px;
+				}
+			}
 		}
 
 		.image-div {
 			.block();
-
 			.image {
 				img {
 					height: 100px;
 					width: 100px;
 				}
 			}
+		}
+
+		.file-div {
+			.block();
 		}
 
 		.player-div {
