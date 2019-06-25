@@ -267,27 +267,30 @@ export default {
         return
       }
       var id
-      if(this.isDraft == true) {
+      if (this.isDraft == true) {
         id = this.taskID
-      }
-      else {
-        this.mission.publish = false
-        this.mission.type = 'questionnaire'
-        let res = await this.$service.task.CreateTask.call(this, this.mission)
-        id = res.id
-        let p = {
-          title: '问卷标题',
-          description: '为了给您提供更好的服务，希望您能抽出几分钟时间，将您的感受和建议告诉我们，我们非常重视每位用户的宝贵意见，期待您的参与！现在我们就马上开始吧！',
-          anonymous: true
+      } else {
+        try {
+          this.mission.publish = false
+          this.mission.type = 'questionnaire'
+          let res = await this.$service.task.CreateTask.call(this, this.mission)
+          id = res.id
+          let p = {
+            title: '问卷标题',
+            description: '为了给您提供更好的服务，希望您能抽出几分钟时间，将您的感受和建议告诉我们，我们非常重视每位用户的宝贵意见，期待您的参与！现在我们就马上开始吧！',
+            anonymous: true
+          }
+          res = await this.$service.questionnaire.create.call(this, id, p)
+          this.$router.push({
+            path: '/create_questionnaire',
+            query: {
+              id: id
+            }
+          })
+        } catch (err) {
+          this.$utils.handler.check.call(this, err)
         }
-        res = await this.$service.questionnaire.create.call(this, id, p)
       }
-      this.$router.push({
-        path: '/create_questionnaire',
-        query: {
-          id: id
-        }
-      })
     }
   },
   created: async function() {
