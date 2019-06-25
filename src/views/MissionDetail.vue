@@ -95,6 +95,10 @@
 				<a-button v-if="isPublisher == true && mission.status == 'wait'" type="primary" @click="closeTask">关闭任务</a-button>
 				<a-button v-if="isPublisher == true && mission.status == 'close'" type="primary" disabled>已关闭</a-button>
 			</div>
+			<div class="comment-div">
+				<p class="title"><span>评论</span></p>
+				<CommentList :taskID="$route.query.id"/>
+			</div>
 		</div>
 	</div>
 </template>
@@ -102,12 +106,14 @@
 <script>
 import PlayerList from '@/components/Mission/MissionDetail/PlayerList.vue'
 import ImgList from '@/components/Mission/MissionDetail/ImgList.vue'
+import CommentList from '@/components/Mission/MissionDetail/CommentList.vue'
 const moment = require('moment')
 
 export default {
 	components: {
 		PlayerList,
-		ImgList
+		ImgList,
+		CommentList
 	},
 	data() {
 		return {
@@ -479,6 +485,9 @@ export default {
 			.block();
 		}
 		.waiting-div {
+			.block();
+		}
+		.comment-div {
 			.block();
 		}
 
