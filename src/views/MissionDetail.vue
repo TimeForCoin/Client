@@ -13,6 +13,7 @@
 					<p class="title"><span>任务状态</span></p>
 					<div class="content">
 						<a-tag class="status-tag" :color="color">{{missionStatus}}</a-tag>
+						<a-tag class="status-tag" v-if="isPlayer == true" :color="color2">{{playerStatus}}</a-tag>
 					</div>
 				</div>
 				<div class="right-div">
@@ -92,7 +93,7 @@
 				<a-button v-if="isPublisher == false && mission.status == 'close'" type="primary" disabled>任务已关闭</a-button>
 				<a-button v-if="isPublisher == false && isPlayer == false && mission.player_count >= mission.max_player" type="primary" disabled>人数已满</a-button>
 				<a-button v-if="isPublisher == true && mission.status == 'wait'" type="primary" @click="closeTask">关闭任务</a-button>
-				<a-button v-if="isPublisher == true && mission.status == 'close'" type="primary" @click="closeTask" disabled>已关闭</a-button>
+				<a-button v-if="isPublisher == true && mission.status == 'close'" type="primary" disabled>已关闭</a-button>
 			</div>
 		</div>
 	</div>
@@ -145,13 +146,48 @@ export default {
 					return "草稿"
 				case "wait":
 					if(this.mission.start_date > moment().startOf('day').unix()) {
-						return "等待中"
+						return "未开始"
 					}
 					return "进行中"
 				case "close":
 					return "已关闭"
 				case "finish":
 					return "已结束"
+			}
+			return "未知"
+		},
+		color2: function() {
+			switch(this.player_status) {
+				case "refuse":
+				case "failure":
+					return "red"
+				case "give_up":
+				case "close":
+					return "gray"
+				case "finish":
+					return "green"
+				case "wait":
+				case "running":
+					return "orange"
+			}
+			return "yellow"
+		},
+		playerStatus: function() {
+			switch(this.player_status) {
+				case "refuse":
+					return "被拒绝"
+				case "failure":
+					return "已失败"
+				case "give_up":
+					return "已放弃"
+				case "close":
+					return "已关闭"
+				case "finish":
+					return "已完成"
+				case "wait":
+					return "审核中"
+				case "running":
+					return "已加入"
 			}
 			return "未知"
 		},
@@ -210,8 +246,7 @@ export default {
 			if(element.player.id == this.userID) this.isPlayer = true
 		});
 		if(this.isPlayer == true) {
-			let res3 = await this.$service.task.GetPlayerStatusOfTask.call(this, this.mission.id, this.userID)
-			this.player_status = res3.data.status
+			this.refreshPlayerStatus()
 			console.log(this.player_status)
 		}
 	},
@@ -226,8 +261,10 @@ export default {
 			}
 			else {
 				this.$message.success('成功加入')
-				this.isPlayer = true
 			}
+			this.isPlayer = true
+			this.refreshPlayerStatus()
+			this.refreshPlayerData()
 		},
 		async closeTask() {
 			this.mission.status = 'close'
@@ -243,6 +280,9 @@ export default {
 			}
 			var res = await this.$service.task.ChangePlayerStatusOfTask.call(this, this.mission.id, 'me', p)
 			//console.log(res)
+			this.$message.success('放弃治疗')
+			this.refreshPlayerStatus()
+			this.refreshPlayerData()
 		},
 		async likeTask(){
 			await this.$service.task.AddLikeTask.call(this, this.mission.id)
@@ -267,6 +307,10 @@ export default {
 		async refreshPlayerData(){
 			var res = await this.$service.task.GetPlayerList.call(this, this.mission.id)
 			this.allPlayer = res.data
+		},
+		async refreshPlayerStatus() {
+			let res = await this.$service.task.GetPlayerStatusOfTask.call(this, this.mission.id, this.userID)
+			this.player_status = res.data.status
 		},
 		answer: function() {
 			this.$router.push({ path: '/questionnaire_answer', query: { id: this.mission.id } })
@@ -465,7 +509,7 @@ export default {
 		margin-bottom: 5px;
 		display: block;
 	}
-	
+
 }
 
 </style>
