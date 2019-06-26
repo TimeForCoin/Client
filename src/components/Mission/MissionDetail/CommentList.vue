@@ -36,7 +36,7 @@
 								<a-icon
 									type="like"
 									:theme="item.liked === true ? 'filled' : 'outlined'"
-									@click="addLike(item.id)"
+									@click="addLike(item.id, item.liked)"
 								/>
 							</a-tooltip>
 							<span style="padding-left: '8px';cursor: 'auto'">
@@ -93,8 +93,13 @@ export default {
 				this.comments[i].time =  moment(newTime).startOf('hour').fromNow()
 			}
 		},
-		async addLike(id){
-			let res = await this.$service.comment.AddLikeComment.call(this, id)
+		async addLike(id, liked){
+			if(liked) {
+				let res = await this.$service.comment.DeleteLikeComment.call(this, id)
+			}
+			else {
+				let res = await this.$service.comment.AddLikeComment.call(this, id)
+			}
 			this.refreshComments()
 		}
 	},
