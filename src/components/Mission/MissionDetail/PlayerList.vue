@@ -59,26 +59,26 @@ export default {
   },
   computed: {},
   methods: {
-    async acceptPlayer(userId, nickname) {
+    acceptPlayer(userId, nickname) {
       this.currentUserID = userId
       this.modalTitle = '确认同意' + nickname + '加入任务？'
       this.changeStatus = 'running'
       this.modelVisible = true
     },
-    async refusePlayer(userId, nickname) {
-      this.currentUserId = userId
+    refusePlayer(userId, nickname) {
+      this.currentUserID = userId
       this.modalTitle = '确认拒绝' + nickname + '加入任务？'
       this.changeStatus = 'refuse'
       this.modelVisible = true
     },
-    async failTask(userId, nickname) {
-      this.currentUserId = userId
+    failTask(userId, nickname) {
+      this.currentUserID = userId
       this.modalTitle = '确认' + nickname + '任务失败？'
       this.changeStatus = 'failure'
       this.modelVisible = true
     },
-    async finishTask(userId, nickname) {
-      this.currentUserId = userId
+    finishTask(userId, nickname) {
+      this.currentUserID = userId
       this.modalTitle = '确认' + nickname + '任务完成？'
       this.changeStatus = 'finish'
       this.modelVisible = true

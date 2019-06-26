@@ -186,6 +186,12 @@
           disabled
         >已关闭</a-button>
       </div>
+      <div class="comment-div">
+        <p class="title">
+          <span>评论</span>
+        </p>
+        <CommentList :taskID="$route.query.id"/>
+      </div>
     </div>
   </div>
 </template>
@@ -193,12 +199,14 @@
 <script>
 import PlayerList from '@/components/Mission/MissionDetail/PlayerList.vue'
 import ImgList from '@/components/Mission/MissionDetail/ImgList.vue'
+import CommentList from '@/components/Mission/MissionDetail/CommentList.vue'
 const moment = require('moment')
 
 export default {
   components: {
     PlayerList,
-    ImgList
+    ImgList,
+    CommentList
   },
   data() {
     return {
@@ -288,7 +296,7 @@ export default {
       return '未知'
     },
     joinBtnText: function() {
-      if (this.mission.auto_accept === true) {
+      if (this.mission.auto_accept == true) {
         return '立即加入'
       }
       return '申请加入'
@@ -304,44 +312,44 @@ export default {
     // 当前带审核的参与者
     waitPlayer: function() {
       return this.allPlayer.filter(item => {
-        return item.status === 'wait'
+        return item.status == 'wait'
       })
     },
     // 当前已加入的参与者
     runningPlayer: function() {
       return this.allPlayer.filter(item => {
-        return item.status === 'running'
+        return item.status == 'running'
       })
     },
     // 当前已完成任务的参与者
     finishPlayer: function() {
       return this.allPlayer.filter(item => {
-        return item.status === 'finish'
+        return item.status == 'finish'
       })
     },
     failurePlayer: function() {
       return this.allPlayer.filter(item => {
-        return item.status === 'failure'
+        return item.status == 'failure'
       })
     }
   },
   // 加载任务消息和参与者信息
   created: async function() {
     var id = this.$route.query.id
-    // console.log(id)
+    //console.log(id)
     var res = await this.$service.task.GetTask.call(this, id)
-    // console.log(res)
+    //console.log(res)
     this.mission = res
-    if (this.userID === this.mission.publisher.id) {
+    if (this.userID == this.mission.publisher.id) {
       this.isPublisher = true
     }
     var res2 = await this.$service.task.GetPlayerList.call(this, this.mission.id)
     this.allPlayer = res2.data
     // 判断是否参与
     this.allPlayer.forEach(element => {
-      if (element.player.id === this.userID) this.isPlayer = true
+      if (element.player.id == this.userID) this.isPlayer = true
     })
-    if (this.isPlayer === true) {
+    if (this.isPlayer == true) {
       this.refreshPlayerStatus()
       console.log(this.player_status)
     }
@@ -349,10 +357,10 @@ export default {
   methods: {
     async joinTask() {
       let p = {}
-      if (this.mission.auto_accept === false) p.note = '我要参加'
+      if (this.mission.auto_accept == false) p.note = '我要参加'
       var res = await this.$service.task.JoinTask.call(this, this.mission.id, p)
-      // console.log(res)
-      if (res.result === 'wait') {
+      //console.log(res)
+      if (res.result == 'wait') {
         this.$message.success('申请成功，等待审核')
       } else {
         this.$message.success('成功加入')
@@ -366,15 +374,15 @@ export default {
       let p = {
         status: 'close'
       }
-      let res = await this.$service.task.ChangeTask.call(this, this.mission.id, p)
-      // console.log(res)
+      var res = await this.$service.task.ChangeTask.call(this, this.mission.id, p)
+      //console.log(res)
     },
     async giveUpTask() {
       let p = {
         status: 'give_up'
       }
-      let res = await this.$service.task.ChangePlayerStatusOfTask.call(this, this.mission.id, 'me', p)
-      // console.log(res)
+      var res = await this.$service.task.ChangePlayerStatusOfTask.call(this, this.mission.id, 'me', p)
+      //console.log(res)
       this.$message.success('放弃治疗')
       this.refreshPlayerStatus()
       this.refreshPlayerData()
@@ -564,7 +572,13 @@ export default {
       }
     }
 
-    .file-div {
+    .player-div {
+      .block();
+    }
+    .waiting-div {
+      .block();
+    }
+    .comment-div {
       .block();
     }
 
