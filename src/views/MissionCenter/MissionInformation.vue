@@ -172,12 +172,6 @@ import TagBlock from '@/components/Mission/CreateMission/TagBlock.vue'
 import ImgUploader from '@/components/Mission/CreateMission/ImgUploader.vue'
 import FileUploader from '@/components/Mission/CreateMission/FileUploader.vue'
 
-function getBase64(img, callback) {
-  const reader = new FileReader()
-  reader.addEventListener('load', () => callback(reader.result))
-  reader.readAsDataURL(img)
-}
-
 export default {
   components: {
     TagBlock,
@@ -278,8 +272,8 @@ export default {
       }
       this.mission.publish = true
       // console.log(this.mission)
-      var res
-      var id
+      let res
+      let id
       if (this.isDraft === true) {
         this.mission.status = 'wait'
         await this.$service.task.ChangeTask.call(this, this.taskID, this.mission)
@@ -300,8 +294,8 @@ export default {
       if (this.checkInformation() === false) {
         return
       }
-      var res
-      var id
+      let res
+      let id
       if (this.isDraft === true) {
         // this.mission.status = 'draft'
         await this.$service.task.ChangeTask.call(this, this.taskID, this.mission)
@@ -323,7 +317,7 @@ export default {
       if (this.checkInformation() === false) {
         return
       }
-      var id
+      let id
       if (this.isDraft === true) {
         id = this.taskID
       } else {
@@ -352,9 +346,9 @@ export default {
     }
   },
   created: async function() {
-    var id = this.$route.query.id
+    let id = this.$route.query.id
     if (id !== 'none') {
-      var res = await this.$service.task.GetTask.call(this, id)
+      let res = await this.$service.task.GetTask.call(this, id)
       this.mission = res
       // 将任务images加载到子控件中，并修改任务中images数据结构
       this.imageList = this.mission.images

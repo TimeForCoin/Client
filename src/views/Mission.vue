@@ -63,7 +63,6 @@
 
 <script>
 import MissionCard from '@/components/Mission/MissionCard.vue'
-import { async } from 'q'
 
 export default {
   components: {
@@ -212,9 +211,9 @@ export default {
       this.$router.push('/create_questionnaire')
     },
     showDetail(id, status, type) {
-      //console.log(id, status, type)
-      if(status == 'draft') {
-        if(type == 'questionnaire') {
+      // console.log(id, status, type)
+      if (status === 'draft') {
+        if (type === 'questionnaire') {
           this.$router.push({
             path: '/mission_information',
             query: {
@@ -222,8 +221,7 @@ export default {
               id: id
             }
           })
-        }
-        else {
+        } else {
           this.$router.push({
             path: '/mission_information',
             query: {
@@ -232,29 +230,27 @@ export default {
             }
           })
         }
-      }
-      else {
+      } else {
         this.$router.push({
           path: '/mission_detail',
           query: {
             id: id
           }
-        });
+        })
       }
     },
     async getCollectedMission(p) {
-      var parmas = {
+      let parmas = {
         page: p,
         size: 6,
         sort: this.sortType,
         type: this.missionType
       }
-      var res = await this.$service.task.GetColllectedTaskList.call(this, 'me', parmas)
-      //console.log(res)
-      if(p > 1) {
+      let res = await this.$service.task.GetCollectedTaskList.call(this, 'me', parmas)
+      // console.log(res)
+      if (p > 1) {
         this.missions = this.missions.concat(res.tasks)
-      }
-      else {
+      } else {
         this.missions = res.tasks
       }
       // console.log(this.missions)
@@ -262,58 +258,55 @@ export default {
       this.total = res.pagination.total
     },
     async getPlayingMission(p) {
-      var parmas = {
+      let parmas = {
         page: p,
         size: 6
       }
-      var res = await this.$service.task.GetPlayingTaskList.call(this, 'me', parmas)
-      //console.log(res)
-      var tasks = []
-      for (var i = 0; i < res.data.length; i++) {
+      let res = await this.$service.task.GetPlayingTaskList.call(this, 'me', parmas)
+      // console.log(res)
+      let tasks = []
+      for (let i = 0; i < res.data.length; i++) {
         tasks.push(res.data[i].task)
       }
-      if(p > 1) {
+      if (p > 1) {
         this.missions = this.missions.concat(tasks)
-      }
-      else {
+      } else {
         this.missions = tasks
       }
-      //console.log(this.missions)
+      // console.log(this.missions)
       this.page = res.pagination.page + 1
       this.total = res.pagination.total
     },
     async getPublishedMission(p) {
-      var parmas = {
+      let parmas = {
         page: p,
         size: 6,
         user: 'me',
         sort: this.sortType,
         type: this.missionType
       }
-      var res = await this.$service.task.GetTasksList.call(this, parmas)
-      //console.log(res)
-      if(p > 1) {
+      let res = await this.$service.task.GetTasksList.call(this, parmas)
+      // console.log(res)
+      if (p > 1) {
         this.missions = this.missions.concat(res.tasks)
-      }
-      else {
+      } else {
         this.missions = res.tasks
       }
       this.page = res.pagination.page + 1
       this.total = res.pagination.total
     },
-    async getDraftMission(p){
+    async getDraftMission(p) {
       let parmas = {
         page: p,
         size: 6,
         user: 'me',
         status: 'draft'
       }
-      var res = await this.$service.task.GetTasksList.call(this, parmas)
-      //console.log(res)
-      if(p > 1) {
+      let res = await this.$service.task.GetTasksList.call(this, parmas)
+      // console.log(res)
+      if (p > 1) {
         this.missions = this.missions.concat(res.tasks)
-      }
-      else {
+      } else {
         this.missions = res.tasks
       }
       this.page = res.pagination.page + 1
@@ -321,10 +314,6 @@ export default {
     }
   },
   created: async function() {
-    var parmas = {
-      page: 1,
-      size: 6
-    }
     this.getPublishedMission(1)
   }
 }

@@ -63,7 +63,7 @@ export default {
         type: 'task',
         content: this.value
       }
-      let res = await this.$service.comment.AddComment.call(this, this.taskID, p)
+      await this.$service.comment.AddComment.call(this, this.taskID, p)
       this.value = ''
       this.refreshComments()
     },
@@ -83,9 +83,9 @@ export default {
     },
     async addLike(id, liked) {
       if (liked) {
-        let res = await this.$service.comment.DeleteLikeComment.call(this, id)
+        await this.$service.comment.DeleteLikeComment.call(this, id)
       } else {
-        let res = await this.$service.comment.AddLikeComment.call(this, id)
+        await this.$service.comment.AddLikeComment.call(this, id)
       }
       this.refreshComments()
     }

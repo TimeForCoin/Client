@@ -374,14 +374,14 @@ export default {
       let p = {
         status: 'close'
       }
-      const res = await this.$service.task.ChangeTask.call(this, this.mission.id, p)
+      await this.$service.task.ChangeTask.call(this, this.mission.id, p)
       // console.log(res)
     },
     async giveUpTask() {
       let p = {
         status: 'give_up'
       }
-      const res = await this.$service.task.ChangePlayerStatusOfTask.call(this, this.mission.id, 'me', p)
+      await this.$service.task.ChangePlayerStatusOfTask.call(this, this.mission.id, 'me', p)
       // console.log(res)
       this.$message.success('放弃治疗')
       this.refreshPlayerStatus()
@@ -543,8 +543,6 @@ export default {
       flex-wrap: wrap;
       flex-direction: row;
       position: relative;
-      .left-div {
-      }
       .right-div {
         position: absolute;
         left: 55%;

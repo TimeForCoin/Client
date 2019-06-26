@@ -88,7 +88,7 @@ export default {
         status: this.changeStatus,
         note: this.note
       }
-      let res = await this.$service.task.ChangePlayerStatusOfTask.call(this, this.taskID, this.currentUserID, p)
+      await this.$service.task.ChangePlayerStatusOfTask.call(this, this.taskID, this.currentUserID, p)
       // console.log(res)
       this.note = ''
       this.$emit('onChange')
