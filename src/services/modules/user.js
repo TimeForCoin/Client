@@ -13,6 +13,11 @@ export async function GetInfo() {
   return res.data
 }
 
+export async function GetUserInfo(userID) {
+  const res = await this.$axios.get('/users/info/' + userID)
+  return res.data
+}
+
 export async function Logout() {
   const res = await this.$axios.delete('/session')
   return res.data
