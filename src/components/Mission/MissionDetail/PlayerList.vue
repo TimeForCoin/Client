@@ -84,15 +84,19 @@ export default {
       this.modelVisible = true
     },
     async handleOk(e) {
-      let p = {
-        status: this.changeStatus,
-        note: this.note
-      }
-      let res = await this.$service.task.ChangePlayerStatusOfTask.call(this, this.taskID, this.currentUserID, p)
-      // console.log(res)
-      this.note = ''
-      this.$emit('onChange')
-      this.modelVisible = false
+      try {
+        let p = {
+          status: this.changeStatus,
+          note: this.note
+        }
+        let res = await this.$service.task.ChangePlayerStatusOfTask.call(this, this.taskID, this.currentUserID, p)
+        // console.log(res)
+        this.note = ''
+        this.$emit('onChange')
+        this.modelVisible = false
+      } catch (err) {
+				this.$utils.handler.check.call(this, err)
+			}
     },
     handleCancel(e) {
       this.note = ''

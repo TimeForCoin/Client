@@ -73,32 +73,44 @@ export default {
 	},
 	methods: {
 		async handleSubmit() {
-			let p = {
-				type: 'task',
-				content: this.value
+			try {
+				let p = {
+					type: 'task',
+					content: this.value
+				}
+				let res = await this.$service.comment.AddComment.call(this, this.taskID, p)
+				this.value = ''
+			} catch (err) {
+				this.$utils.handler.check.call(this, err)
 			}
-			let res = await this.$service.comment.AddComment.call(this, this.taskID, p)
-			this.value = ''
 			this.refreshComments()
 		},
 		handleChange(e) {
 			this.value = e.target.value
 		},
 		async refreshComments() {
-			let res = await this.$service.comment.GetComments.call(this, this.taskID)
-			console.log(res)
-			this.comments = res.data
-			for(var i = 0; i < this.comments.length; i ++) {
-				let newTime = new Date(this.comments[i].time * 1000)
-				this.comments[i].time =  moment(newTime).startOf('hour').fromNow()
+			try {
+				let res = await this.$service.comment.GetComments.call(this, this.taskID)
+				console.log(res)
+				this.comments = res.data
+				for(var i = 0; i < this.comments.length; i ++) {
+					let newTime = new Date(this.comments[i].time * 1000)
+					this.comments[i].time =  moment(newTime).startOf('hour').fromNow()
+				}
+			} catch (err) {
+				this.$utils.handler.check.call(this, err)
 			}
 		},
 		async addLike(id, liked){
-			if(liked) {
-				let res = await this.$service.comment.DeleteLikeComment.call(this, id)
-			}
-			else {
-				let res = await this.$service.comment.AddLikeComment.call(this, id)
+			try {
+				if(liked) {
+					let res = await this.$service.comment.DeleteLikeComment.call(this, id)
+				}
+				else {
+					let res = await this.$service.comment.AddLikeComment.call(this, id)
+				}
+			} catch (err) {
+				this.$utils.handler.check.call(this, err)
 			}
 			this.refreshComments()
 		}
