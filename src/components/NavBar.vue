@@ -60,9 +60,9 @@
 </template>
 
 <script>
-import { setInterval, clearInterval, setTimeout } from 'timers'
+import { setTimeout } from 'timers'
 export default {
-  data () {
+  data() {
     return {
       loginType: '',
       user: null,
@@ -75,19 +75,19 @@ export default {
     }
   },
   computed: {
-    nickname: function () {
+    nickname: function() {
       return this.$store.getters.getNickname
     },
-    avatar: function () {
+    avatar: function() {
       return this.$store.getters.getAvatar
     }
   },
   methods: {
-    logoClick (event) {
+    logoClick(event) {
       this.menuSelected = []
       this.$router.push('/')
     },
-    menuClick (event) {
+    menuClick(event) {
       switch (event.key) {
         case 'discover':
           this.$router.push('/discover')
@@ -97,7 +97,7 @@ export default {
           break
       }
     },
-    async loginByViolet () {
+    async loginByViolet() {
       this.loginType = 'violet'
       this.failedLogin = false
       this.loginModalText = '等待授权中...'
@@ -135,7 +135,7 @@ export default {
         this.loginModalVisible = false
       }
     },
-    async loginByWechat () {
+    async loginByWechat() {
       this.loginType = 'wechat'
       try {
         const timer = () => {
@@ -161,23 +161,22 @@ export default {
         this.$message.error('请求失败:' + error)
         this.loginModalVisible = false
       }
-
     },
-    async getUserInfo () {
+    async getUserInfo() {
       try {
         const res = await this.$service.user.GetInfo.call(this)
         this.user = res
         this.$store.commit('setUser', res)
-      } catch (error) { }
+      } catch (error) {}
     },
-    async userClick () {
+    async userClick() {
       this.$router.push('/user')
     },
-    async login (event) {
+    async login(event) {
       this.loginType = ''
       this.loginModalVisible = true
     },
-    async logout () {
+    async logout() {
       try {
         await this.$service.user.Logout.call(this)
         this.$store.commit('removeUser')
@@ -187,7 +186,7 @@ export default {
         this.$message.error('请求失败:' + error)
       }
     },
-    onScroll () {
+    onScroll() {
       let top = document.scrollingElement.scrollTop
       if (this.oldTop >= top) {
         this.isShow = true
@@ -197,14 +196,14 @@ export default {
       this.oldTop = top
     }
   },
-  mounted () {
+  mounted() {
     // 屏幕滚动事件监听
     window.addEventListener('scroll', this.onScroll)
     this.oldTop = document.scrollingElement.scrollTop
 
     this.getUserInfo()
   },
-  destroyed () {
+  destroyed() {
     window.removeEventListener('scroll', this.onScroll)
   }
 }

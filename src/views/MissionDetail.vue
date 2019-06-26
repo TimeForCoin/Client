@@ -335,151 +335,147 @@ export default {
 @width: 60vw;
 
 .mission-detail {
-	margin-top: 70px;
+  margin-top: 70px;
 
-	.main {
-		background: white;
-		width: 800px;
-		height: auto;
-		margin-left: auto;
-		margin-right: auto;
-		position: relative;
+  .main {
+    background: white;
+    width: 800px;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
 
-		.background {
-			width: 100%;
-			height: 30vh;
-			min-height: 250px;
-			background-image: url("../assets/HomePage/page1-background.jpg");
-			background-size: cover;
-			background-position: center;
-			position: relative;
+    .background {
+      width: 100%;
+      height: 30vh;
+      min-height: 250px;
+      background-image: url('../assets/HomePage/page1-background.jpg');
+      background-size: cover;
+      background-position: center;
+      position: relative;
 
-			.black {
-				width: 100%;
-				height: 100%;
-				background-color: black;
-				background-color:rgba(0,0,0,0.35);
-				display: flex;
-				justify-content: center;
-				align-items: center;
+      .black {
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        background-color: rgba(0, 0, 0, 0.35);
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-				.mission-title {
-					color: white;
-					font-size: 40px;
-					font-weight: bold;
-					margin-top: 30px;
+        .mission-title {
+          color: white;
+          font-size: 40px;
+          font-weight: bold;
+          margin-top: 30px;
 
-					.top-logo {
-						width: 65px;
-						height: 65px;
-						margin-right: 10px;
-					}
-				}
-			}
+          .top-logo {
+            width: 65px;
+            height: 65px;
+            margin-right: 10px;
+          }
+        }
+      }
 
-			.triangle-top {
-				width: 0px;
-				height: 0px;
-				border-width: 40px 160px 0 640px;
-				border-style: solid;
-				border-color: white transparent transparent transparent;
-				position: absolute;
-				top: 0px;
-			}
+      .triangle-top {
+        width: 0px;
+        height: 0px;
+        border-width: 40px 160px 0 640px;
+        border-style: solid;
+        border-color: white transparent transparent transparent;
+        position: absolute;
+        top: 0px;
+      }
 
-			.triangle-bottom {
-				width: 0px;
-				height: 0px;
-				border-width: 0 640px 45px 160px;
-				border-style: solid;
-				border-color: transparent transparent white transparent;
-				position: relative;
-				top: -45px;
-			}
-		}
+      .triangle-bottom {
+        width: 0px;
+        height: 0px;
+        border-width: 0 640px 45px 160px;
+        border-style: solid;
+        border-color: transparent transparent white transparent;
+        position: relative;
+        top: -45px;
+      }
+    }
 
-		.title {
-			text-align: left;
-			padding-left: 10px;
-			border-left-style:solid;
-			border-width:5px;
-			border-color:#F0B11B;
-			color: #7c7c7c;
-			font-size: 18px;
-			font-weight: bold;
-			span {
-				vertical-align: middle;
-				margin-right: 10px;
-			}
-		}
+    .title {
+      text-align: left;
+      padding-left: 10px;
+      border-left-style: solid;
+      border-width: 5px;
+      border-color: #f0b11b;
+      color: #7c7c7c;
+      font-size: 18px;
+      font-weight: bold;
+      span {
+        vertical-align: middle;
+        margin-right: 10px;
+      }
+    }
 
-		.content {
-			text-align: left;
-			padding: 10px;
-		}
+    .content {
+      text-align: left;
+      padding: 10px;
+    }
 
-		.block {
-			width: 600px;
-			height: auto;
-			margin-left: auto;
-			margin-right: auto;
-			margin-top: 15px;
-			text-align: left;
-		}
+    .block {
+      width: 600px;
+      height: auto;
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 15px;
+      text-align: left;
+    }
 
-		.content-div {
-			.block();
-			transition: 0.5s;
-		}
+    .content-div {
+      .block();
+      transition: 0.5s;
+    }
 
-		// .content-div:hover {
-		// 	transition: 0.5s;
-		// 	transform: scale(1.03);
-		// 	box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.2);
-		// }
+    // .content-div:hover {
+    //   transition: 0.5s;
+    //   transform: scale(1.03);
+    //   box-shadow: 0 0px 8px 0 rgba(0, 0, 0, 0.2);
+    // }
 
-		.date-div {
-			.block();
-		}
+    .date-div {
+      .block();
+    }
 
-		.flex-div {
-			.block();
-			display: flex;
-			flex-wrap: wrap;
-			flex-direction: row;
-			position: relative;
-			.left-div{
-			}
-			.right-div {
-				position: absolute;
-				left: 55%;
+    .flex-div {
+      .block();
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
+      position: relative;
+      .left-div {
+      }
+      .right-div {
+        position: absolute;
+        left: 55%;
 
-				.head-img {
-					width: 40px;
-					height: 40px;
-					border-radius: 100%;
-					margin-left: 10px;
-				}
-				.nickname {
-					margin-left: 10px;
-					font-size: 14px;
-				}
-			}
-		}
+        .head-img {
+          width: 40px;
+          height: 40px;
+          border-radius: 100%;
+          margin-left: 10px;
+        }
+        .nickname {
+          margin-left: 10px;
+          font-size: 14px;
+        }
+      }
+    }
 
-		.image-div {
-			.block();
-			.image {
-				img {
-					height: 100px;
-					width: 100px;
-				}
-			}
-		}
-
-		.file-div {
-			.block();
-		}
+    .image-div {
+      .block();
+      .image {
+        img {
+          height: 100px;
+          width: 100px;
+        }
+      }
+    }
 
 		.player-div {
 			.block();
@@ -491,34 +487,39 @@ export default {
 			.block();
 		}
 
-		.btn-group {
-			width: 400px;
-			margin-top: 30px;
-			padding-bottom: 30px;
-			margin-left: auto;
-			margin-right: auto;
-			display: flex;
-			flex-wrap: wrap;
-			flex-direction: row;
-			justify-content: space-around;
-		}
+    .player-div {
+      .block();
+    }
+    .waiting-div {
+      .block();
+    }
 
-		.question-btn {
-			margin-left: 15px;
-		}
-	}
+    .btn-group {
+      width: 400px;
+      margin-top: 30px;
+      padding-bottom: 30px;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row;
+      justify-content: space-around;
+    }
 
-	.none {
-		color: gray;
-		margin-left: 15px;
-	}
+    .question-btn {
+      margin-left: 15px;
+    }
+  }
 
-	.file-url {
-		margin-left: 15px;
-		margin-bottom: 5px;
-		display: block;
-	}
+  .none {
+    color: gray;
+    margin-left: 15px;
+  }
 
+  .file-url {
+    margin-left: 15px;
+    margin-bottom: 5px;
+    display: block;
+  }
 }
-
 </style>
