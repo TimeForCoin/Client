@@ -296,60 +296,60 @@ export default {
       return '未知'
     },
     joinBtnText: function() {
-      if (this.mission.auto_accept == true) {
+      if (this.mission.auto_accept === true) {
         return '立即加入'
       }
       return '申请加入'
     },
     startDate: function() {
-      var newTime = new Date(this.mission.start_date * 1000)
+      const newTime = new Date(this.mission.start_date * 1000)
       return moment(newTime).format('YYYY-MM-DD')
     },
     endDate: function() {
-      var newTime = new Date(this.mission.end_date * 1000)
+      const newTime = new Date(this.mission.end_date * 1000)
       return moment(newTime).format('YYYY-MM-DD')
     },
     // 当前带审核的参与者
     waitPlayer: function() {
       return this.allPlayer.filter(item => {
-        return item.status == 'wait'
+        return item.status === 'wait'
       })
     },
     // 当前已加入的参与者
     runningPlayer: function() {
       return this.allPlayer.filter(item => {
-        return item.status == 'running'
+        return item.status === 'running'
       })
     },
     // 当前已完成任务的参与者
     finishPlayer: function() {
       return this.allPlayer.filter(item => {
-        return item.status == 'finish'
+        return item.status === 'finish'
       })
     },
     failurePlayer: function() {
       return this.allPlayer.filter(item => {
-        return item.status == 'failure'
+        return item.status === 'failure'
       })
     }
   },
   // 加载任务消息和参与者信息
   created: async function() {
-    var id = this.$route.query.id
-    //console.log(id)
-    var res = await this.$service.task.GetTask.call(this, id)
-    //console.log(res)
+    const id = this.$route.query.id
+    // console.log(id)
+    const res = await this.$service.task.GetTask.call(this, id)
+    // console.log(res)
     this.mission = res
-    if (this.userID == this.mission.publisher.id) {
+    if (this.userID === this.mission.publisher.id) {
       this.isPublisher = true
     }
-    var res2 = await this.$service.task.GetPlayerList.call(this, this.mission.id)
+    const res2 = await this.$service.task.GetPlayerList.call(this, this.mission.id)
     this.allPlayer = res2.data
     // 判断是否参与
     this.allPlayer.forEach(element => {
-      if (element.player.id == this.userID) this.isPlayer = true
+      if (element.player.id === this.userID) this.isPlayer = true
     })
-    if (this.isPlayer == true) {
+    if (this.isPlayer === true) {
       this.refreshPlayerStatus()
       console.log(this.player_status)
     }
@@ -357,10 +357,10 @@ export default {
   methods: {
     async joinTask() {
       let p = {}
-      if (this.mission.auto_accept == false) p.note = '我要参加'
-      var res = await this.$service.task.JoinTask.call(this, this.mission.id, p)
-      //console.log(res)
-      if (res.result == 'wait') {
+      if (this.mission.auto_accept === false) p.note = '我要参加'
+      const res = await this.$service.task.JoinTask.call(this, this.mission.id, p)
+      // console.log(res)
+      if (res.result === 'wait') {
         this.$message.success('申请成功，等待审核')
       } else {
         this.$message.success('成功加入')
@@ -374,15 +374,15 @@ export default {
       let p = {
         status: 'close'
       }
-      var res = await this.$service.task.ChangeTask.call(this, this.mission.id, p)
-      //console.log(res)
+      const res = await this.$service.task.ChangeTask.call(this, this.mission.id, p)
+      // console.log(res)
     },
     async giveUpTask() {
       let p = {
         status: 'give_up'
       }
-      var res = await this.$service.task.ChangePlayerStatusOfTask.call(this, this.mission.id, 'me', p)
-      //console.log(res)
+      const res = await this.$service.task.ChangePlayerStatusOfTask.call(this, this.mission.id, 'me', p)
+      // console.log(res)
       this.$message.success('放弃治疗')
       this.refreshPlayerStatus()
       this.refreshPlayerData()
@@ -408,7 +408,7 @@ export default {
       this.$message.success('取消收藏')
     },
     async refreshPlayerData() {
-      var res = await this.$service.task.GetPlayerList.call(this, this.mission.id)
+      const res = await this.$service.task.GetPlayerList.call(this, this.mission.id)
       this.allPlayer = res.data
     },
     async refreshPlayerStatus() {
