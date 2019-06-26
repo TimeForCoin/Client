@@ -6,7 +6,7 @@ module.exports = {
     proxy: {
       '/api': {
         // 目标 API 地址
-        target: 'https://coin.zhenly.cn/api/',
+        target: 'https://coin.zhenly.cn/test/',
         changeOrigin: true,
         ws: true,
         pathRewrite: {
