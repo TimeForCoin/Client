@@ -32,6 +32,11 @@ export default new Router({
       component: () => import('./views/Discover.vue')
     },
     {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('./views/Profile.vue')
+    },
+    {
       path: '/create_mission',
       name: 'create_mission',
       component: () => import('./views/MissionCenter/MissionTypeChoice.vue')
