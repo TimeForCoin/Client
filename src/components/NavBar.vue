@@ -1,7 +1,8 @@
 <template>
   <div class="navbar" :class="{hide: !isShow}">
     <div class="left-menu" @click="logoClick">
-      <img src="@/assets/logo.png">Time For Coin
+      <img src="@/assets/logo.png">
+      <p class="title" >Time For Coin</p>
     </div>
     <div v-if="user === null" class="right-menu">
       <a-button class="menu-button" type="primary" @click="login">登录</a-button>
@@ -56,6 +57,7 @@
       <a-menu-item class="menu-item" key="discover">发现</a-menu-item>
       <a-menu-item class="menu-item" key="mission">任务中心</a-menu-item>
     </a-menu>
+
   </div>
 </template>
 
@@ -224,18 +226,21 @@ export default {
 
   .left-menu {
     cursor: pointer;
-    white-space: nowrap;
     height: 64px;
-    width: 270px;
+    display: flex;
+    align-items: center;
     float: left;
-    font-size: 24px;
-    line-height: 64px;
-
-    overflow: hidden;
 
     img {
       height: 40px;
       margin-right: 20px;
+    }
+
+    .title {
+      white-space: nowrap;
+      font-size: 24px;
+      line-height: 64px;
+      margin: 0px;
     }
   }
 

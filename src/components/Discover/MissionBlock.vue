@@ -93,10 +93,10 @@ export default {
 <style lang="less" scoped>
 .missionblock {
     width: 90vw;
+    min-width: 700px;
     margin: auto;
     margin-bottom: 100px;
     display: flex;
-    min-width: 570px;
     flex-direction: column;
 
     .divider {
@@ -104,7 +104,6 @@ export default {
     }
 
     .function-bar {
-        width: 100%;
         display: flex;
         justify-content: flex-end;
 
@@ -118,11 +117,9 @@ export default {
     }
 
     .mission-list {
-        margin: auto;
-        margin-top: 20px;
-        margin-bottom: 20px;
         display: flex;
         justify-items: center;
+        margin-bottom: 50px;
         flex-wrap: wrap;
     }
 }

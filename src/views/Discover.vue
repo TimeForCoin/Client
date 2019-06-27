@@ -20,6 +20,7 @@ export default {
 <style lang="less" scoped>
 .discover {
   background-color: white;
+  min-width: 700px;
 
   .background {
     width: 100%;
