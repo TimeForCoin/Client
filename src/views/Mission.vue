@@ -3,21 +3,26 @@
     <a-layout class="layout-container">
       <a-layout-sider width="240px" class="layout-sider">
         <div class="left-bar">
-          <a-menu class="left-menu"  mode="inline" @click="leftMenuClick" :defaultSelectedKeys="['1']">
+          <a-menu
+            class="left-menu"
+            mode="inline"
+            @click="leftMenuClick"
+            :defaultSelectedKeys="['1']"
+          >
             <a-menu-item key="1" class="left-menu-item">
-              <a-icon type="notification" />
+              <a-icon type="notification"/>
               <span class="nav-text">发布的任务</span>
             </a-menu-item>
             <a-menu-item key="2" class="left-menu-item">
-              <a-icon type="bulb" />
+              <a-icon type="bulb"/>
               <span class="nav-text">接收的任务</span>
             </a-menu-item>
             <a-menu-item key="3" class="left-menu-item">
-              <a-icon type="star" />
+              <a-icon type="star"/>
               <span class="nav-text">我的收藏</span>
             </a-menu-item>
             <a-menu-item key="4" class="left-menu-item">
-              <a-icon type="edit" />
+              <a-icon type="edit"/>
               <span class="nav-text">草稿箱</span>
             </a-menu-item>
           </a-menu>
@@ -29,10 +34,10 @@
           <a-menu class="top-menu" mode="horizontal" style="lineHeight: 62px" @click="topMenuClick">
             <a-sub-menu class="top-menu-item">
               <span slot="title" class="submenu-title-wrapper">类型-{{subTypeTitle[missionType]}}</span>
-                <a-menu-item key="all">{{subTypeTitle['all']}}</a-menu-item>
-                <a-menu-item key="run">{{subTypeTitle['run']}}</a-menu-item>
-                <a-menu-item key="questionnaire">{{subTypeTitle['questionnaire']}}</a-menu-item>
-                <a-menu-item key="info">{{subTypeTitle['info']}}</a-menu-item>
+              <a-menu-item key="all">{{subTypeTitle['all']}}</a-menu-item>
+              <a-menu-item key="run">{{subTypeTitle['run']}}</a-menu-item>
+              <a-menu-item key="questionnaire">{{subTypeTitle['questionnaire']}}</a-menu-item>
+              <a-menu-item key="info">{{subTypeTitle['info']}}</a-menu-item>
             </a-sub-menu>
             <a-sub-menu class="top-menu-item">
               <span slot="title" class="submenu-title-wrapper">排序方式-{{subSortTitle[sortType]}}</span>
@@ -41,16 +46,31 @@
             </a-sub-menu>
           </a-menu>
           <a-input placeholder="搜索" v-model="searchText" class="input-text">
-            <a-icon slot="prefix" type="search" />
-            <a-icon v-if="searchText" slot="suffix" type="close-circle" @click="emitEmpty" class="close-btn" />
+            <a-icon slot="prefix" type="search"/>
+            <a-icon
+              v-if="searchText"
+              slot="suffix"
+              type="close-circle"
+              @click="emitEmpty"
+              class="close-btn"
+            />
           </a-input>
         </div>
         <div class="mission-cards">
-          <div v-for="(item) in missionShow" class="cards" :key="item.id" >
-            <MissionCard :MissionModel="item" @click.native="showDetail(item.id, item.status, item.type)"></MissionCard>
+          <div v-for="(item) in missionShow" class="cards" :key="item.id">
+            <MissionCard
+              :MissionModel="item"
+              @click.native="showDetail(item.id, item.status, item.type)"
+            ></MissionCard>
           </div>
         </div>
-        <a-button v-if="(page-1) * 6 < total" type="primary" class="add-more" icon="plus" @click="addMore">加载更多</a-button>
+        <a-button
+          v-if="(page-1) * 6 < total"
+          type="primary"
+          class="add-more"
+          icon="plus"
+          @click="addMore"
+        >加载更多</a-button>
         <a-button v-else type="primary" class="add-more" icon="plus" disabled>已无更多</a-button>
       </a-layout-content>
     </a-layout>
@@ -70,14 +90,14 @@ export default {
       sortType: 'new',
       show: 1,
       subTypeTitle: {
-        'all': '全部',
-        'run': '跑腿任务',
-        'questionnaire': '问卷任务',
-        'info': '信息任务'
+        all: '全部',
+        run: '跑腿任务',
+        questionnaire: '问卷任务',
+        info: '信息任务'
       },
       subSortTitle: {
-        'new': '最新',
-        'hot': '最热'
+        new: '最新',
+        hot: '最热'
       },
       totalPage: 10,
       searchText: '',
@@ -88,11 +108,10 @@ export default {
   },
   computed: {
     missionShow: function() {
-      if(this.missions) {
-        return this.missions.filter((item) => {
+      if (this.missions) {
+        return this.missions.filter(item => {
           if (this.searchText != null) {
-            return (item.title.indexOf(this.searchText) !== -1 ||
-                    item.content.indexOf(this.searchText) !== -1)
+            return item.title.indexOf(this.searchText) !== -1 || item.content.indexOf(this.searchText) !== -1
           }
           return true
         })
@@ -200,7 +219,7 @@ export default {
           break
       }
     },
-    emitEmpty () {
+    emitEmpty() {
       this.searchText = ''
     },
     createMission() {
@@ -257,8 +276,8 @@ export default {
         this.page = res.pagination.page + 1
         this.total = res.pagination.total
       } catch (err) {
-				this.$utils.handler.check.call(this, err)
-		  }
+        this.$utils.handler.check.call(this, err)
+      }
     },
     async getPlayingMission(p) {
       let parmas = {
@@ -282,8 +301,8 @@ export default {
         this.page = res.pagination.page + 1
         this.total = res.pagination.total
       } catch (err) {
-				this.$utils.handler.check.call(this, err)
-		  }
+        this.$utils.handler.check.call(this, err)
+      }
     },
     async getPublishedMission(p) {
       let parmas = {
@@ -304,8 +323,8 @@ export default {
         this.page = res.pagination.page + 1
         this.total = res.pagination.total
       } catch (err) {
-				this.$utils.handler.check.call(this, err)
-		  }
+        this.$utils.handler.check.call(this, err)
+      }
     },
     async getDraftMission(p) {
       let parmas = {
@@ -325,8 +344,8 @@ export default {
         this.page = res.pagination.page + 1
         this.total = res.pagination.total
       } catch (err) {
-				this.$utils.handler.check.call(this, err)
-		  }
+        this.$utils.handler.check.call(this, err)
+      }
     }
   },
   created: async function() {
@@ -412,7 +431,7 @@ export default {
       display: flex;
       flex-wrap: wrap;
       flex-direction: row;
-      justify-content: flex-start ;
+      justify-content: flex-start;
       left: 30px;
       top: 30px;
 
@@ -439,6 +458,5 @@ export default {
       margin-bottom: 50px;
     }
   }
-
 }
 </style>
