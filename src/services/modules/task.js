@@ -13,7 +13,7 @@ export async function GetPlayingTaskList(id, p) {
   return res.data
 }
 
-export async function GetColllectedTaskList(id, p) {
+export async function GetCollectedTaskList(id, p) {
   const res = await this.$axios.get('/users/collect/' + id, { params: p })
   return res.data
 }
@@ -33,42 +33,37 @@ export async function JoinTask(id, p) {
   return res.data
 }
 
-export async function GetPlayerList(task_id) {
-  const res = await this.$axios.get('/tasks/' + task_id + '/player')
+export async function GetPlayerList(taskId) {
+  const res = await this.$axios.get('/tasks/' + taskId + '/player')
   return res.data
 }
 
-export async function GetPlayerStatusOfTask(task_id, user_id) {
-  const res = await this.$axios.get('/tasks/' + task_id + '/player/' + user_id)
+export async function GetPlayerStatusOfTask(taskId, userId) {
+  const res = await this.$axios.get('/tasks/' + taskId + '/player/' + userId)
   return res.data
 }
 
-export async function ChangePlayerStatusOfTask(task_id, user_id, params) {
-  const res = await this.$axios.put('/tasks/' + task_id + '/player/' + user_id, params)
+export async function ChangePlayerStatusOfTask(taskId, userId, params) {
+  const res = await this.$axios.put('/tasks/' + taskId + '/player/' + userId, params)
   return res.data
 }
 
-export async function AddLikeTask(task_id) {
-  const res = await this.$axios.post('/tasks/' + task_id + '/like')
+export async function AddLikeTask(taskId) {
+  const res = await this.$axios.post('/tasks/' + taskId + '/like')
   return res.data
 }
 
-export async function DeleteLikeTask(task_id) {
-  const res = await this.$axios.delete('/tasks/' + task_id + '/like')
+export async function DeleteLikeTask(taskId) {
+  const res = await this.$axios.delete('/tasks/' + taskId + '/like')
   return res.data
 }
 
-export async function AddCollectTask(task_id) {
-  const res = await this.$axios.post('/tasks/' + task_id + '/collect')
+export async function AddCollectTask(taskId) {
+  const res = await this.$axios.post('/tasks/' + taskId + '/collect')
   return res.data
 }
 
-export async function DeleteCollectTask(task_id) {
-  const res = await this.$axios.delete('/tasks/' + task_id + '/collect')
-  return res.data
-}
-
-export async function ChangeTaskInfomation(task_id, information) {
-  const res = await this.$axios.put('/tasks/' + task_id, information)
+export async function DeleteCollectTask(taskId) {
+  const res = await this.$axios.delete('/tasks/' + taskId + '/collect')
   return res.data
 }

@@ -23,7 +23,6 @@
 import Choice from '../components/Presentation/Choice.vue'
 import Score from '../components/Presentation/Score.vue'
 import Fill from '../components/Presentation/Fill.vue'
-import { async } from 'q'
 
 export default {
   props: ['state'],

@@ -48,7 +48,7 @@ export default {
       return '跑腿'
     },
     time: function() {
-      var newTime = new Date(this.MissionModel.publish_date * 1000)
+      const newTime = new Date(this.MissionModel.publish_date * 1000)
       // return moment(newTime).format("YYYY-MM-DD")
       return moment(newTime).startOf('hour').fromNow()
     },

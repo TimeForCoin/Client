@@ -1,6 +1,6 @@
 export async function GetComments(id) {
-	const res = await this.$axios.get('/comments/' + id)
-	return res.data
+  const res = await this.$axios.get('/comments/' + id)
+  return res.data
 }
 
 export async function AddComment(id, p) {

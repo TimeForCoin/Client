@@ -14,63 +14,60 @@ export default new Router({
     {
       path: '/about',
       name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+      component: () => import('./views/About.vue')
     },
     {
       path: '/user',
       name: 'user',
-      component: () => import(/* webpackChunkName: "user" */ './views/User.vue')
+      component: () => import('./views/User.vue')
     },
     {
       path: '/mission',
       name: 'mission',
-      component: () => import(/* webpackChunkName: "mission" */ './views/Mission.vue')
+      component: () => import('./views/Mission.vue')
     },
     {
       path: '/discover',
       name: 'discover',
-      component: () => import(/* webpackChunkName: "discover" */ './views/Discover.vue')
+      component: () => import('./views/Discover.vue')
     },
     {
       path: '/create_mission',
       name: 'create_mission',
-      component: () => import(/* webpackChunkName: "create_mission" */ './views/MissionCenter/MissionTypeChoice.vue')
+      component: () => import('./views/MissionCenter/MissionTypeChoice.vue')
     },
     {
       path: '/mission_information',
       name: '/mission_information',
-      component: () => import(/* webpackChunkName: "create_normal_mission" */ './views/MissionCenter/MissionInformation.vue')
+      component: () => import('./views/MissionCenter/MissionInformation.vue')
     },
     {
       path: '/create_questionnaire',
       name: 'create_questionnaire',
-      component: () => import(/* webpackChunkName: "create_questionnaire" */ './views/Questionnaire.vue')
+      component: () => import('./views/Questionnaire.vue')
     },
     {
       path: '/mission_detail',
       name: 'mission_detail',
-      component: () => import(/* webpackChunkName: "create_mission" */ './views/MissionDetail.vue')
+      component: () => import('./views/MissionDetail.vue')
     },
     {
       path: '/questionnaire_answer',
       name: 'questionnaire_answer',
       props: { state: 'answer' },
-      component: () => import(/* webpackChunkName: "create_mission" */ './views/Presentation.vue')
+      component: () => import('./views/Presentation.vue')
     },
     {
       path: '/questionnaire_statistics',
       name: 'questionnaire_statistics',
       props: { state: 'statistics' },
-      component: () => import(/* webpackChunkName: "create_mission" */ './views/Presentation.vue')
+      component: () => import('./views/Presentation.vue')
     },
     {
       path: '/questionnaire_preview',
       name: 'questionnaire_preview',
       props: { state: 'preview' },
-      component: () => import(/* webpackChunkName: "create_mission" */ './views/Presentation.vue')
+      component: () => import('./views/Presentation.vue')
     }
   ]
 })
