@@ -47,3 +47,8 @@ export async function Following(userID, params) {
   const res = await this.$axios.post('/users/following/' + userID)
   return res.data
 }
+
+export async function GetReceiveTasks(userID, params) {
+  const res = await this.$axios.get('/users/task/' + userID, params)
+  return res.data
+}

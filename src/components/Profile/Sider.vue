@@ -9,9 +9,11 @@
         <a-button v-else-if="isMe" class="follow-button">
             编辑
         </a-button>
-        <p>{{user.info.email}}</p>
-        <p>{{user.info.location}}</p>
-        <p>{{user.info.school}}</p>
+        <div class="info">
+          <div class="info-item"><a-icon class="icon" v-if="user.info.location" type="environment" />{{user.info.location}}</div>
+          <div class="info-item"><a-icon class="icon" v-if="user.info.email" type="mail" />{{user.info.email}}</div>
+          <div class="info-item"><a-icon class="icon" v-if="user.info.school" type="team" />{{user.info.school}}</div>
+        </div>
     </div>
 </template>
 
@@ -44,9 +46,28 @@ export default {
 .sider {
     display: flex;
     flex-direction: column;
+    width: 200px;
+    margin-right: 50px;
 
     .avatar {
+      width: 200px;
+      height: 200px;
+      border: 1px solid #e1e4e8;
+    }
 
+    .info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-top: 30px;
+
+      .info-item{
+        margin-bottom: 5px;
+
+        .icon {
+          margin-right: 10px;
+        }
+      }
     }
 }
 
