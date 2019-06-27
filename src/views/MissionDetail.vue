@@ -336,15 +336,19 @@ export default {
   // 加载任务消息和参与者信息
   created: async function() {
     const id = this.$route.query.id
-    // console.log(id)
-    const res = await this.$service.task.GetTask.call(this, id)
-    // console.log(res)
-    this.mission = res
-    if (this.userID === this.mission.publisher.id) {
-      this.isPublisher = true
-    }
-    const res2 = await this.$service.task.GetPlayerList.call(this, this.mission.id)
-    this.allPlayer = res2.data
+		// console.log(id)
+		try {
+			const res = await this.$service.task.GetTask.call(this, id)
+			// console.log(res)
+			this.mission = res
+			if (this.userID === this.mission.publisher.id) {
+				this.isPublisher = true
+			}
+			const res2 = await this.$service.task.GetPlayerList.call(this, this.mission.id)
+			this.allPlayer = res2.data
+		} catch (err) {
+				this.$utils.handler.check.call(this, err)
+		}
     // 判断是否参与
     this.allPlayer.forEach(element => {
       if (element.player.id === this.userID) this.isPlayer = true
@@ -356,16 +360,20 @@ export default {
   },
   methods: {
     async joinTask() {
-      let p = {}
-      if (this.mission.auto_accept === false) p.note = '我要参加'
-      const res = await this.$service.task.JoinTask.call(this, this.mission.id, p)
-      // console.log(res)
-      if (res.result === 'wait') {
-        this.$message.success('申请成功，等待审核')
-      } else {
-        this.$message.success('成功加入')
-      }
-      this.isPlayer = true
+			let p = {}
+			try {
+				if (this.mission.auto_accept === false) p.note = '我要参加'
+				const res = await this.$service.task.JoinTask.call(this, this.mission.id, p)
+				// console.log(res)
+				if (res.result === 'wait') {
+					this.$message.success('申请成功，等待审核')
+				} else {
+					this.$message.success('成功加入')
+				}
+				this.isPlayer = true
+			} catch (err) {
+				this.$utils.handler.check.call(this, err)
+			}
       this.refreshPlayerStatus()
       this.refreshPlayerData()
     },
@@ -373,47 +381,74 @@ export default {
       this.mission.status = 'close'
       let p = {
         status: 'close'
-      }
-      await this.$service.task.ChangeTask.call(this, this.mission.id, p)
-      // console.log(res)
+			}
+			try {
+      	this.$service.task.ChangeTask.call(this, this.mission.id, p)
+      } catch (err) {
+				this.$utils.handler.check.call(this, err)
+			}
     },
     async giveUpTask() {
       let p = {
         status: 'give_up'
-      }
-      await this.$service.task.ChangePlayerStatusOfTask.call(this, this.mission.id, 'me', p)
-      // console.log(res)
-      this.$message.success('放弃治疗')
+			}
+			try {
+				await this.$service.task.ChangePlayerStatusOfTask.call(this, this.mission.id, 'me', p)
+				// console.log(res)
+				this.$message.success('放弃治疗')
+			} catch (err) {
+				this.$utils.handler.check.call(this, err)
+			}
       this.refreshPlayerStatus()
       this.refreshPlayerData()
     },
     async likeTask() {
-      await this.$service.task.AddLikeTask.call(this, this.mission.id)
-      this.mission.liked = true
-      this.$message.success('点赞成功')
+			try {
+				await this.$service.task.AddLikeTask.call(this, this.mission.id)
+				this.mission.liked = true
+				this.$message.success('点赞成功')
+			} catch (err) {
+				this.$utils.handler.check.call(this, err)
+			}
     },
     async dislike() {
-      await this.$service.task.DeleteLikeTask.call(this, this.mission.id)
-      this.mission.liked = false
-      this.$message.success('取消点赞')
+			try {
+				await this.$service.task.DeleteLikeTask.call(this, this.mission.id)
+				this.mission.liked = false
+				this.$message.success('取消点赞')
+			} catch (err) {
+				this.$utils.handler.check.call(this, err)
+			}
     },
     async collectTask() {
-      await this.$service.task.AddCollectTask.call(this, this.mission.id)
-      this.mission.collected = true
-      this.$message.success('收藏成功')
+			try {
+				await this.$service.task.AddCollectTask.call(this, this.mission.id)
+				this.mission.collected = true
+				this.$message.success('收藏成功')
+			} catch (err) {
+				this.$utils.handler.check.call(this, err)
+			}
     },
     async cancelCollect() {
-      await this.$service.task.DeleteCollectTask.call(this, this.mission.id)
-      this.mission.collected = false
-      this.$message.success('取消收藏')
+			try {
+				await this.$service.task.DeleteCollectTask.call(this, this.mission.id)
+				this.mission.collected = false
+				this.$message.success('取消收藏')
+			} catch (err) {
+				this.$utils.handler.check.call(this, err)
+			}
     },
     async refreshPlayerData() {
       const res = await this.$service.task.GetPlayerList.call(this, this.mission.id)
       this.allPlayer = res.data
     },
     async refreshPlayerStatus() {
-      let res = await this.$service.task.GetPlayerStatusOfTask.call(this, this.mission.id, this.userID)
-      this.player_status = res.data.status
+			try {
+				let res = await this.$service.task.GetPlayerStatusOfTask.call(this, this.mission.id, this.userID)
+				this.player_status = res.data.status
+			} catch (err) {
+				this.$utils.handler.check.call(this, err)
+			}
     },
     answer: function() {
       this.$router.push({ path: '/questionnaire_answer', query: { id: this.mission.id } })

@@ -246,36 +246,44 @@ export default {
         sort: this.sortType,
         type: this.missionType
       }
-      let res = await this.$service.task.GetCollectedTaskList.call(this, 'me', parmas)
-      // console.log(res)
-      if (p > 1) {
-        this.missions = this.missions.concat(res.tasks)
-      } else {
-        this.missions = res.tasks
-      }
-      // console.log(this.missions)
-      this.page = res.pagination.page + 1
-      this.total = res.pagination.total
+      try {
+        let res = await this.$service.task.GetCollectedTaskList.call(this, 'me', parmas)
+        // console.log(res)
+        if (p > 1) {
+          this.missions = this.missions.concat(res.tasks)
+        } else {
+          this.missions = res.tasks
+        }
+        // console.log(this.missions)
+        this.page = res.pagination.page + 1
+        this.total = res.pagination.total
+      } catch (err) {
+				this.$utils.handler.check.call(this, err)
+		  }
     },
     async getPlayingMission(p) {
       let parmas = {
         page: p,
         size: 6
       }
-      let res = await this.$service.task.GetPlayingTaskList.call(this, 'me', parmas)
-      // console.log(res)
-      let tasks = []
-      for (let i = 0; i < res.data.length; i++) {
-        tasks.push(res.data[i].task)
-      }
-      if (p > 1) {
-        this.missions = this.missions.concat(tasks)
-      } else {
-        this.missions = tasks
-      }
-      // console.log(this.missions)
-      this.page = res.pagination.page + 1
-      this.total = res.pagination.total
+      try {
+        let res = await this.$service.task.GetPlayingTaskList.call(this, 'me', parmas)
+        // console.log(res)
+        let tasks = []
+        for (let i = 0; i < res.data.length; i++) {
+          tasks.push(res.data[i].task)
+        }
+        if (p > 1) {
+          this.missions = this.missions.concat(tasks)
+        } else {
+          this.missions = tasks
+        }
+        // console.log(this.missions)
+        this.page = res.pagination.page + 1
+        this.total = res.pagination.total
+      } catch (err) {
+				this.$utils.handler.check.call(this, err)
+		  }
     },
     async getPublishedMission(p) {
       let parmas = {
@@ -285,15 +293,19 @@ export default {
         sort: this.sortType,
         type: this.missionType
       }
-      let res = await this.$service.task.GetTasksList.call(this, parmas)
-      // console.log(res)
-      if (p > 1) {
-        this.missions = this.missions.concat(res.tasks)
-      } else {
-        this.missions = res.tasks
-      }
-      this.page = res.pagination.page + 1
-      this.total = res.pagination.total
+      try {
+        let res = await this.$service.task.GetTasksList.call(this, parmas)
+        // console.log(res)
+        if (p > 1) {
+          this.missions = this.missions.concat(res.tasks)
+        } else {
+          this.missions = res.tasks
+        }
+        this.page = res.pagination.page + 1
+        this.total = res.pagination.total
+      } catch (err) {
+				this.$utils.handler.check.call(this, err)
+		  }
     },
     async getDraftMission(p) {
       let parmas = {
@@ -302,15 +314,19 @@ export default {
         user: 'me',
         status: 'draft'
       }
-      let res = await this.$service.task.GetTasksList.call(this, parmas)
-      // console.log(res)
-      if (p > 1) {
-        this.missions = this.missions.concat(res.tasks)
-      } else {
-        this.missions = res.tasks
-      }
-      this.page = res.pagination.page + 1
-      this.total = res.pagination.total
+      try {
+        let res = await this.$service.task.GetTasksList.call(this, parmas)
+        // console.log(res)
+        if (p > 1) {
+          this.missions = this.missions.concat(res.tasks)
+        } else {
+          this.missions = res.tasks
+        }
+        this.page = res.pagination.page + 1
+        this.total = res.pagination.total
+      } catch (err) {
+				this.$utils.handler.check.call(this, err)
+		  }
     }
   },
   created: async function() {

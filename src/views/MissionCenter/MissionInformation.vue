@@ -274,21 +274,25 @@ export default {
       // console.log(this.mission)
       let res
       let id
-      if (this.isDraft === true) {
-        this.mission.status = 'wait'
-        await this.$service.task.ChangeTask.call(this, this.taskID, this.mission)
-        id = this.taskID
-      } else {
-        res = await this.$service.task.CreateTask.call(this, this.mission)
-        id = res.id
-      }
-      // console.log(res.id)
-      this.$router.push({
-        path: '/mission_detail',
-        query: {
-          id: id
+      try {
+        if (this.isDraft === true) {
+          this.mission.status = 'wait'
+          await this.$service.task.ChangeTask.call(this, this.taskID, this.mission)
+          id = this.taskID
+        } else {
+          res = await this.$service.task.CreateTask.call(this, this.mission)
+          id = res.id
         }
-      })
+        // console.log(res.id)
+        this.$router.push({
+          path: '/mission_detail',
+          query: {
+            id: id
+          }
+        })
+      } catch (err) {
+        this.$utils.handler.check.call(this, err)
+      }
     },
     async saveMission() {
       if (this.checkInformation() === false) {
@@ -296,22 +300,26 @@ export default {
       }
       let res
       let id
-      if (this.isDraft === true) {
-        // this.mission.status = 'draft'
-        await this.$service.task.ChangeTask.call(this, this.taskID, this.mission)
-        id = this.taskID
-        console.log('draft', id)
-      } else {
-        this.mission.publish = false
-        res = await this.$service.task.CreateTask.call(this, this.mission)
-        id = res.id
-      }
-      this.$router.push({
-        path: '/mission_detail',
-        query: {
-          id: id
+      try {
+        if (this.isDraft === true) {
+          // this.mission.status = 'draft'
+          await this.$service.task.ChangeTask.call(this, this.taskID, this.mission)
+          id = this.taskID
+          console.log('draft', id)
+        } else {
+          this.mission.publish = false
+          res = await this.$service.task.CreateTask.call(this, this.mission)
+          id = res.id
         }
-      })
+        this.$router.push({
+          path: '/mission_detail',
+          query: {
+            id: id
+          }
+        })
+      } catch (err) {
+        this.$utils.handler.check.call(this, err)
+      }
     },
     async editQuestion() {
       if (this.checkInformation() === false) {
@@ -347,22 +355,26 @@ export default {
   },
   created: async function() {
     let id = this.$route.query.id
-    if (id !== 'none') {
-      let res = await this.$service.task.GetTask.call(this, id)
-      this.mission = res
-      // 将任务images加载到子控件中，并修改任务中images数据结构
-      this.imageList = this.mission.images
-      // console.log(this.imageList)
-      this.mission.images = []
-      this.fileList = this.mission.attachment
-      this.mission.attachment = []
-      this.tagList = this.mission.tags
-      this.mission.tags = []
-      this.locationList = this.mission.location
-      this.mission.location = []
+    try {
+      if (id !== 'none') {
+        let res = await this.$service.task.GetTask.call(this, id)
+        this.mission = res
+        // 将任务images加载到子控件中，并修改任务中images数据结构
+        this.imageList = this.mission.images
+        // console.log(this.imageList)
+        this.mission.images = []
+        this.fileList = this.mission.attachment
+        this.mission.attachment = []
+        this.tagList = this.mission.tags
+        this.mission.tags = []
+        this.locationList = this.mission.location
+        this.mission.location = []
 
-      this.isDraft = true
-      this.taskID = id
+        this.isDraft = true
+        this.taskID = id
+      }
+    } catch (err) {
+      this.$utils.handler.check.call(this, err)
     }
   }
 }

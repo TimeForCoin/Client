@@ -28,13 +28,16 @@ export default {
       const newFileList = this.fileList.slice()
       newFileList.splice(index, 1)
       this.fileList = newFileList
+      try {
+        await this.$service.file.DeleteFile.call(this, this.fileIDList[index])
 
-      await this.$service.file.DeleteFile.call(this, this.fileIDList[index])
-
-      const newFileIDList = this.fileIDList.slice()
-      newFileIDList.splice(index, 1)
-      this.fileIDList = newFileIDList
-      this.$emit('fileChange', this.fileIDList)
+        const newFileIDList = this.fileIDList.slice()
+        newFileIDList.splice(index, 1)
+        this.fileIDList = newFileIDList
+        this.$emit('fileChange', this.fileIDList)
+      } catch (err) {
+				this.$utils.handler.check.call(this, err)
+			}
     },
     async beforeUpload(file) {
       this.fileList = [...this.fileList, file]
@@ -43,11 +46,15 @@ export default {
       formData.append('owner', 'user')
       formData.append('type', 'file')
 
-      const res = await this.$service.file.UploadFile.call(this, formData)
-      // console.log(res);
-      this.fileIDList.push(res.id)
-      this.$emit('fileChange', this.fileIDList)
-      throw String('Finsih')
+      try {
+        const res = await this.$service.file.UploadFile.call(this, formData)
+        // console.log(res);
+        this.fileIDList.push(res.id)
+        this.$emit('fileChange', this.fileIDList)
+        throw String('Finsih')
+      } catch (err) {
+				this.$utils.handler.check.call(this, err)
+			}
     }
   },
   watch: {

@@ -1,5 +1,6 @@
 const badRequest = {
-  invalid_id: '无效参数'
+  invalid_id: '无效参数',
+  invalid_start_date: '无效日期'
 }
 const unauthorized = {
   invalid_session: '未登录',

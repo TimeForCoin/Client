@@ -88,11 +88,15 @@ export default {
         status: this.changeStatus,
         note: this.note
       }
-      await this.$service.task.ChangePlayerStatusOfTask.call(this, this.taskID, this.currentUserID, p)
-      // console.log(res)
-      this.note = ''
-      this.$emit('onChange')
-      this.modelVisible = false
+      try {
+        await this.$service.task.ChangePlayerStatusOfTask.call(this, this.taskID, this.currentUserID, p)
+        // console.log(res)
+        this.note = ''
+        this.$emit('onChange')
+        this.modelVisible = false
+      } catch (err) {
+				this.$utils.handler.check.call(this, err)
+		  }
     },
     handleCancel(e) {
       this.note = ''
