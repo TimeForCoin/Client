@@ -71,8 +71,8 @@
           type="primary"
           class="question-btn"
           v-if="isPlayer == false"
-          @click="showQuestionnaire"
-        >查看问卷</a-button>
+          disabled
+        >加入任务填写问卷</a-button>
         <a-button
           type="primary"
           class="question-btn"

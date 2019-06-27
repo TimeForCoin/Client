@@ -328,6 +328,12 @@ export default {
       let id
       if (this.isDraft === true) {
         id = this.taskID
+        this.$router.push({
+          path: '/create_questionnaire',
+          query: {
+            id: id
+          }
+        })
       } else {
         try {
           this.mission.publish = false
