@@ -32,8 +32,11 @@ export default {
 <style lang="less" scoped>
 
 .profile {
-    margin: 70px auto 0px;
     display: flex;
+    margin-top: 70px;
+    padding: 50px;
+    min-width: 700px;
+    justify-content: center;
     background-color: white;
 }
 

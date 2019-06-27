@@ -1,15 +1,32 @@
 <template>
     <div class="content">
         <div class="top">
-            <p>Overview</p>
-            <p>关注{{user.data.following_count}}</p>
-            <p>被关注{{user.data.follower_count}}</p>
-            <p>发布的任务{{user.data.publish_count}}</p>
-            <p>接受的任务{{user.data.receive_count}}</p>
+            <a-menu
+              v-model="current"
+              mode="horizontal"
+            >
+              <a-menu-item key="overview">
+                Overview
+              </a-menu-item>
+              <a-menu-item key="following">
+                Following{{user.data.following_count}}
+              </a-menu-item>
+              <a-menu-item key="followers">
+                Followers{{user.data.follower_count}}
+              </a-menu-item>
+              <a-menu-item key="receive">
+                Received Tasks{{user.data.receive_count}}
+              </a-menu-item>
+              <a-menu-item key="publish">
+                Published Tasks{{user.data.publish_count}}
+              </a-menu-item>
+            </a-menu>
         </div>
-        <Overview :id="user.id"/>
-        <UserList :id="user.id"/>
-        <MissionList :id="user.id"/>
+        <Overview v-if="current[0]=='overview'" :id="user.id"/>
+        <UserList v-if="current[0]=='following'" :id="user.id"/>
+        <UserList v-if="current[0]=='followers'" :id="user.id"/>
+        <MissionList v-if="current[0]=='receive'" :id="user.id"/>
+        <MissionList v-if="current[0]=='publish'" :id="user.id"/>
     </div>
 </template>
 
@@ -25,7 +42,7 @@ export default {
   },
   data() {
     return {
-
+      current: ['overview']
     }
   }
 
@@ -33,9 +50,15 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@width: 100%-300px;
+
 .content {
-    .top {
-        display: flex;
-    }
+  width: @width;
+  min-width: 400px;
+
+  .top {
+      display: flex;
+      margin-bottom: 50px;
+  }
 }
 </style>
