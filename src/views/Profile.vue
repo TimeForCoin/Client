@@ -1,7 +1,7 @@
 <template>
     <div class="profile">
         <div v-if="loading">加载中</div>
-        <Sider v-if="!loading" :user="user.info" />
+        <Sider v-if="!loading" :user="user" />
         <Content v-if="!loading" :user="user" />
     </div>
 </template>
@@ -20,6 +20,7 @@ export default {
   },
   mounted: async function() {
     let id = '5d10ff9aa42378d58963eff2'
+    // let id = this.$store.state.user.id
     let res = await this.$service.user.GetUserInfo.call(this, id)
     this.user = JSON.parse(JSON.stringify(res))
     this.loading = false

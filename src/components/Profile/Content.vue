@@ -7,13 +7,22 @@
             <p>发布的任务{{user.data.publish_count}}</p>
             <p>接受的任务{{user.data.receive_count}}</p>
         </div>
-
+        <Overview :id="user.id"/>
+        <UserList :id="user.id"/>
+        <MissionList :id="user.id"/>
     </div>
 </template>
 
 <script>
+import Overview from './Overview.vue'
+import UserList from './UserList.vue'
+import MissionList from './MissionList.vue'
+
 export default {
   props: ['user'],
+  components: {
+    Overview, UserList, MissionList
+  },
   data() {
     return {
 
