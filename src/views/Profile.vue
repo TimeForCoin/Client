@@ -32,7 +32,7 @@ export default {
 <style lang="less" scoped>
 
 .profile {
-    margin-top: 70px;
+    margin: 70px auto 0px;
     display: flex;
     background-color: white;
 }
