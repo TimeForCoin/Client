@@ -20,10 +20,6 @@
               <a-icon type="edit" />
               <span class="nav-text">草稿箱</span>
             </a-menu-item>
-            <a-menu-item key="5" class="left-menu-item">
-              <a-icon type="delete" />
-              <span class="nav-text">历史任务</span>
-            </a-menu-item>
           </a-menu>
           <a-button type="primary" class="mission-btn" @click="createMission">发布任务</a-button>
         </div>
@@ -92,13 +88,16 @@ export default {
   },
   computed: {
     missionShow: function() {
-      return this.missions.filter((item) => {
-        if (this.searchText != null) {
-          return (item.title.indexOf(this.searchText) !== -1 ||
-                  item.content.indexOf(this.searchText) !== -1)
-        }
-        return true
-      })
+      if(this.missions) {
+        return this.missions.filter((item) => {
+          if (this.searchText != null) {
+            return (item.title.indexOf(this.searchText) !== -1 ||
+                    item.content.indexOf(this.searchText) !== -1)
+          }
+          return true
+        })
+      }
+      return []
       // .filter((item) => {
       //   if (this.missionType == 0
       //       ||this.missionType == 1 && item.type == "run"             //跑腿
@@ -272,6 +271,7 @@ export default {
         let tasks = []
         for (let i = 0; i < res.data.length; i++) {
           tasks.push(res.data[i].task)
+          tasks[i].player_status = res.data[i].status.status
         }
         if (p > 1) {
           this.missions = this.missions.concat(tasks)

@@ -34,7 +34,8 @@ const forbidden = {
   not_allow_finish: '不允许关闭，参与人员尚未处理完毕',
   faked_file: '图片/文件不存在',
   error_file_type: '文件类型(图片/附件)错误',
-  not_allow_other_draft: '不允许查询他人的草稿'
+  not_allow_other_draft: '不允许查询他人的草稿',
+  no_money: '报酬过高，余额不足'
 }
 
 export default {

@@ -16,6 +16,10 @@
         <p class="long-text">任务内容：{{MissionModel.content}}</p>
         <p class="long-text" id="reward">酬劳：{{missionReward}}</p>
       </div>
+      <div class="tags">
+        <a-tag class="status-tag" :color="color">{{missionStatus}}</a-tag>
+        <a-tag class="status-tag" v-if="MissionModel.player_status" :color="color2">{{playerStatus}}</a-tag>
+      </div>
       <div class="text3">
         <p class="icon-number"><a-icon type="eye"/>{{MissionModel.view_count}}</p>
         <p class="icon-number"><a-icon type="like"/>{{MissionModel.like_count}}</p>
@@ -47,6 +51,75 @@ export default {
       }
       return '跑腿'
     },
+    color: function() {
+      switch (this.MissionModel.status) {
+        case 'draft':
+          return 'blue'
+        case 'wait':
+          return 'orange'
+        case 'close':
+          return 'red'
+        case 'finish':
+          return 'gray'
+      }
+      return 'yellow'
+    },
+    missionStatus: function() {
+      switch (this.MissionModel.status) {
+        case 'draft':
+          return '草稿'
+        case 'wait':
+          if (
+            this.MissionModel.start_date >
+            moment()
+              .startOf('day')
+              .unix()
+          ) {
+            return '未开始'
+          }
+          return '进行中'
+        case 'close':
+          return '已关闭'
+        case 'finish':
+          return '已结束'
+      }
+      return '未知'
+    },
+    color2: function() {
+      switch (this.MissionModel.player_status) {
+        case 'refuse':
+        case 'failure':
+          return 'red'
+        case 'give_up':
+        case 'close':
+          return 'gray'
+        case 'finish':
+          return 'green'
+        case 'wait':
+        case 'running':
+          return 'orange'
+      }
+      return 'yellow'
+    },
+    playerStatus: function() {
+      switch (this.MissionModel.player_status) {
+        case 'refuse':
+          return '被拒绝'
+        case 'failure':
+          return '已失败'
+        case 'give_up':
+          return '已放弃'
+        case 'close':
+          return '已关闭'
+        case 'finish':
+          return '已完成'
+        case 'wait':
+          return '审核中'
+        case 'running':
+          return '已加入'
+      }
+      return '未知'
+    },
     time: function() {
       const newTime = new Date(this.MissionModel.publish_date * 1000)
       // return moment(newTime).format("YYYY-MM-DD")
@@ -76,7 +149,7 @@ export default {
 .mission-card {
   background-color: white;
   width: 250px;
-  height: 320px;
+  height: 340px;
   transition: 0.5s;
   position: relative;
 
@@ -167,6 +240,15 @@ export default {
         -webkit-line-clamp: 1;
         overflow: hidden;
       }
+    }
+
+    .tags {
+      width: auto;
+      height: 20px;
+      text-align: left;
+      margin-left: 20px;
+      position: absolute;
+      top: 160px;
     }
 
     .text3 {
